@@ -82,8 +82,13 @@ input.err{border-color:var(--rd);background:#fff8f8}
 
 /* SLIDERS */
 .sr{display:flex;align-items:center;gap:12px;margin-top:8px}
-input[type=range]{flex:1;-webkit-appearance:none;height:6px;background:var(--br);border-radius:3px;outline:none;cursor:pointer}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--ac);border:2.5px solid #fff;box-shadow:0 2px 10px rgba(232,98,42,.4),0 0 0 4px rgba(232,98,42,.12);cursor:pointer;transition:transform .15s}
+input[type=range]{flex:1;-webkit-appearance:none;-moz-appearance:none;appearance:none;height:6px;background:var(--br);border-radius:3px;outline:none;cursor:pointer;touch-action:pan-x;transition:background .1s}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:inherit}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--ac);border:3px solid #fff;box-shadow:0 2px 10px rgba(232,98,42,.4),0 0 0 4px rgba(232,98,42,.12);cursor:grab;transition:transform .1s,box-shadow .1s;margin-top:-9px}
+input[type=range]::-webkit-slider-thumb:active{cursor:grabbing;transform:scale(1.15);box-shadow:0 3px 14px rgba(232,98,42,.5),0 0 0 6px rgba(232,98,42,.15)}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--ac);border:3px solid #fff;box-shadow:0 2px 10px rgba(232,98,42,.4);cursor:grab;transition:transform .1s}
+input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:var(--br)}
+input[type=range]::-moz-range-progress{height:6px;border-radius:3px;background:var(--ac)}
 .sv{min-width:62px;text-align:right;font-size:16px;font-weight:700;color:var(--ac);font-feature-settings:'tnum'}
 
 /* WARM / STATUS BANNERS */
@@ -770,16 +775,16 @@ function r1() {
     </div>
     <div class="f">
       <label>Current age</label>
-      <div class="iw"><input type="number" class="np hs" placeholder="35" value="${S.age||''}" onchange="S.age=+this.value;re()"><span class="sfx">years</span></div>
+      <div class="iw"><input type="number" class="np hs" placeholder="35" value="${S.age||''}" oninput="S.age=+this.value;re()"><span class="sfx">years</span></div>
     </div>
     <div class="f">
       <label>Retirement age</label>
-      <div class="iw"><input type="number" class="np hs" placeholder="60" value="${S.retAge||''}" onchange="S.retAge=+this.value;re()"><span class="sfx">years</span></div>
+      <div class="iw"><input type="number" class="np hs" placeholder="60" value="${S.retAge||''}" oninput="S.retAge=+this.value;re()"><span class="sfx">years</span></div>
       ${S.age>0&&S.retAge>S.age?`<div class="hint">\u2714 ${ytr()} years to build your corpus</div>`:''}
     </div>
     <div class="f" style="margin-bottom:0">
       <label>Life expectancy</label>
-      <div class="iw"><input type="number" class="np hs" placeholder="85" value="${S.lifeE||''}" onchange="S.lifeE=+this.value;re()"><span class="sfx">years</span></div>
+      <div class="iw"><input type="number" class="np hs" placeholder="85" value="${S.lifeE||''}" oninput="S.lifeE=+this.value;re()"><span class="sfx">years</span></div>
       <div class="hint">\u24d8 Planning to age 85 is safe, 90 is conservative. Healthcare is improving — plan longer.</div>
     </div>
   </div>`;
@@ -788,15 +793,15 @@ function r1() {
 function r2() {
   const detailInv = `
   <div class="bkt-grid">
-    <div class="bkt"><div class="bkt-lbl" style="color:#2d6a4f">\u{1F7E2} Mutual Funds</div><input type="text" inputmode="text" value="${fmtInput(S.invMF)}" placeholder="0" onchange="S.invMF=parseAmt(this.value);re()"><div class="bkt-sub">Equity, Debt, Hybrid</div></div>
-    <div class="bkt"><div class="bkt-lbl" style="color:#c8873a">\u{1F7E0} Direct Equity</div><input type="text" inputmode="text" value="${fmtInput(S.invEQ)}" placeholder="0" onchange="S.invEQ=parseAmt(this.value);re()"><div class="bkt-sub">Stocks, ETFs</div></div>
-    <div class="bkt"><div class="bkt-lbl" style="color:#2055a0">\u{1F535} PF / EPF / PPF</div><input type="text" inputmode="text" value="${fmtInput(S.invPF)}" placeholder="0" onchange="S.invPF=parseAmt(this.value);re()"><div class="bkt-sub">Provident fund</div></div>
-    <div class="bkt"><div class="bkt-lbl" style="color:#7b4fa0">\u{1F7E3} Debt / FD</div><input type="text" inputmode="text" value="${fmtInput(S.invDT)}" placeholder="0" onchange="S.invDT=parseAmt(this.value);re()"><div class="bkt-sub">FDs, NPS, Bonds</div></div>
+    <div class="bkt"><div class="bkt-lbl" style="color:#2d6a4f">\u{1F7E2} Mutual Funds</div><input type="text" inputmode="text" value="${fmtInput(S.invMF)}" placeholder="0" oninput="S.invMF=parseAmt(this.value);debouncedRe()" onchange="S.invMF=parseAmt(this.value);re()"><div class="bkt-sub">Equity, Debt, Hybrid</div></div>
+    <div class="bkt"><div class="bkt-lbl" style="color:#c8873a">\u{1F7E0} Direct Equity</div><input type="text" inputmode="text" value="${fmtInput(S.invEQ)}" placeholder="0" oninput="S.invEQ=parseAmt(this.value);debouncedRe()" onchange="S.invEQ=parseAmt(this.value);re()"><div class="bkt-sub">Stocks, ETFs</div></div>
+    <div class="bkt"><div class="bkt-lbl" style="color:#2055a0">\u{1F535} PF / EPF / PPF</div><input type="text" inputmode="text" value="${fmtInput(S.invPF)}" placeholder="0" oninput="S.invPF=parseAmt(this.value);debouncedRe()" onchange="S.invPF=parseAmt(this.value);re()"><div class="bkt-sub">Provident fund</div></div>
+    <div class="bkt"><div class="bkt-lbl" style="color:#7b4fa0">\u{1F7E3} Debt / FD</div><input type="text" inputmode="text" value="${fmtInput(S.invDT)}" placeholder="0" oninput="S.invDT=parseAmt(this.value);debouncedRe()" onchange="S.invDT=parseAmt(this.value);re()"><div class="bkt-sub">FDs, NPS, Bonds</div></div>
   </div>`;
 
   const detailAddInc = `
-  <div class="f"><label>Rental income (&#8377;/month)</label><div class="iw"><span class="pfx">&#8377;</span><input type="text" inputmode="text" value="${fmtInput(S.addIncRental)}" placeholder="0" onchange="S.addIncRental=parseAmt(this.value);re()"></div></div>
-  <div class="f" style="margin-bottom:0"><label>Other income (&#8377;/month) <span style="font-weight:400;font-size:12px;color:var(--mu)">freelance, dividends…</span></label><div class="iw"><span class="pfx">&#8377;</span><input type="text" inputmode="text" value="${fmtInput(S.addIncOther)}" placeholder="0" onchange="S.addIncOther=parseAmt(this.value);re()"></div></div>`;
+  <div class="f"><label>Rental income (&#8377;/month)</label><div class="iw"><span class="pfx">&#8377;</span><input type="text" inputmode="text" value="${fmtInput(S.addIncRental)}" placeholder="0" oninput="S.addIncRental=parseAmt(this.value);debouncedRe()" onchange="S.addIncRental=parseAmt(this.value);re()"></div></div>
+  <div class="f" style="margin-bottom:0"><label>Other income (&#8377;/month) <span style="font-weight:400;font-size:12px;color:var(--mu)">freelance, dividends…</span></label><div class="iw"><span class="pfx">&#8377;</span><input type="text" inputmode="text" value="${fmtInput(S.addIncOther)}" placeholder="0" oninput="S.addIncOther=parseAmt(this.value);debouncedRe()" onchange="S.addIncOther=parseAmt(this.value);re()"></div></div>`;
 
   return `
   <div class="sh">
@@ -817,7 +822,7 @@ function r2() {
     ${S.invMode==='quick'?`
       <div class="f">
         <label>Total money saved so far (&#8377;)</label>
-        <div class="iw"><span class="pfx">&#8377;</span><input type="text" inputmode="text" value="${fmtInput(S.invQuick)}" placeholder="e.g. 50L or 5000000" onchange="S.invQuick=parseAmt(this.value);re()"></div>
+        <div class="iw"><span class="pfx">&#8377;</span><input type="text" inputmode="text" value="${fmtInput(S.invQuick)}" placeholder="e.g. 50L or 5000000" oninput="S.invQuick=parseAmt(this.value);debouncedRe()" onchange="S.invQuick=parseAmt(this.value);re()"></div>
         <div class="hint">All investments combined — MF, EPF, FD, stocks, PPF, everything</div>
       </div>
     `:detailInv}
@@ -834,7 +839,7 @@ function r2() {
     <div class="card-title">Monthly Salary</div>
     <div class="f">
       <label>Take-home monthly salary (&#8377;)</label>
-      <div class="iw"><span class="pfx">&#8377;</span><input type="text" inputmode="text" value="${fmtInput(S.salaryMonthly)}" placeholder="e.g. 1.5L or 150000" onchange="S.salaryMonthly=parseAmt(this.value);re()"></div>
+      <div class="iw"><span class="pfx">&#8377;</span><input type="text" inputmode="text" value="${fmtInput(S.salaryMonthly)}" placeholder="e.g. 1.5L or 150000" oninput="S.salaryMonthly=parseAmt(this.value);debouncedRe()" onchange="S.salaryMonthly=parseAmt(this.value);re()"></div>
       <div class="hint">After tax and PF deductions</div>
     </div>
     <div class="f" style="margin-bottom:0">
@@ -856,7 +861,7 @@ function r2() {
     ${S.addIncMode==='quick'?`
       <div class="f" style="margin-bottom:0">
         <label>Other monthly income (&#8377;) <span style="font-weight:400;font-size:12px;color:var(--mu)">— 0 if none</span></label>
-        <div class="iw"><span class="pfx">&#8377;</span><input type="text" inputmode="text" value="${fmtInput(S.addIncQuick)}" placeholder="0" onchange="S.addIncQuick=parseAmt(this.value);re()"></div>
+        <div class="iw"><span class="pfx">&#8377;</span><input type="text" inputmode="text" value="${fmtInput(S.addIncQuick)}" placeholder="0" oninput="S.addIncQuick=parseAmt(this.value);debouncedRe()" onchange="S.addIncQuick=parseAmt(this.value);re()"></div>
         <div class="hint">Rental income, dividends, freelance, interest from FDs</div>
       </div>
     `:detailAddInc}
@@ -964,7 +969,7 @@ function r3() {
       <div class="f" style="margin-bottom:0">
         <label>Total monthly household expenses (&#8377;)</label>
         <div class="sr"><input type="range" min="10000" max="500000" step="5000" value="${S.expQMo||50000}" oninput="S.expQMo=parseAmt(this.value);re()"><div class="sv">${fmt(S.expQMo||50000)}</div></div>
-        <div class="iw" style="margin-top:10px"><span class="pfx">&#8377;</span><input type="text" inputmode="text" value="${fmtInput(S.expQMo)}" placeholder="e.g. 50K or 50000" onchange="S.expQMo=parseAmt(this.value);re()"></div>
+        <div class="iw" style="margin-top:10px"><span class="pfx">&#8377;</span><input type="text" inputmode="text" value="${fmtInput(S.expQMo)}" placeholder="e.g. 50K or 50000" oninput="S.expQMo=parseAmt(this.value);debouncedRe()" onchange="S.expQMo=parseAmt(this.value);re()"></div>
         <div class="hint">Rent + groceries + EMI + utilities + everything. Click <strong>Detailed</strong> to break down by category.</div>
       </div>
     `:moDetailed}
@@ -982,7 +987,7 @@ function r3() {
     ${S.expMode==='quick'?`
       <div class="f" style="margin-bottom:0">
         <label>Total yearly one-time expenses (&#8377;)</label>
-        <div class="iw"><span class="pfx">&#8377;</span><input type="text" inputmode="text" value="${fmtInput(S.expQYr)}" placeholder="e.g. 2L or 200000" onchange="S.expQYr=parseAmt(this.value);re()"></div>
+        <div class="iw"><span class="pfx">&#8377;</span><input type="text" inputmode="text" value="${fmtInput(S.expQYr)}" placeholder="e.g. 2L or 200000" oninput="S.expQYr=parseAmt(this.value);debouncedRe()" onchange="S.expQYr=parseAmt(this.value);re()"></div>
         <div class="hint">Holidays + insurance premiums + shopping + repairs + everything you pay once a year.</div>
       </div>
     `:yrDetailed}
@@ -1050,7 +1055,7 @@ function r4() {
     <div class="card-title">Your Monthly SIP Amount</div>
     <div class="f">
       <label>How much will you invest every month? (&#8377;)</label>
-      <div class="iw"><span class="pfx">&#8377;</span><input type="text" inputmode="text" value="${fmtInput(S.sipAmt)}" placeholder="${Math.round(moSurp*0.7)}" onchange="S.sipAmt=parseAmt(this.value);re()"></div>
+      <div class="iw"><span class="pfx">&#8377;</span><input type="text" inputmode="text" value="${fmtInput(S.sipAmt)}" placeholder="${Math.round(moSurp*0.7)}" oninput="S.sipAmt=parseAmt(this.value);debouncedRe()" onchange="S.sipAmt=parseAmt(this.value);re()"></div>
       ${S.sipAmt>0&&S.sipAmt>moSurp?`<div class="hint" style="color:var(--rd)">\u26a0\ufe0f Your SIP (${fmt(S.sipAmt)}/mo) exceeds your surplus (${fmt(moSurp)}/mo). Reduce it to avoid cash flow issues.</div>`:
         S.sipAmt>0?`<div class="hint" style="color:var(--gn)">\u2714 ${fmtPct(S.sipAmt/moInc*100)} of income — ${S.sipAmt/moSurp>0.8?'excellent':'good'} savings discipline.</div>`:''}
     </div>
@@ -1068,7 +1073,7 @@ function r4() {
     ${S.sipMode==='fixed'&&S.sipAmt>0?`
     <div class="f" style="margin-bottom:0">
       <label>Increase SIP by this amount every year (&#8377;/year)</label>
-      <div class="iw"><span class="pfx">&#8377;</span><input type="text" inputmode="text" value="${fmtInput(S.sipFixed)}" placeholder="e.g. 60K or 60000" onchange="S.sipFixed=parseAmt(this.value);re()"></div>
+      <div class="iw"><span class="pfx">&#8377;</span><input type="text" inputmode="text" value="${fmtInput(S.sipFixed)}" placeholder="e.g. 60K or 60000" oninput="S.sipFixed=parseAmt(this.value);debouncedRe()" onchange="S.sipFixed=parseAmt(this.value);re()"></div>
       ${sipFixedWarn?`<div class="hint" style="color:var(--rd)">\u26a0\ufe0f Fixed step-up (${fmt(S.sipFixed)}/yr) is higher than your salary growth (${fmt(S.salaryGrowth)}% of ${fmt(S.sipAmt*12)}/yr = ${fmt(Math.round(S.sipAmt*12*S.salaryGrowth/100))}/yr). This may become unsustainable. Consider matching your salary growth rate.</div>`:'<div class="hint">This keeps your SIP growing in absolute terms every year, regardless of salary changes.</div>'}
     </div>`:
     S.sipMode==='salary'&&S.sipAmt>0?`<div class="al ok" style="margin-bottom:0"><span>\u2139\ufe0f</span><div>Your SIP will grow from <strong>${fmt(S.sipAmt)}/mo</strong> today to <strong>${fmt(Math.round(S.sipAmt*Math.pow(1+S.salaryGrowth/100,ytr())))}/mo</strong> by retirement — aligned with your salary at ${S.salaryGrowth}%/yr.</div></div>`:''}
@@ -2090,7 +2095,7 @@ function t4() {
       <div class="f">
         <label>Child's current age</label>
         <div class="iw"><input type="number" class="np hs" placeholder="e.g. 5" value="${kid.age||''}"
-          onchange="updKid(${i},'age',+this.value)"><span class="sfx">yrs</span></div>
+          oninput="updKid(${i},'age',+this.value)"><span class="sfx">yrs</span></div>
         ${kid.age>0?`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px">
           <div style="background:#f0f7f4;border-radius:8px;padding:7px 9px;font-size:11.5px;text-align:center">
             <div style="color:var(--mu);font-size:10px;margin-bottom:2px">UG starts</div>
@@ -2133,12 +2138,12 @@ function t4() {
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div class="f" style="margin-bottom:0">
             <label style="font-size:12px">Child's age at UG start</label>
-            <div class="iw"><input type="number" class="np hs" value="${kid.ugStartAge||18}" onchange="updKid(${i},'ugStartAge',+this.value)"><span class="sfx">yrs</span></div>
+            <div class="iw"><input type="number" class="np hs" value="${kid.ugStartAge||18}" oninput="updKid(${i},'ugStartAge',+this.value)"><span class="sfx">yrs</span></div>
             ${kid.age>0?`<div class="hint" style="color:var(--ac)">📅 ${Math.max((kid.ugStartAge||18)-kid.age,0)} years from now (you are ${S.age})</div>`:''}
           </div>
           <div class="f" style="margin-bottom:0">
             <label style="font-size:12px">Duration</label>
-            <div class="iw"><input type="number" class="np hs" value="${kid.ugDur||4}" onchange="updKid(${i},'ugDur',+this.value)"><span class="sfx">yrs</span></div>
+            <div class="iw"><input type="number" class="np hs" value="${kid.ugDur||4}" oninput="updKid(${i},'ugDur',+this.value)"><span class="sfx">yrs</span></div>
             <div class="hint">UG ends age ${(kid.ugStartAge||18)+(kid.ugDur||4)}</div>
           </div>
           <div class="f" style="margin-bottom:0;grid-column:1/-1">
@@ -2157,12 +2162,12 @@ function t4() {
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div class="f" style="margin-bottom:0">
             <label style="font-size:12px">Child's age at PG start</label>
-            <div class="iw"><input type="number" class="np hs" value="${kid.pgStartAge||22}" onchange="updKid(${i},'pgStartAge',+this.value)"><span class="sfx">yrs</span></div>
+            <div class="iw"><input type="number" class="np hs" value="${kid.pgStartAge||22}" oninput="updKid(${i},'pgStartAge',+this.value)"><span class="sfx">yrs</span></div>
             ${kid.age>0?`<div class="hint" style="color:var(--ac)">📅 ${Math.max((kid.pgStartAge||22)-kid.age,0)} years from now</div>`:''}
           </div>
           <div class="f" style="margin-bottom:0">
             <label style="font-size:12px">Duration</label>
-            <div class="iw"><input type="number" class="np hs" value="${kid.pgDur||2}" onchange="updKid(${i},'pgDur',+this.value)"><span class="sfx">yrs</span></div>
+            <div class="iw"><input type="number" class="np hs" value="${kid.pgDur||2}" oninput="updKid(${i},'pgDur',+this.value)"><span class="sfx">yrs</span></div>
             <div class="hint">PG ends age ${(kid.pgStartAge||22)+(kid.pgDur||2)}</div>
           </div>
           <div class="f" style="margin-bottom:0;grid-column:1/-1">
@@ -2180,7 +2185,7 @@ function t4() {
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div class="f" style="margin-bottom:0">
             <label style="font-size:12px">Child's age at marriage</label>
-            <div class="iw"><input type="number" class="np hs" value="${kid.marAge||28}" onchange="updKid(${i},'marAge',+this.value)"><span class="sfx">yrs</span></div>
+            <div class="iw"><input type="number" class="np hs" value="${kid.marAge||28}" oninput="updKid(${i},'marAge',+this.value)"><span class="sfx">yrs</span></div>
             ${kid.age>0?`<div class="hint" style="color:var(--ac)">📅 ${Math.max((kid.marAge||28)-kid.age,0)} years from now</div>`:''}
           </div>
           <div class="f" style="margin-bottom:0">
@@ -2288,7 +2293,7 @@ function t5() {
     <div class="card-title">Your Retirement SIP</div>
     <div class="f">
       <label>Monthly SIP for retirement (&#8377;)</label>
-      <div class="iw"><span class="pfx">&#8377;</span><input type="text" inputmode="text" value="${fmtInput(S.retSipAmt)}" placeholder="${Math.round(retSurp*0.7)||''}" onchange="S.retSipAmt=parseAmt(this.value);re()"></div>
+      <div class="iw"><span class="pfx">&#8377;</span><input type="text" inputmode="text" value="${fmtInput(S.retSipAmt)}" placeholder="${Math.round(retSurp*0.7)||''}" oninput="S.retSipAmt=parseAmt(this.value);debouncedRe()" onchange="S.retSipAmt=parseAmt(this.value);re()"></div>
       ${S.retSipAmt>retSurp?`<div class="hint" style="color:var(--rd)">⚠️ Exceeds available surplus of ${fmt(retSurp)}/mo after kids goals.</div>`:
         S.retSipAmt>0?`<div class="hint" style="color:var(--gn)">✔ ${(S.retSipAmt/moInc*100).toFixed(1)}% of income — good discipline.</div>`:''}
     </div>
@@ -3019,6 +3024,14 @@ function canNext() {
 function re() {
   // Step dots
   document.getElementById('stepLabel').textContent = S.step <= 6 ? `Step ${S.step} of 6` : 'Your Plan';
+  // Update slider track fill after render
+  setTimeout(()=>{
+    document.querySelectorAll('input[type=range]').forEach(sl=>{
+      const min=+sl.min||0, max=+sl.max||100, val=+sl.value||0;
+      const pct=((val-min)/(max-min)*100).toFixed(1);
+      sl.style.background=`linear-gradient(to right,var(--ac) ${pct}%,var(--br) ${pct}%)`;
+    });
+  }, 0);
   const fillEl = document.getElementById('topbarFill');
   if(fillEl) fillEl.style.width = S.step >= 7 ? '100%' : (S.step/6*100).toFixed(1)+'%';
   document.getElementById('dots').innerHTML = [1,2,3,4,5,6].map(i=>
@@ -3059,6 +3072,8 @@ function re() {
   const renderers = S.tab===1 ? tab1renderers : tab2renderers;
   c.innerHTML = renderers[Math.min(S.step,7)-1]();
   c.scrollTop = sc;
+  // Save state after every render
+  saveState();
 }
 
 function goReport(){ S.step=7; document.getElementById('cnt').scrollTop=0; re(); }
@@ -3080,6 +3095,8 @@ function resetPlan(){
   // Always go to step 1 and scroll to top
   const cnt = document.getElementById('cnt');
   if (cnt) cnt.scrollTop = 0;
+  // Clear saved state so restart is truly fresh
+  try { localStorage.removeItem('corpuscalc_state_v2'); } catch(e) {}
   // Refresh tab button styles
   const t1 = document.getElementById('tab1btn');
   const t2 = document.getElementById('tab2btn');
@@ -3108,6 +3125,39 @@ function prev() {
   re();
 }
 
+// ── PERSISTENCE ─────────────────────────────────────────────
+const SAVE_KEY = 'corpuscalc_state_v2';
+
+// Debounce for live input updates (prevents re() on every keystroke)
+let _debounceTid = null;
+function debouncedRe(ms) {
+  clearTimeout(_debounceTid);
+  _debounceTid = setTimeout(() => re(), ms || 600);
+}
+
+function saveState() {
+  try {
+    // Don't save computed phases — they rebuild from inputs
+    const toSave = {...S};
+    localStorage.setItem(SAVE_KEY, JSON.stringify(toSave));
+  } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    // Merge saved into S, preserving any new keys added since save
+    Object.keys(saved).forEach(k => {
+      if (k in S || k === 'tab' || k === 'step') S[k] = saved[k];
+    });
+  } catch(e) {}
+}
+
+// Load saved state before first render
+loadState();
+
 // Set topbar height CSS variable so tab strip sticks right below it
 function setTopbarHeight() {
   const tb = document.querySelector('.topbar');
@@ -3116,7 +3166,16 @@ function setTopbarHeight() {
 setTopbarHeight();
 window.addEventListener('resize', setTopbarHeight);
 
-// Start
+// Slider track fill — live update on drag (before re() is called)
+document.addEventListener('input', function(e){
+  if(e.target.type==='range'){
+    const min=+e.target.min||0, max=+e.target.max||100, val=+e.target.value;
+    const pct=((val-min)/(max-min)*100).toFixed(1);
+    e.target.style.background=`linear-gradient(to right,var(--ac) ${pct}%,var(--br) ${pct}%)`;
+  }
+});
+
+// Start (state already loaded above)
 re();
 </script>
 </body></html>
