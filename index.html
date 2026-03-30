@@ -1524,7 +1524,7 @@ function r6() {
                   <input type="text" inputmode="text" id="phQMo_${idx}" value="${fmtInput(phMoTotal)}" placeholder="e.g. 2L or 200000"
                     style="width:100%;padding:12px 12px 12px 30px;border:1.5px solid var(--br);border-radius:8px;font-size:15px;font-family:'DM Sans',sans-serif;-moz-appearance:textfield;appearance:none;outline:none;transition:border .15s"
                     onfocus="this.style.borderColor='var(--ac)'"
-                    onblur="this.style.borderColor='var(--br)';(function(v,pi){if(isNaN(v)||v<0)return;const keys=['rent','emi','groc','trav','util','ent','hlth','hh','other'];const cur=Object.values(S.phases[pi].mo).reduce((s,x)=>s+(isNaN(+x)?0:+x),0);keys.forEach(k=>{S.phases[pi].mo[k]=cur>0?Math.round((isNaN(S.phases[pi].mo[k])?0:S.phases[pi].mo[k])*(v/cur)):Math.round(v/9)});S.phases[pi].userEdited=true;re()})(parseAmt(this.value),${idx})">
+                    onblur="this.style.borderColor='var(--br)';(function(v,pi){const amt=parseAmt(v);if(isNaN(amt)||amt<0)return;['rent','emi','groc','trav','util','ent','hlth','hh','other'].forEach(k=>{S.phases[pi].mo[k]=0});S.phases[pi].mo.other=amt;S.phases[pi].userEdited=true;re()})(this.value,${idx})">
                 </div>
               </div>
               <div>
@@ -1534,7 +1534,7 @@ function r6() {
                   <input type="text" inputmode="text" id="phQYr_${idx}" value="${fmtInput(phYrTotal)}" placeholder="e.g. 3L or 300000"
                     style="width:100%;padding:12px 12px 12px 30px;border:1.5px solid var(--br);border-radius:8px;font-size:15px;font-family:'DM Sans',sans-serif;-moz-appearance:textfield;appearance:none;outline:none;transition:border .15s"
                     onfocus="this.style.borderColor='var(--ac)'"
-                    onblur="this.style.borderColor='var(--br)';(function(v,pi){if(isNaN(v)||v<0)return;const keys=['hol','ins','gad','clo','cin','don','rep','oy'];const cur=Object.values(S.phases[pi].yr).reduce((s,x)=>s+(isNaN(+x)?0:+x),0);keys.forEach(k=>{S.phases[pi].yr[k]=cur>0?Math.round((isNaN(S.phases[pi].yr[k])?0:S.phases[pi].yr[k])*(v/cur)):Math.round(v/8)});S.phases[pi].userEdited=true;re()})(parseAmt(this.value),${idx})">
+                    onblur="this.style.borderColor='var(--br)';(function(v,pi){const amt=parseAmt(v);if(isNaN(amt)||amt<0)return;['hol','ins','gad','clo','cin','don','rep','oy'].forEach(k=>{S.phases[pi].yr[k]=0});S.phases[pi].yr.oy=amt;S.phases[pi].userEdited=true;re()})(this.value,${idx})">
                 </div>
               </div>
             </div>
@@ -2426,7 +2426,7 @@ function t6() {
         <input type="text" inputmode="text" id="phQMo_t_${idx}" value="${fmtInput(phMoTotal)}" placeholder="e.g. 2L or 200000"
           style="width:100%;padding:12px 12px 12px 30px;border:1.5px solid var(--br);border-radius:8px;font-size:15px;font-family:'DM Sans',sans-serif;-moz-appearance:textfield;appearance:none;outline:none"
           onfocus="this.style.borderColor='var(--ac)'"
-          onblur="this.style.borderColor='var(--br)';(function(v,pi){if(isNaN(v)||v<0)return;const keys=['rent','emi','groc','trav','util','ent','hlth','hh','other'];const cur=Object.values(S.phases[pi].mo).reduce((s,x)=>s+(isNaN(+x)?0:+x),0);keys.forEach(k=>{S.phases[pi].mo[k]=cur>0?Math.round((isNaN(S.phases[pi].mo[k])?0:S.phases[pi].mo[k])*(v/cur)):Math.round(v/9)});S.phases[pi].userEdited=true;re()})(parseAmt(this.value),${idx})"></div>
+          onblur="this.style.borderColor='var(--br)';(function(v,pi){const amt=parseAmt(v);if(isNaN(amt)||amt<0)return;['rent','emi','groc','trav','util','ent','hlth','hh','other'].forEach(k=>{S.phases[pi].mo[k]=0});S.phases[pi].mo.other=amt;S.phases[pi].userEdited=true;re()})(this.value,${idx})"></div>
       </div>
       <div>
         <div style="font-size:12px;font-weight:500;color:var(--mu);margin-bottom:5px">Yearly total (&#8377;/yr)</div>
@@ -2434,7 +2434,7 @@ function t6() {
         <input type="text" inputmode="text" id="phQYr_t_${idx}" value="${fmtInput(phYrTotal)}" placeholder="e.g. 3L or 300000"
           style="width:100%;padding:12px 12px 12px 30px;border:1.5px solid var(--br);border-radius:8px;font-size:15px;font-family:'DM Sans',sans-serif;-moz-appearance:textfield;appearance:none;outline:none"
           onfocus="this.style.borderColor='var(--ac)'"
-          onblur="this.style.borderColor='var(--br)';(function(v,pi){if(isNaN(v)||v<0)return;const keys=['hol','ins','gad','clo','cin','don','rep','oy'];const cur=Object.values(S.phases[pi].yr).reduce((s,x)=>s+(isNaN(+x)?0:+x),0);keys.forEach(k=>{S.phases[pi].yr[k]=cur>0?Math.round((isNaN(S.phases[pi].yr[k])?0:S.phases[pi].yr[k])*(v/cur)):Math.round(v/8)});S.phases[pi].userEdited=true;re()})(parseAmt(this.value),${idx})"></div>
+          onblur="this.style.borderColor='var(--br)';(function(v,pi){const amt=parseAmt(v);if(isNaN(amt)||amt<0)return;['hol','ins','gad','clo','cin','don','rep','oy'].forEach(k=>{S.phases[pi].yr[k]=0});S.phases[pi].yr.oy=amt;S.phases[pi].userEdited=true;re()})(this.value,${idx})"></div>
       </div>
     </div>
     ${phMoTotal>0||phYrTotal>0?`<div style="margin-top:8px;padding:7px 11px;background:#f0f7f4;border-radius:7px;display:flex;justify-content:space-between;font-size:12px;color:var(--s)"><span>Total annual:</span><strong>${fmt(phMoTotal*12+phYrTotal)}/yr</strong></div>`:''}`;
