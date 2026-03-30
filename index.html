@@ -1491,7 +1491,7 @@ function r6() {
           const phMoTotal = Object.values(ph.mo).reduce((s,v)=>s+(isNaN(+v)?0:+v),0);
           const phYrTotal = Object.values(ph.yr).reduce((s,v)=>s+(isNaN(+v)?0:+v),0);
           const moFields=[['Rent / Housing','rent'],['EMI (if any)','emi'],['Groceries','groc'],['Travel','trav'],['Utilities','util'],['Entertainment','ent'],['Healthcare','hlth'],['Household Help','hh'],['Other','other']];
-          const yrFields=[['Holidays','hol'],['Health Insurance','ins'],['Gadgets','gad'],['Clothes','clo'],['Car Insurance','cin'],['Donations','don'],['Home Repairs','rep'],['Other Yearly','oy']];
+          const yrFields=[['Holidays','hol'],['Health Insurance','ins'],['Gadgets','gad'],['Clothes','clo'],['Car Insurance','cins'],['Donations','don'],['Home Repairs','rep'],['Other Yearly','oy']];
 
           // For phase 2+ show inflation-adj choice prompt if not yet chosen
           const adjPrompt = (idx > 0 && askAdj) ? `
@@ -1534,7 +1534,7 @@ function r6() {
                   <input type="text" inputmode="text" id="phQYr_${idx}" value="${fmtInput(phYrTotal)}" placeholder="e.g. 3L or 300000"
                     style="width:100%;padding:12px 12px 12px 30px;border:1.5px solid var(--br);border-radius:8px;font-size:15px;font-family:'DM Sans',sans-serif;-moz-appearance:textfield;appearance:none;outline:none;transition:border .15s"
                     onfocus="this.style.borderColor='var(--ac)'"
-                    onblur="this.style.borderColor='var(--br)';(function(v,pi){const amt=parseAmt(v);if(isNaN(amt)||amt<0)return;['hol','ins','gad','clo','cin','don','rep','oy'].forEach(k=>{S.phases[pi].yr[k]=0});S.phases[pi].yr.oy=amt;S.phases[pi].userEdited=true;re()})(this.value,${idx})">
+                    onblur="this.style.borderColor='var(--br)';(function(v,pi){const amt=parseAmt(v);if(isNaN(amt)||amt<0)return;['hol','ins','gad','clo','cins','don','rep','oy'].forEach(k=>{S.phases[pi].yr[k]=0});S.phases[pi].yr.oy=amt;S.phases[pi].userEdited=true;re()})(this.value,${idx})">
                 </div>
               </div>
             </div>
@@ -2402,7 +2402,7 @@ function t6() {
     const useAdj = S.phInflAdj[idx]===true;
     const askAdj = idx>0 && S.phInflAdj[idx]===undefined;
     const moFields=[['Rent/Housing','rent'],['EMI','emi'],['Groceries','groc'],['Travel','trav'],['Utilities','util'],['Entertainment','ent'],['Healthcare','hlth'],['Household Help','hh'],['Other','other']];
-    const yrFields=[['Holidays','hol'],['Insurance','ins'],['Gadgets','gad'],['Clothes','clo'],['Car Ins','cin'],['Donations','don'],['Home Repairs','rep'],['Other','oy']];
+    const yrFields=[['Holidays','hol'],['Insurance','ins'],['Gadgets','gad'],['Clothes','clo'],['Car Ins','cins'],['Donations','don'],['Home Repairs','rep'],['Other','oy']];
 
     const adjPrompt = (idx>0&&askAdj)?`
     <div style="background:#e8f4f0;border:1.5px solid #6fcf97;border-radius:var(--rs);padding:12px 14px;margin-bottom:12px">
@@ -2434,7 +2434,7 @@ function t6() {
         <input type="text" inputmode="text" id="phQYr_t_${idx}" value="${fmtInput(phYrTotal)}" placeholder="e.g. 3L or 300000"
           style="width:100%;padding:12px 12px 12px 30px;border:1.5px solid var(--br);border-radius:8px;font-size:15px;font-family:'DM Sans',sans-serif;-moz-appearance:textfield;appearance:none;outline:none"
           onfocus="this.style.borderColor='var(--ac)'"
-          onblur="this.style.borderColor='var(--br)';(function(v,pi){const amt=parseAmt(v);if(isNaN(amt)||amt<0)return;['hol','ins','gad','clo','cin','don','rep','oy'].forEach(k=>{S.phases[pi].yr[k]=0});S.phases[pi].yr.oy=amt;S.phases[pi].userEdited=true;re()})(this.value,${idx})"></div>
+          onblur="this.style.borderColor='var(--br)';(function(v,pi){const amt=parseAmt(v);if(isNaN(amt)||amt<0)return;['hol','ins','gad','clo','cins','don','rep','oy'].forEach(k=>{S.phases[pi].yr[k]=0});S.phases[pi].yr.oy=amt;S.phases[pi].userEdited=true;re()})(this.value,${idx})"></div>
       </div>
     </div>
     ${phMoTotal>0||phYrTotal>0?`<div style="margin-top:8px;padding:7px 11px;background:#f0f7f4;border-radius:7px;display:flex;justify-content:space-between;font-size:12px;color:var(--s)"><span>Total annual:</span><strong>${fmt(phMoTotal*12+phYrTotal)}/yr</strong></div>`:''}`;
