@@ -8,8 +8,8 @@ export default defineConfig({
   name: 'default',
   title: 'corpuscalc',
 
-  projectId: '55cj92zk',
-  dataset: 'production',
+  projectId: import.meta.env.VITE_SANITY_PROJECT_ID,
+  dataset: import.meta.env.VITE_SANITY_DATASET,
 
   plugins: [structureTool(), visionTool(), table()],
 
