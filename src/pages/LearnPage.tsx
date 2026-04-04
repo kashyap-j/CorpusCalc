@@ -24,6 +24,55 @@ const TAG_COLORS: Record<string, string> = {
 
 const FILTER_TABS = ['All', 'Inflation', 'SIP', 'Strategy', 'Basics', 'Geopolitics'];
 
+// Static fallback — used when Sanity returns empty or is unreachable
+const FALLBACK_ARTICLES: DisplayArticle[] = [
+  {
+    id: 'global-wars-retirement-inflation',
+    slug: 'global-wars-retirement-inflation',
+    title: 'How Global Wars Are Making Your Retirement More Expensive',
+    excerpt: "Russia-Ukraine, Middle East tensions, and supply chain disruptions are quietly eroding your retirement corpus. Here's how to protect it.",
+    tags: ['Inflation', 'Strategy'],
+    readingTime: 5,
+    publishedAt: '2024-11-10',
+  },
+  {
+    id: 'dollar-rupee-retirement',
+    slug: 'dollar-rupee-retirement',
+    title: 'The Dollar-Rupee Story: Why Your Retirement Number Keeps Changing',
+    excerpt: "Every time the rupee weakens, your imported lifestyle costs more. Here's what a weak rupee means for your retirement plan.",
+    tags: ['Strategy', 'Basics'],
+    readingTime: 4,
+    publishedAt: '2024-11-20',
+  },
+  {
+    id: 'china-slowdown-mutual-funds',
+    slug: 'china-slowdown-mutual-funds',
+    title: "China's Economy Is Slowing Down. That's Bad News for Your Mutual Funds",
+    excerpt: "Chinese economic weakness is rippling through global markets. Indian equity funds are not immune. Here's what long-term investors should know.",
+    tags: ['Strategy', 'SIP'],
+    readingTime: 5,
+    publishedAt: '2024-12-01',
+  },
+  {
+    id: 'us-fed-rates-india-sip',
+    slug: 'us-fed-rates-india-sip',
+    title: 'US Fed Rate Hikes and Your Indian SIP: The Hidden Connection',
+    excerpt: "When the US Fed raises interest rates, FIIs pull money out of India. Your SIP feels it. Here's the full picture and why you should keep investing anyway.",
+    tags: ['SIP', 'Strategy'],
+    readingTime: 5,
+    publishedAt: '2024-12-15',
+  },
+  {
+    id: 'oil-price-retirement-india',
+    slug: 'oil-price-retirement-india',
+    title: 'Oil at $100 Again? How Middle East Tensions Are Reshaping Indian Retirement Planning',
+    excerpt: "India imports 85% of its oil. Every Middle East flare-up hits your petrol bill, your groceries and quietly your retirement corpus. Here's the math.",
+    tags: ['Inflation', 'Basics'],
+    readingTime: 4,
+    publishedAt: '2025-01-05',
+  },
+];
+
 function tagColor(tag: string) {
   return TAG_COLORS[tag] ?? '#6B7280';
 }
@@ -166,8 +215,7 @@ export default function LearnPage() {
   useEffect(() => {
     getAllArticles()
       .then(data => {
-        if (!data) return;
-        const converted: DisplayArticle[] = (data as Array<{
+        const list = data as Array<{
           _id: string;
           title: string;
           slug: string;
@@ -175,18 +223,26 @@ export default function LearnPage() {
           readingTime?: number;
           publishedAt?: string;
           tags?: string[];
-        }>).map(a => ({
-          id: a._id,
-          title: a.title,
-          slug: a.slug,
-          excerpt: a.excerpt ?? '',
-          readingTime: a.readingTime ?? 3,
-          publishedAt: a.publishedAt ?? '',
-          tags: a.tags ?? [],
-        }));
-        setArticles(converted);
+        }>;
+        if (list && list.length > 0) {
+          setArticles(list.map(a => ({
+            id: a._id,
+            title: a.title,
+            slug: a.slug,
+            excerpt: a.excerpt ?? '',
+            readingTime: a.readingTime ?? 3,
+            publishedAt: a.publishedAt ?? '',
+            tags: a.tags ?? [],
+          })));
+        } else {
+          // Sanity returned empty — use static fallback
+          setArticles(FALLBACK_ARTICLES);
+        }
       })
-      .catch(() => {/* Sanity unavailable — stay empty */})
+      .catch(() => {
+        // Sanity unreachable — use static fallback
+        setArticles(FALLBACK_ARTICLES);
+      })
       .finally(() => setLoading(false));
   }, []);
 
