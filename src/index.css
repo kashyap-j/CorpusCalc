@@ -1,0 +1,320 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* ─── CSS Custom Properties ─────────────────────────────────────── */
+:root {
+  /* Warm cream background */
+  --background: 38 50% 97%;
+  --foreground: 153 30% 12%;
+
+  --card: 40 40% 99%;
+  --card-foreground: 153 30% 12%;
+
+  --popover: 40 40% 99%;
+  --popover-foreground: 153 30% 12%;
+
+  /* Deep forest green — primary */
+  --primary: 153 40% 18%;
+  --primary-foreground: 40 30% 95%;
+
+  /* Warm cream secondary */
+  --secondary: 38 35% 94%;
+  --secondary-foreground: 153 30% 18%;
+
+  --muted: 38 20% 93%;
+  --muted-foreground: 150 8% 48%;
+
+  /* Muted warm gold accent */
+  --accent: 40 55% 62%;
+  --accent-foreground: 153 30% 12%;
+
+  --destructive: 0 65% 55%;
+  --destructive-foreground: 0 0% 100%;
+
+  --success: 152 35% 35%;
+  --success-foreground: 0 0% 100%;
+
+  /* Warm muted gold */
+  --warm-gold: 40 55% 62%;
+  --warm-gold-light: 42 45% 82%;
+  --warm-gold-dark: 38 50% 45%;
+
+  /* Deep forest green */
+  --forest: 153 40% 18%;
+  --forest-light: 150 25% 35%;
+  --forest-muted: 150 15% 28%;
+
+  /* Cream tones */
+  --cream: 38 50% 97%;
+  --cream-dark: 38 25% 90%;
+
+  --border: 38 20% 90%;
+  --input: 38 20% 90%;
+  --ring: 153 40% 18%;
+
+  --radius: 1rem;
+
+  --shadow-card: 0 2px 16px rgba(27, 67, 50, 0.04);
+  --shadow-card-hover: 0 8px 32px rgba(27, 67, 50, 0.08);
+  --shadow-soft: 0 1px 3px rgba(27, 67, 50, 0.03);
+
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'DM Sans', sans-serif;
+
+  --sidebar-background: 0 0% 98%;
+  --sidebar-foreground: 240 5.3% 26.1%;
+  --sidebar-primary: 240 5.9% 10%;
+  --sidebar-primary-foreground: 0 0% 98%;
+  --sidebar-accent: 240 4.8% 95.9%;
+  --sidebar-accent-foreground: 240 5.9% 10%;
+  --sidebar-border: 220 13% 91%;
+  --sidebar-ring: 153 40% 18%;
+}
+
+/* ─── Tailwind v4 Theme Tokens ───────────────────────────────────── */
+@theme {
+  /* Semantic colors */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  /* Brand colors */
+  --color-forest: hsl(var(--forest));
+  --color-forest-light: hsl(var(--forest-light));
+  --color-forest-muted: hsl(var(--forest-muted));
+  --color-warm-gold: hsl(var(--warm-gold));
+  --color-warm-gold-light: hsl(var(--warm-gold-light));
+  --color-warm-gold-dark: hsl(var(--warm-gold-dark));
+  --color-cream: hsl(var(--cream));
+  --color-cream-dark: hsl(var(--cream-dark));
+
+  /* Sidebar */
+  --color-sidebar: hsl(var(--sidebar-background));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  /* Font families */
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'DM Sans', sans-serif;
+
+  /* Border radius */
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+/* ─── Container ──────────────────────────────────────────────────── */
+@utility container {
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+  max-width: 1200px;
+}
+
+/* ─── Base Styles ────────────────────────────────────────────────── */
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.7;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+  }
+}
+
+/* ─── Utility Classes ────────────────────────────────────────────── */
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-body {
+    font-family: var(--font-body);
+  }
+
+  .label-tiny {
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-size: 11px;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .number-hero {
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .number-section {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .card-corpus {
+    border-radius: 1rem;
+    padding: 1.25rem;
+    background: hsl(var(--card));
+    box-shadow: var(--shadow-card);
+  }
+
+  .card-corpus-hover {
+    border-radius: 1rem;
+    padding: 1.25rem;
+    background: hsl(var(--card));
+    box-shadow: var(--shadow-card);
+    transition: all 0.3s;
+  }
+
+  .card-corpus-hover:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-3px);
+  }
+
+  .pill-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    border-radius: 9999px;
+    padding: 0.375rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: hsl(var(--secondary));
+    color: hsl(var(--forest-light));
+  }
+
+  .btn-primary-corpus {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    font-weight: 600;
+    transition: all 0.3s;
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    padding: 14px 28px;
+    min-height: 48px;
+    font-size: 15px;
+    text-decoration: none;
+  }
+
+  .btn-primary-corpus:hover {
+    background: hsl(var(--forest-light));
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(27, 67, 50, 0.15);
+  }
+
+  .btn-ghost-corpus {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    font-weight: 600;
+    transition: all 0.3s;
+    background: transparent;
+    color: hsl(var(--muted-foreground));
+    border: 1px solid hsl(var(--border));
+    padding: 14px 28px;
+    min-height: 48px;
+    font-size: 15px;
+    text-decoration: none;
+  }
+
+  .btn-ghost-corpus:hover {
+    background: hsl(var(--secondary));
+    color: hsl(var(--foreground));
+    border-color: hsl(var(--cream-dark));
+  }
+
+  .text-forest {
+    color: hsl(var(--forest));
+  }
+
+  .text-forest-light {
+    color: hsl(var(--forest-light));
+  }
+
+  .text-warm-gold {
+    color: hsl(var(--warm-gold));
+  }
+
+  .text-warm-gold-dark {
+    color: hsl(var(--warm-gold-dark));
+  }
+
+  .bg-forest {
+    background: hsl(var(--forest));
+  }
+
+  .bg-cream {
+    background: hsl(var(--cream));
+  }
+
+  .bg-cream-dark {
+    background: hsl(var(--cream-dark));
+  }
+
+  .bg-warm-gold {
+    background: hsl(var(--warm-gold));
+  }
+
+  .bg-warm-gold-light {
+    background: hsl(var(--warm-gold-light));
+  }
+}
+
+/* ─── Animations ─────────────────────────────────────────────────── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0px) rotate(1deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out forwards;
+}
+
+.float-gentle {
+  animation: float-gentle 6s ease-in-out infinite;
+}

@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(printf '\\\\n')",
+      "Bash(yes '')",
+      "Bash(npx create-vite@latest . --template react-ts)",
+      "Bash(npx:*)",
+      "Bash(cp:*)",
+      "Bash(npm install:*)",
+      "Bash(mkdir -p src/pages src/components/layout src/components/planner src/components/ui src/lib src/store src/data)",
+      "Bash(touch src/components/planner/.gitkeep src/components/ui/.gitkeep)",
+      "Bash(timeout 15 npm run dev)",
+      "Bash(sanity:*)",
+      "Bash(AUTH_TOKEN=\"sklrBFBpmQhJh0zw7SiweLgwew1D4NYIEEb5zybrfiolJDCXjfqaUNuzlV5KiiMHfCpM2rFNhoEyo87T0\")",
+      "Bash(curl -s -X POST \"https://api.sanity.io/v2021-06-07/projects\" -H \"Authorization: Bearer $AUTH_TOKEN\" -H \"Content-Type: application/json\" -d '{\"\"displayName\"\":\"\"corpuscalc\"\"}')",
+      "Bash(curl -s -X PUT \"https://api.sanity.io/v2021-06-07/projects/55cj92zk/datasets/production\" -H \"Authorization: Bearer $AUTH_TOKEN\" -H \"Content-Type: application/json\" -d '{\"\"aclMode\"\":\"\"private\"\"}')",
+      "Bash(npm run:*)",
+      "Bash(curl -s http://localhost:5173)",
+      "Bash(curl -s http://localhost:5174/plan)",
+      "Bash(curl -s http://localhost:5174/)",
+      "Bash(pkill -f \"vite\")",
+      "Bash(curl -s http://localhost:5175/plan)",
+      "Read(//tmp/**)",
+      "Bash(curl:*)",
+      "Bash(wc -l src/*.tsx)",
+      "Bash(grep -n \"testimonial\\\\|Testimonial\" src/pages/HomePage.tsx src/components/ui/*.tsx)",
+      "Bash(node:*)",
+      "Bash(cmd.exe /c \"taskkill /PID 46276 /F\")",
+      "Bash(echo \"exit: $?\")"
+    ]
+  }
+}
