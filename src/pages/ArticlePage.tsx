@@ -54,7 +54,7 @@ const FALLBACK_ARTICLES: LocalArticle[] = [
     excerpt: "Russia-Ukraine, Middle East tensions, and supply chain disruptions are quietly eroding your retirement corpus. Here's how to protect it.",
     tags: ['Inflation', 'Strategy'],
     readingTime: 5,
-    publishedAt: '2024-11-10',
+    publishedAt: '2026-04-04',
     body: [
       { type: 'p', text: 'Every time a war breaks out somewhere in the world, your grocery bill goes up. That sounds dramatic, but it is economics. The Russia-Ukraine war pushed global wheat prices up 60% in 2022. Houthi attacks on Red Sea shipping lanes in 2024 added 20-30% to container freight costs. All of it eventually shows up in your retirement corpus plan as a number that just is not big enough.' },
       { type: 'h2', text: 'The Oil Connection: Why Wars Hit Your Wallet First' },
@@ -84,7 +84,7 @@ const FALLBACK_ARTICLES: LocalArticle[] = [
     excerpt: "Every time the rupee weakens, your imported lifestyle costs more. Here's what a weak rupee means for your retirement plan.",
     tags: ['Strategy', 'Basics'],
     readingTime: 4,
-    publishedAt: '2024-11-20',
+    publishedAt: '2026-04-04',
     body: [
       { type: 'p', text: 'In 2010, one US dollar bought you about ₹45. Today it costs ₹84-85. That is the rupee losing nearly 50% of its value against the dollar in 15 years, roughly 3% annual depreciation, as reliable as the seasons. If you are planning for retirement in India, this is not just a news headline. A structural force is quietly reshaping your cost of living.' },
       { type: 'h2', text: "The Slow Burn: India's Rupee Depreciation History" },
@@ -110,7 +110,7 @@ const FALLBACK_ARTICLES: LocalArticle[] = [
     excerpt: "Chinese economic weakness is rippling through global markets. Indian equity funds are not immune. Here's what long-term investors should know.",
     tags: ['Strategy', 'SIP'],
     readingTime: 5,
-    publishedAt: '2024-12-01',
+    publishedAt: '2026-04-04',
     body: [
       { type: 'p', text: "China is the world's second-largest economy and the factory floor for almost everything. When China slows, supply chains seize up, commodity prices fall and emerging market stocks take a hit. Indian equities are no exception. If you are invested in Indian mutual funds, you might wonder what a slowdown in Beijing has to do with your SIP. More than you would think." },
       { type: 'h2', text: 'China at the Centre of Global Supply Chains' },
@@ -137,7 +137,7 @@ const FALLBACK_ARTICLES: LocalArticle[] = [
     excerpt: "When the US Fed raises interest rates, FIIs pull money out of India. Your SIP feels it. Here's the full picture and why you should keep investing anyway.",
     tags: ['SIP', 'Strategy'],
     readingTime: 5,
-    publishedAt: '2024-12-15',
+    publishedAt: '2026-04-04',
     body: [
       { type: 'p', text: 'In 2022, the US Federal Reserve hiked interest rates from near zero to 4.5%. It was one of the most aggressive tightening cycles in modern history. American investors, seeing high-yielding US bonds suddenly available, began selling riskier assets, including Indian equities. Foreign institutional investors sold a net ₹1.21 lakh crore from Indian equity markets that year. Your mutual fund NAV went down. Many investors panicked and stopped their SIPs, right at the worst possible moment.' },
       { type: 'h2', text: 'What FII Outflows Actually Mean' },
@@ -163,7 +163,7 @@ const FALLBACK_ARTICLES: LocalArticle[] = [
     excerpt: "India imports 85% of its oil. Every Middle East flare-up hits your petrol bill, your groceries and quietly your retirement corpus. Here's the math.",
     tags: ['Inflation', 'Basics'],
     readingTime: 4,
-    publishedAt: '2025-01-05',
+    publishedAt: '2026-04-04',
     body: [
       { type: 'p', text: "India is the world's third-largest consumer of crude oil, and it imports roughly 85% of what it needs. The Middle East supplies most of that oil, so every disruption there affects India's energy security. The cost of your retirement is connected to these events in ways that are not always obvious until they show up in your monthly budget." },
       { type: 'h2', text: "India's Oil Import Dependency: A Structural Vulnerability" },

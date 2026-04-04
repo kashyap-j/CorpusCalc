@@ -33,7 +33,7 @@ const FALLBACK_ARTICLES: DisplayArticle[] = [
     excerpt: "Russia-Ukraine, Middle East tensions, and supply chain disruptions are quietly eroding your retirement corpus. Here's how to protect it.",
     tags: ['Inflation', 'Strategy'],
     readingTime: 5,
-    publishedAt: '2024-11-10',
+    publishedAt: '2026-04-04',
   },
   {
     id: 'dollar-rupee-retirement',
@@ -42,7 +42,7 @@ const FALLBACK_ARTICLES: DisplayArticle[] = [
     excerpt: "Every time the rupee weakens, your imported lifestyle costs more. Here's what a weak rupee means for your retirement plan.",
     tags: ['Strategy', 'Basics'],
     readingTime: 4,
-    publishedAt: '2024-11-20',
+    publishedAt: '2026-04-04',
   },
   {
     id: 'china-slowdown-mutual-funds',
@@ -51,7 +51,7 @@ const FALLBACK_ARTICLES: DisplayArticle[] = [
     excerpt: "Chinese economic weakness is rippling through global markets. Indian equity funds are not immune. Here's what long-term investors should know.",
     tags: ['Strategy', 'SIP'],
     readingTime: 5,
-    publishedAt: '2024-12-01',
+    publishedAt: '2026-04-04',
   },
   {
     id: 'us-fed-rates-india-sip',
@@ -60,7 +60,7 @@ const FALLBACK_ARTICLES: DisplayArticle[] = [
     excerpt: "When the US Fed raises interest rates, FIIs pull money out of India. Your SIP feels it. Here's the full picture and why you should keep investing anyway.",
     tags: ['SIP', 'Strategy'],
     readingTime: 5,
-    publishedAt: '2024-12-15',
+    publishedAt: '2026-04-04',
   },
   {
     id: 'oil-price-retirement-india',
@@ -69,7 +69,7 @@ const FALLBACK_ARTICLES: DisplayArticle[] = [
     excerpt: "India imports 85% of its oil. Every Middle East flare-up hits your petrol bill, your groceries and quietly your retirement corpus. Here's the math.",
     tags: ['Inflation', 'Basics'],
     readingTime: 4,
-    publishedAt: '2025-01-05',
+    publishedAt: '2026-04-04',
   },
 ];
 
