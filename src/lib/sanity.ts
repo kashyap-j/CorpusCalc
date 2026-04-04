@@ -7,6 +7,7 @@ export const sanityClient = createClient({
   dataset: import.meta.env.VITE_SANITY_DATASET,
   useCdn: false,
   apiVersion: '2024-01-01',
+  perspective: 'published',
 });
 
 const builder = imageUrlBuilder(sanityClient);
