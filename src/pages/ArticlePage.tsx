@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { PortableText } from '@portabletext/react';
+import type { PortableTextBlock } from '@portabletext/react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import { getArticleBySlug, urlFor } from '../lib/sanity';
@@ -17,7 +18,7 @@ type SanityArticle = {
   tags?: string[];
   featuredImage?: { asset: object; alt?: string };
   youtubeVideos?: string[];
-  body?: object[];
+  body?: PortableTextBlock[];
   ctaText?: string;
   seoTitle?: string;
   seoDescription?: string;
@@ -486,8 +487,7 @@ export default function ArticlePage() {
 
             {/* Body — Sanity Portable Text */}
             {!useLocal && sanityArticle?.body && sanityArticle.body.length > 0 && (
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              <PortableText value={sanityArticle.body as any} components={portableComponents} />
+              <PortableText value={sanityArticle.body} components={portableComponents} />
             )}
 
             {/* Body — static fallback */}

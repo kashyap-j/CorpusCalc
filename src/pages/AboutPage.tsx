@@ -4,21 +4,47 @@ import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import { supabase } from '../lib/supabase';
 
+const FEEDBACK_RL_KEY = 'feedback_timestamps';
+const FEEDBACK_RL_MAX = 3;
+const FEEDBACK_RL_WINDOW = 60 * 60 * 1000; // 1 hour in ms
+
+function getRecentSubmissions(): number[] {
+  try {
+    const raw = localStorage.getItem(FEEDBACK_RL_KEY);
+    const all: number[] = raw ? JSON.parse(raw) : [];
+    return all.filter(t => t > Date.now() - FEEDBACK_RL_WINDOW);
+  } catch {
+    return [];
+  }
+}
+
+function recordSubmission(existing: number[]): void {
+  try {
+    localStorage.setItem(FEEDBACK_RL_KEY, JSON.stringify([...existing, Date.now()]));
+  } catch {}
+}
+
 function FeedbackForm() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [msg, setMsg] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [submissions, setSubmissions] = useState<number[]>(() => getRecentSubmissions());
+
+  const rateLimited = submissions.length >= FEEDBACK_RL_MAX;
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!msg.trim()) return;
+    if (!msg.trim() || rateLimited) return;
     setStatus('sending');
     try {
       const { error } = await supabase
         .from('feedback')
         .insert([{ name: name.trim() || null, email: email.trim() || null, message: msg.trim() }]);
       if (error) throw error;
+      const updated = [...submissions, Date.now()];
+      recordSubmission(submissions);
+      setSubmissions(updated);
       setStatus('sent');
     } catch {
       setStatus('error');
@@ -35,6 +61,14 @@ function FeedbackForm() {
     fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px',
     color: '#9CA3AF', fontFamily: 'var(--font-body)', display: 'block', marginBottom: '5px',
   };
+
+  if (rateLimited) {
+    return (
+      <p style={{ fontSize: '13px', color: '#92400E', fontFamily: 'var(--font-body)', margin: 0 }}>
+        You've submitted 3 times in the last hour. Please try again later.
+      </p>
+    );
+  }
 
   if (status === 'sent') {
     return (
@@ -76,12 +110,12 @@ function FeedbackForm() {
       )}
       <button
         type="submit"
-        disabled={status === 'sending' || !msg.trim()}
+        disabled={status === 'sending' || !msg.trim() || rateLimited}
         style={{
           padding: '12px 24px', borderRadius: '12px', border: 'none',
-          background: status === 'sending' || !msg.trim() ? '#9CA3AF' : '#0f2318',
+          background: status === 'sending' || !msg.trim() || rateLimited ? '#9CA3AF' : '#0f2318',
           color: '#fff', fontSize: '14px', fontWeight: 700,
-          fontFamily: 'var(--font-body)', cursor: status === 'sending' || !msg.trim() ? 'not-allowed' : 'pointer',
+          fontFamily: 'var(--font-body)', cursor: status === 'sending' || !msg.trim() || rateLimited ? 'not-allowed' : 'pointer',
           transition: 'all 0.2s',
         }}
       >
