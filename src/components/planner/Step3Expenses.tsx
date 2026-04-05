@@ -86,15 +86,15 @@ export default function Step3Expenses() {
         </div>
 
         {S.expMode === 'quick' ? (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             <div>
               <label style={fieldLabel}>Monthly total</label>
-              <p style={{ fontSize: '10px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '0 0 6px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>e.g. Rent, EMIs, groceries, fuel, subs</p>
+              <p style={{ fontSize: '10px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '0 0 6px' }}>e.g. Rent, EMIs, groceries, fuel, subs</p>
               <AmountInput value={S.expQMo} onChange={(v) => update({ expQMo: v })} placeholder="e.g. 60K" />
             </div>
             <div>
               <label style={fieldLabel}>Yearly total</label>
-              <p style={{ fontSize: '10px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '0 0 6px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>e.g. Insurance, vacations, festivals, clothing</p>
+              <p style={{ fontSize: '10px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '0 0 6px' }}>e.g. Insurance, vacations, festivals, clothing</p>
               <AmountInput value={S.expQYr} onChange={(v) => update({ expQYr: v })} placeholder="e.g. 1.2L" />
             </div>
           </div>

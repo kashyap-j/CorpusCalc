@@ -45,7 +45,7 @@ export default function Step5Report() {
 
         {/* The 25x Rule education card */}
         <div style={{
-          borderRadius: '16px', padding: '20px',
+          borderRadius: '16px', padding: '20px 24px',
           background: '#FFF8F0', border: '1px solid #FDE68A',
         }}>
           <p style={{ fontSize: '13px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#92400E', fontFamily: 'var(--font-body)', margin: '0 0 10px' }}>

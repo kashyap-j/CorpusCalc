@@ -7,14 +7,15 @@ import { useAuthStore } from '../../store/authStore';
 function Slider({ label, value, min, max, unit, onChange, hint }: {
   label: string; value: number; min: number; max: number; unit: string; onChange: (v: number) => void; hint?: string;
 }) {
+  const inputId = label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: '13px', fontFamily: 'var(--font-body)', color: '#374151', fontWeight: 500 }}>{label}</span>
+        <label htmlFor={inputId} style={{ fontSize: '13px', fontFamily: 'var(--font-body)', color: '#374151', fontWeight: 500 }}>{label}</label>
         <span style={{ fontSize: '14px', fontFamily: 'var(--font-body)', color: '#e8622a', fontWeight: 700 }}>{value}{unit}</span>
       </div>
-      {hint && <p style={{ fontSize: '10px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '-4px 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{hint}</p>}
-      <input type="range" min={min} max={max} value={value} onChange={e => onChange(Number(e.target.value))}
+      {hint && <p style={{ fontSize: '10px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '-4px 0 0' }}>{hint}</p>}
+      <input id={inputId} type="range" min={min} max={max} value={value} onChange={e => onChange(Number(e.target.value))}
         style={{ width: '100%', accentColor: '#e8622a' }} />
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#9CA3AF', fontFamily: 'var(--font-body)' }}>
         <span>{min}{unit}</span><span>{max}{unit}</span>
@@ -60,9 +61,9 @@ export default function Step4SIP() {
 
         {/* SIP Amount */}
         <div>
-          <label style={{ ...fieldLabel, color: sipErr ? '#DC2626' : '#6B7280' }}>Monthly SIP amount</label>
-          <p style={{ fontSize: '10px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '0 0 6px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Monthly equity mutual fund investment</p>
-          <AmountInput value={S.sipAmt} onChange={(v) => update({ sipAmt: v })} placeholder="e.g. 25K" hasError={sipErr} />
+          <label htmlFor="sip-amount" style={{ ...fieldLabel, color: sipErr ? '#DC2626' : '#6B7280' }}>Monthly SIP amount</label>
+          <p style={{ fontSize: '10px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '0 0 6px' }}>Monthly equity mutual fund investment</p>
+          <AmountInput id="sip-amount" value={S.sipAmt} onChange={(v) => update({ sipAmt: v })} placeholder="e.g. 25K" hasError={sipErr} />
           {sipErr && <p style={{ fontSize: '12px', color: '#DC2626', margin: '4px 0 0', fontFamily: 'var(--font-body)' }}>Required</p>}
           {overBudget && !sipErr && (
             <p style={{ fontSize: '12px', color: '#DC2626', margin: '4px 0 0', fontFamily: 'var(--font-body)' }}>
@@ -102,8 +103,8 @@ export default function Step4SIP() {
         {/* Fixed step-up amount */}
         {S.sipMode === 'fixed' && (
           <div>
-            <label style={fieldLabel}>Annual step-up amount</label>
-            <AmountInput value={S.sipFixed} onChange={(v) => update({ sipFixed: v })} placeholder="e.g. 12K/year" />
+            <label htmlFor="sip-step-up" style={fieldLabel}>Annual step-up amount</label>
+            <AmountInput id="sip-step-up" value={S.sipFixed} onChange={(v) => update({ sipFixed: v })} placeholder="e.g. 12K/year" />
             <p style={{ fontSize: '12px', color: '#6B7280', margin: '4px 0 0', fontFamily: 'var(--font-body)' }}>
               Your SIP will increase by this fixed amount every year
             </p>
@@ -111,7 +112,7 @@ export default function Step4SIP() {
         )}
 
         {/* Sliders */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <Slider label="Expected SIP return rate" value={S.sipReturn} min={7} max={20} unit="%" onChange={(v) => update({ sipReturn: v })} hint="Equity MFs avg 12% p.a. historically" />
           <Slider label="Inflation rate" value={S.inflation} min={4} max={12} unit="%" onChange={(v) => update({ inflation: v })} hint="India's avg inflation is 6–7% p.a." />
         </div>

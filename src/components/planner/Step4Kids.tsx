@@ -13,7 +13,8 @@ const smallInp: React.CSSProperties = {
   width: '100%', background: '#FAFAF8',
   border: '1.5px solid #E8E4DE', borderRadius: '10px',
   padding: '9px 12px', fontSize: '14px',
-  fontFamily: 'var(--font-body)', outline: 'none', boxSizing: 'border-box',
+  fontFamily: 'var(--font-body)', boxSizing: 'border-box',
+  transition: 'border-color 0.15s',
 };
 
 type GoalTab = 'ug' | 'pg' | 'mar';
@@ -69,6 +70,7 @@ function KidCard({ kid, index, onUpdate, onRemove }: {
           <input
             type="text" value={kid.name}
             onChange={e => onUpdate({ name: e.target.value })}
+            aria-label={`Child ${index + 1} name`}
             placeholder="Child's name"
             style={{ fontSize: '14px', fontWeight: 600, background: 'transparent', border: 'none', outline: 'none', color: '#0f2318', fontFamily: 'var(--font-body)', width: '130px' }}
           />
@@ -82,8 +84,8 @@ function KidCard({ kid, index, onUpdate, onRemove }: {
         {/* Age + Education inflation */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
           <div>
-            <label style={fieldLabel}>Current age</label>
-            <input type="number" min={0} max={25} value={kid.age || ''}
+            <label htmlFor={`kid-${kid.id}-age`} style={fieldLabel}>Current age</label>
+            <input id={`kid-${kid.id}-age`} type="number" min={0} max={25} value={kid.age || ''}
               onChange={e => onUpdate({ age: parseInt(e.target.value) || 0 })}
               placeholder="0" style={smallInp} />
           </div>

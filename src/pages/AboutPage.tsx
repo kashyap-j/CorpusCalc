@@ -84,17 +84,18 @@ function FeedbackForm() {
     <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
         <div>
-          <label style={lbl}>Name (optional)</label>
-          <input type="text" placeholder="Your name" value={name} onChange={e => setName(e.target.value)} style={inp} />
+          <label htmlFor="feedback-name" style={lbl}>Name (optional)</label>
+          <input id="feedback-name" type="text" placeholder="Your name" value={name} onChange={e => setName(e.target.value)} style={inp} />
         </div>
         <div>
-          <label style={lbl}>Email (optional)</label>
-          <input type="email" placeholder="For a reply" value={email} onChange={e => setEmail(e.target.value)} style={inp} />
+          <label htmlFor="feedback-email" style={lbl}>Email (optional)</label>
+          <input id="feedback-email" type="email" placeholder="For a reply" value={email} onChange={e => setEmail(e.target.value)} style={inp} />
         </div>
       </div>
       <div>
-        <label style={lbl}>Message *</label>
+        <label htmlFor="feedback-message" style={lbl}>Message *</label>
         <textarea
+          id="feedback-message"
           placeholder="Bug report, feature request, general feedback..."
           value={msg}
           onChange={e => setMsg(e.target.value)}
@@ -103,11 +104,13 @@ function FeedbackForm() {
           style={{ ...inp, resize: 'vertical', lineHeight: 1.6 }}
         />
       </div>
-      {status === 'error' && (
-        <p style={{ fontSize: '13px', color: '#DC2626', fontFamily: 'var(--font-body)', margin: 0 }}>
-          Something went wrong. Please try again or email directly.
-        </p>
-      )}
+      <div aria-live="polite" aria-atomic="true">
+        {status === 'error' && (
+          <p role="alert" style={{ fontSize: '13px', color: '#DC2626', fontFamily: 'var(--font-body)', margin: 0 }}>
+            Something went wrong. Please try again or email directly.
+          </p>
+        )}
+      </div>
       <button
         type="submit"
         disabled={status === 'sending' || !msg.trim() || rateLimited}

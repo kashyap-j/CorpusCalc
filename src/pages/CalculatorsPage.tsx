@@ -60,6 +60,7 @@ function NumberInput({ label, value, min = 0, max = Infinity, onChange, hint, pa
 }) {
   const [text, setText] = useState(() => value > 0 ? String(value) : '');
   const [focused, setFocused] = useState(false);
+  const inputId = label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
   const commit = (raw: string) => {
     const n = parseIndianNumber(raw);
@@ -75,8 +76,9 @@ function NumberInput({ label, value, min = 0, max = Infinity, onChange, hint, pa
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-      <label style={lbl}>{label}</label>
+      <label htmlFor={inputId} style={lbl}>{label}</label>
       <input
+        id={inputId}
         type="text"
         value={focused ? text : (value > 0 ? String(value) : '')}
         onFocus={() => {
@@ -115,7 +117,7 @@ function NumberInput({ label, value, min = 0, max = Infinity, onChange, hint, pa
         </p>
       )}
       {/* Helper hint */}
-      <p style={{ fontSize: '11px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '4px 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+      <p style={{ fontSize: '11px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '4px 0 0' }}>
         {hint}
       </p>
     </div>
@@ -499,7 +501,7 @@ export default function CalculatorsPage() {
 
       {/* Tab navigation */}
       <div style={{ background: '#fff', borderBottom: '1px solid #E8E4DE', padding: '0 24px' }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', gap: '8px', padding: '14px 0', overflowX: 'auto', scrollbarWidth: 'none' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', gap: '8px', padding: '14px 0', overflowX: 'auto', scrollbarWidth: 'thin' }}>
           {TABS.map(tab => (
             <button
               key={tab.id}

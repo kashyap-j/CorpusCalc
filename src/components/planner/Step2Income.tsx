@@ -35,14 +35,15 @@ function ToggleGroup({
 function Slider({ label, value, min, max, unit, onChange, hint }: {
   label: string; value: number; min: number; max: number; unit: string; onChange: (v: number) => void; hint?: string;
 }) {
+  const inputId = label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: '13px', fontFamily: 'var(--font-body)', color: '#374151', fontWeight: 500 }}>{label}</span>
+        <label htmlFor={inputId} style={{ fontSize: '13px', fontFamily: 'var(--font-body)', color: '#374151', fontWeight: 500 }}>{label}</label>
         <span style={{ fontSize: '14px', fontFamily: 'var(--font-body)', color: '#e8622a', fontWeight: 700 }}>{value}{unit}</span>
       </div>
-      {hint && <p style={{ fontSize: '10px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '-4px 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{hint}</p>}
-      <input type="range" min={min} max={max} value={value} onChange={e => onChange(Number(e.target.value))}
+      {hint && <p style={{ fontSize: '10px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '-4px 0 0' }}>{hint}</p>}
+      <input id={inputId} type="range" min={min} max={max} value={value} onChange={e => onChange(Number(e.target.value))}
         style={{ width: '100%', accentColor: '#e8622a' }} />
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#9CA3AF', fontFamily: 'var(--font-body)' }}>
         <span>{min}{unit}</span><span>{max}{unit}</span>
@@ -83,7 +84,7 @@ export default function Step2Income() {
           {S.invMode === 'quick' ? (
             <div>
               <label style={fieldLabel}>Total investments today</label>
-              <p style={{ fontSize: '10px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '0 0 6px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>All savings: MFs, stocks, PF, FDs</p>
+              <p style={{ fontSize: '10px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '0 0 6px' }}>All savings: MFs, stocks, PF, FDs</p>
               <AmountInput value={S.invQuick} onChange={(v) => update({ invQuick: v })} placeholder="e.g. 10L" />
             </div>
           ) : (
@@ -117,8 +118,8 @@ export default function Step2Income() {
         <section>
           <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#0f2318', fontFamily: 'var(--font-body)', margin: '0 0 14px' }}>Monthly income</h3>
           <div>
-            <label style={{ ...fieldLabel, color: salaryErr ? '#DC2626' : '#6B7280' }}>Monthly salary / take-home</label>
-            <p style={{ fontSize: '10px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '0 0 6px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>In-hand amount after tax — not CTC</p>
+            <label htmlFor="salary" style={{ ...fieldLabel, color: salaryErr ? '#DC2626' : '#6B7280' }}>Monthly salary / take-home</label>
+            <p style={{ fontSize: '10px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '0 0 6px' }}>In-hand amount after tax — not CTC</p>
             <AmountInput id="salary" value={S.salaryMonthly} onChange={(v) => update({ salaryMonthly: v })} placeholder="e.g. 1.2L" hasError={salaryErr} />
             {salaryErr && <p style={{ fontSize: '12px', color: '#DC2626', margin: '4px 0 0', fontFamily: 'var(--font-body)' }}>Required</p>}
           </div>

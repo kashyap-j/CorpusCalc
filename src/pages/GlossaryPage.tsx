@@ -79,6 +79,7 @@ export default function GlossaryPage() {
               <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px', pointerEvents: 'none' }}>🔍</span>
               <input
                 type="text"
+                aria-label="Search glossary terms"
                 placeholder="Search terms..."
                 value={search}
                 onChange={e => { setSearch(e.target.value); setActiveLetter(null); }}
@@ -90,7 +91,7 @@ export default function GlossaryPage() {
                 }}
               />
               {search && (
-                <button onClick={() => setSearch('')} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#9CA3AF' }}>×</button>
+                <button onClick={() => setSearch('')} aria-label="Clear search" style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#9CA3AF' }}>×</button>
               )}
             </div>
 

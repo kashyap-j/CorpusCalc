@@ -114,23 +114,28 @@ export default function AuthModal({ initialTab = 'login', onClose }: AuthModalPr
           {tab === 'login' ? (
             <form onSubmit={handleLogin} className="space-y-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-foreground font-body">Email</label>
+                <label htmlFor="auth-login-email" className="text-xs font-medium text-foreground font-body">Email</label>
                 <input
+                  id="auth-login-email"
                   type="email" required autoFocus
                   value={email} onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com" className={inputCls}
+                  aria-describedby={error ? 'auth-login-error' : undefined}
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-foreground font-body">Password</label>
+                <label htmlFor="auth-login-password" className="text-xs font-medium text-foreground font-body">Password</label>
                 <input
+                  id="auth-login-password"
                   type="password" required
                   value={password} onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••" className={inputCls}
                 />
               </div>
 
-              {error && <p className="text-xs text-destructive font-body">{error}</p>}
+              <div aria-live="polite" aria-atomic="true">
+                {error && <p id="auth-login-error" role="alert" className="text-xs text-destructive font-body">{error}</p>}
+              </div>
 
               <button
                 type="submit" disabled={loading}
@@ -143,32 +148,38 @@ export default function AuthModal({ initialTab = 'login', onClose }: AuthModalPr
           ) : (
             <form onSubmit={handleSignup} className="space-y-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-foreground font-body">Email</label>
+                <label htmlFor="auth-signup-email" className="text-xs font-medium text-foreground font-body">Email</label>
                 <input
+                  id="auth-signup-email"
                   type="email" required autoFocus
                   value={email} onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com" className={inputCls}
+                  aria-describedby={error ? 'auth-signup-error' : success ? 'auth-signup-success' : undefined}
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-foreground font-body">Password</label>
+                <label htmlFor="auth-signup-password" className="text-xs font-medium text-foreground font-body">Password</label>
                 <input
+                  id="auth-signup-password"
                   type="password" required
                   value={password} onChange={(e) => setPassword(e.target.value)}
                   placeholder="Min. 6 characters" className={inputCls}
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-foreground font-body">Confirm password</label>
+                <label htmlFor="auth-signup-confirm" className="text-xs font-medium text-foreground font-body">Confirm password</label>
                 <input
+                  id="auth-signup-confirm"
                   type="password" required
                   value={confirm} onChange={(e) => setConfirm(e.target.value)}
                   placeholder="••••••••" className={inputCls}
                 />
               </div>
 
-              {error && <p className="text-xs text-destructive font-body">{error}</p>}
-              {success && <p className="text-xs text-forest font-body">{success}</p>}
+              <div aria-live="polite" aria-atomic="true">
+                {error && <p id="auth-signup-error" role="alert" className="text-xs text-destructive font-body">{error}</p>}
+                {success && <p id="auth-signup-success" className="text-xs text-forest font-body">{success}</p>}
+              </div>
 
               <button
                 type="submit" disabled={loading || !!success}

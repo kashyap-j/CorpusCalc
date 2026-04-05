@@ -207,27 +207,31 @@ export default function LoginGate({ variant, onSuccess, onClose }: LoginGateProp
           <input
             type="email" required value={email}
             onChange={e => setEmail(e.target.value)}
+            aria-label="Email address"
             placeholder="Email address"
             style={{ ...inp, borderColor: error && error.includes('email') ? '#DC2626' : '#E8E4DE' }}
           />
           <input
             type="password" required value={password}
             onChange={e => setPassword(e.target.value)}
+            aria-label="Password"
             placeholder={mode === 'signup' ? 'Create a password (min. 6 chars)' : 'Password'}
             style={{ ...inp, borderColor: error && error.includes('password') ? '#DC2626' : '#E8E4DE' }}
           />
 
-          {error && (
-            <div style={{ borderRadius: '10px', background: '#FEF2F2', border: '1px solid #FECACA', padding: '10px 14px', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-              <span style={{ fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>⚠</span>
-              <p style={{ fontSize: '13px', color: '#DC2626', fontFamily: 'var(--font-body)', margin: 0, lineHeight: 1.4 }}>{error}</p>
-            </div>
-          )}
-          {info && (
-            <div style={{ borderRadius: '10px', background: '#F0FDF4', border: '1px solid #86EFAC', padding: '10px 14px' }}>
-              <p style={{ fontSize: '13px', color: '#16A34A', fontFamily: 'var(--font-body)', margin: 0, lineHeight: 1.4 }}>{info}</p>
-            </div>
-          )}
+          <div aria-live="polite" aria-atomic="true">
+            {error && (
+              <div role="alert" style={{ borderRadius: '10px', background: '#FEF2F2', border: '1px solid #FECACA', padding: '10px 14px', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                <span style={{ fontSize: '14px', flexShrink: 0, marginTop: '1px' }}>⚠</span>
+                <p style={{ fontSize: '13px', color: '#DC2626', fontFamily: 'var(--font-body)', margin: 0, lineHeight: 1.4 }}>{error}</p>
+              </div>
+            )}
+            {info && (
+              <div style={{ borderRadius: '10px', background: '#F0FDF4', border: '1px solid #86EFAC', padding: '10px 14px' }}>
+                <p style={{ fontSize: '13px', color: '#16A34A', fontFamily: 'var(--font-body)', margin: 0, lineHeight: 1.4 }}>{info}</p>
+              </div>
+            )}
+          </div>
 
           <button
             type="submit"

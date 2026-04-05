@@ -186,8 +186,10 @@ export default function PlannerShell() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'hsl(var(--background))' }}>
       {/* Toasts */}
-      {toast && <Toast message={toast} onDismiss={() => setToast('')} />}
-      {successToast && <Toast message={successToast} type="success" onDismiss={() => setSuccessToast('')} />}
+      <div aria-live="polite" aria-atomic="true">
+        {toast && <Toast message={toast} onDismiss={() => setToast('')} />}
+        {successToast && <Toast message={successToast} type="success" onDismiss={() => setSuccessToast('')} />}
+      </div>
 
       {/* Login gate modal */}
       {showLoginGate && (

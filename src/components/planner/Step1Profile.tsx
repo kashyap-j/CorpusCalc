@@ -45,8 +45,9 @@ export default function Step1Profile() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         {/* Name */}
         <div>
-          <label style={label}>Your name <span style={{ color: '#9CA3AF', textTransform: 'none', letterSpacing: 0 }}>(optional)</span></label>
+          <label htmlFor="profile-name" style={label}>Your name <span style={{ color: '#9CA3AF', textTransform: 'none', letterSpacing: 0 }}>(optional)</span></label>
           <input
+            id="profile-name"
             type="text" value={S.name} onChange={e => update({ name: e.target.value })}
             placeholder="e.g. Rahul"
             style={inp(false, false, false)}
@@ -56,10 +57,11 @@ export default function Step1Profile() {
         {/* Age row */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '14px', alignItems: 'start' }}>
           <div style={{ minHeight: '80px' }}>
-            <label style={{ ...label, color: ageErr ? '#DC2626' : '#6B7280' }}>
+            <label htmlFor="profile-age" style={{ ...label, color: ageErr ? '#DC2626' : '#6B7280' }}>
               Current age <span style={{ color: '#e8622a' }}>*</span>
             </label>
             <input
+              id="profile-age"
               type="number" min={18} max={80}
               value={S.age || ''} onChange={e => update({ age: parseInt(e.target.value) || 0 })}
               onFocus={() => setAgeFoc(true)} onBlur={() => setAgeFoc(false)}
@@ -70,31 +72,33 @@ export default function Step1Profile() {
             <p style={{ fontSize: '12px', color: '#e8622a', fontStyle: 'italic', fontFamily: 'var(--font-body)', margin: '4px 0 0' }}>* Required</p>
           </div>
           <div style={{ minHeight: '80px' }}>
-            <label style={{ ...label, color: retErr ? '#DC2626' : '#6B7280' }}>
+            <label htmlFor="profile-ret-age" style={{ ...label, color: retErr ? '#DC2626' : '#6B7280' }}>
               Retirement age <span style={{ color: '#e8622a' }}>*</span>
             </label>
             <input
+              id="profile-ret-age"
               type="number" min={S.age + 1} max={90}
               value={S.retAge || ''} onChange={e => update({ retAge: parseInt(e.target.value) || 0 })}
               onFocus={() => setRetFoc(true)} onBlur={() => setRetFoc(false)}
               placeholder="e.g. 60"
               style={inp(retErr, retFoc, S.retAge === 0)}
             />
-            <p style={{ fontSize: '10px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '4px 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Age to stop working</p>
+            <p style={{ fontSize: '10px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '4px 0 0' }}>Age to stop working</p>
             {retErr && <p style={{ fontSize: '12px', color: '#DC2626', margin: '4px 0 0', fontFamily: 'var(--font-body)' }}>{S.retAge > 0 && S.retAge <= S.age ? 'Must be > current age' : 'Required'}</p>}
           </div>
           <div style={{ minHeight: '80px' }}>
-            <label style={{ ...label, color: lifeErr ? '#DC2626' : '#6B7280' }}>
+            <label htmlFor="profile-life-e" style={{ ...label, color: lifeErr ? '#DC2626' : '#6B7280' }}>
               Life expectancy <span style={{ color: '#e8622a' }}>*</span>
             </label>
             <input
+              id="profile-life-e"
               type="text" inputMode="numeric" pattern="[0-9]*"
               value={S.lifeE || ''} onChange={e => handleLifeE(parseInt(e.target.value) || 0)}
               onFocus={() => setLifeFoc(true)} onBlur={() => setLifeFoc(false)}
               placeholder="e.g. 85"
               style={inp(lifeErr, lifeFoc, S.lifeE === 0)}
             />
-            <p style={{ fontSize: '10px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '4px 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Your corpus funds this many years</p>
+            <p style={{ fontSize: '10px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '4px 0 0' }}>Your corpus funds this many years</p>
             {lifeErr && <p style={{ fontSize: '12px', color: '#DC2626', margin: '4px 0 0', fontFamily: 'var(--font-body)' }}>Must be &gt; retirement age</p>}
           </div>
         </div>

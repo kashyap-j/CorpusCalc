@@ -305,6 +305,7 @@ export default function LearnPage() {
           <div style={{ position: 'relative', maxWidth: '480px', margin: '0 auto' }}>
             <input
               type="text"
+              aria-label="Search articles"
               placeholder="Search articles..."
               value={search}
               onChange={e => setSearch(e.target.value)}
@@ -349,7 +350,7 @@ export default function LearnPage() {
             gap: '6px',
             overflowX: 'auto',
             padding: '14px 0',
-            scrollbarWidth: 'none',
+            scrollbarWidth: 'thin',
           }}
         >
           {FILTER_TABS.map(tab => (
