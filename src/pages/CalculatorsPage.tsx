@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import {
   AreaChart, Area, LineChart, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
@@ -477,6 +478,11 @@ export default function CalculatorsPage() {
 
   return (
     <div className="min-h-screen bg-background font-body">
+      <Helmet>
+        <title>Retirement Calculators – SIP, Corpus & Inflation | CorpusCalc</title>
+        <meta name="description" content="Free retirement calculators for Indians. Calculate your SIP, corpus goal, and inflation-adjusted returns." />
+        <link rel="canonical" href="https://corpuscalc.com/calculators" />
+      </Helmet>
       <Navbar />
 
       {/* Hero */}

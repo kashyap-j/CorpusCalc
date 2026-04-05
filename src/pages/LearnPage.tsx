@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import { getAllArticles } from '../lib/sanity';
@@ -262,6 +263,11 @@ export default function LearnPage() {
 
   return (
     <div className="min-h-screen bg-background font-body">
+      <Helmet>
+        <title>Knowledge Hub – Retirement Planning Guides | CorpusCalc</title>
+        <meta name="description" content="Plain English guides on SIPs, corpus strategies, inflation, and Indian tax planning for retirement." />
+        <link rel="canonical" href="https://corpuscalc.com/knowledge" />
+      </Helmet>
       <Navbar />
 
       {/* Hero */}

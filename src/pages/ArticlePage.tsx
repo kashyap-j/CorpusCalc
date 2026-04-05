@@ -390,6 +390,17 @@ export default function ArticlePage() {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={metaOgTitle} />
         <meta name="twitter:description" content={metaOgDescription} />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "headline": title,
+          "description": excerpt,
+          "datePublished": publishedAt ? new Date(publishedAt).toISOString() : '',
+          "dateModified": publishedAt ? new Date(publishedAt).toISOString() : '',
+          "author": { "@type": "Organization", "name": "CorpusCalc" },
+          "publisher": { "@type": "Organization", "name": "CorpusCalc", "url": "https://corpuscalc.com" },
+          "url": typeof window !== 'undefined' ? window.location.href : canonicalUrl,
+        })}</script>
       </Helmet>
       <Navbar />
 
@@ -500,6 +511,66 @@ export default function ArticlePage() {
             {/* Share */}
             <ShareSection title={title} />
 
+          </div>
+        </div>
+      )}
+
+      {/* Related Articles */}
+      {FALLBACK_ARTICLES.filter(a => a.slug !== slug).slice(0, 3).length > 0 && (
+        <div style={{ background: 'hsl(38 35% 94%)', padding: '3rem 0' }}>
+          <div className="container" style={{ maxWidth: '760px' }}>
+            <h2 style={{
+              fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 700,
+              color: 'hsl(153 40% 18%)', marginBottom: '1.25rem',
+            }}>
+              Related Articles
+            </h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {FALLBACK_ARTICLES.filter(a => a.slug !== slug).slice(0, 3).map(article => (
+                <Link
+                  key={article.slug}
+                  to={`/knowledge/${article.slug}`}
+                  style={{ textDecoration: 'none' }}
+                >
+                  <div style={{
+                    background: 'hsl(40 40% 99%)', borderRadius: '1rem', padding: '1.25rem 1.5rem',
+                    border: '1px solid hsl(38 20% 90%)', boxShadow: '0 2px 16px rgba(27, 67, 50, 0.04)',
+                    transition: 'box-shadow 0.2s, transform 0.2s',
+                  }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLDivElement).style.boxShadow = '0 8px 32px rgba(27, 67, 50, 0.08)';
+                      (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)';
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 16px rgba(27, 67, 50, 0.04)';
+                      (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)';
+                    }}
+                  >
+                    <p style={{
+                      fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 600,
+                      color: 'hsl(153 40% 18%)', margin: '0 0 0.5rem', lineHeight: 1.4,
+                    }}>
+                      {article.title}
+                    </p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      {article.tags.map(tag => (
+                        <span key={tag} style={{
+                          fontSize: '11px', fontWeight: 600, fontFamily: 'var(--font-body)',
+                          background: 'hsl(38 35% 94%)', color: 'hsl(150 25% 35%)',
+                          borderRadius: '9999px', padding: '2px 10px',
+                          border: '1px solid hsl(38 20% 88%)',
+                        }}>
+                          {tag}
+                        </span>
+                      ))}
+                      <span style={{ fontSize: '12px', color: 'hsl(150 8% 48%)', fontFamily: 'var(--font-body)' }}>
+                        · {article.readingTime} min read
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       )}

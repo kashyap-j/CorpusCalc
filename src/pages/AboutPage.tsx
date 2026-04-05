@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import { supabase } from '../lib/supabase';
@@ -93,6 +94,11 @@ function FeedbackForm() {
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-background font-body">
+      <Helmet>
+        <title>About CorpusCalc – India's Retirement Planning Tool</title>
+        <meta name="description" content="Learn about CorpusCalc, built to help Indians plan smarter retirements with clear tools and honest guides." />
+        <link rel="canonical" href="https://corpuscalc.com/about" />
+      </Helmet>
       <Navbar />
       <div className="container py-12">
         <div style={{ maxWidth: '680px', margin: '0 auto' }}>
