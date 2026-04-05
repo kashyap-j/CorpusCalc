@@ -126,21 +126,6 @@ export default function DisclaimerPage() {
           </p>
         </Section>
 
-        <Section title="8. Contact">
-          <p>
-            If you have questions about this Disclaimer, please contact us at:
-          </p>
-          <div style={{
-            marginTop: '0.75rem', padding: '1rem 1.25rem', borderRadius: '0.75rem',
-            background: 'hsl(38 35% 94%)', border: '1px solid hsl(38 20% 90%)',
-          }}>
-            <p style={{ margin: 0, fontWeight: 600 }}>CorpusCalc</p>
-            <p style={{ margin: '0.25rem 0 0', color: 'hsl(153 40% 18%)' }}>
-              contact@corpuscalc.in
-            </p>
-          </div>
-        </Section>
-
       </div>
 
       <Footer />

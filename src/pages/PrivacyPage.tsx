@@ -84,8 +84,8 @@ export default function PrivacyPage() {
         <Section title="4. Data Sharing and Third Parties">
           <p>
             We <strong>do not sell, rent, or trade</strong> your personal information to any third
-            party. We share data only with our secure authentication provider (database and auth
-            infrastructure) and Sanity.io (content management only — no personal data shared).
+            party. We share data only with our authentication provider (database and auth
+            infrastructure) and our content management system (no personal data shared).
           </p>
         </Section>
 
