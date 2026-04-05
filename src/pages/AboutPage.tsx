@@ -4,6 +4,24 @@ import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import { supabase } from '../lib/supabase';
 
+const ABOUT_STYLES = `
+  .about-3col-stats {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 48px;
+  }
+  .about-2col-feedback {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  @media (min-width: 480px) {
+    .about-3col-stats { grid-template-columns: 1fr 1fr 1fr; }
+    .about-2col-feedback { grid-template-columns: 1fr 1fr; }
+  }
+`;
+
 const FEEDBACK_RL_KEY = 'feedback_timestamps';
 const FEEDBACK_RL_MAX = 3;
 const FEEDBACK_RL_WINDOW = 60 * 60 * 1000; // 1 hour in ms
@@ -82,7 +100,7 @@ function FeedbackForm() {
 
   return (
     <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+      <div className="about-2col-feedback">
         <div>
           <label htmlFor="feedback-name" style={lbl}>Name (optional)</label>
           <input id="feedback-name" type="text" placeholder="Your name" value={name} onChange={e => setName(e.target.value)} style={inp} />
@@ -136,6 +154,7 @@ export default function AboutPage() {
         <meta name="description" content="Learn about CorpusCalc, built to help Indians plan smarter retirements with clear tools and honest guides." />
         <link rel="canonical" href="https://corpuscalc.com/about" />
       </Helmet>
+      <style>{ABOUT_STYLES}</style>
       <Navbar />
       <div className="container py-12">
         <div style={{ maxWidth: '680px', margin: '0 auto' }}>
@@ -175,7 +194,7 @@ export default function AboutPage() {
           </div>
 
           {/* Stats */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '48px' }}>
+          <div className="about-3col-stats">
             {[
               { n: 'Free', sub: 'No subscription ever' },
               { n: '6 steps', sub: 'Full retirement plan' },

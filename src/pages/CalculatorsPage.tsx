@@ -7,6 +7,29 @@ import {
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 
+const CALC_STYLES = `
+  .calc-hero-section { padding: 32px 20px 28px; }
+  .calc-hero-h1 { font-size: 28px !important; }
+  .calc-corpus-num { font-size: 28px !important; }
+  .calc-stat-chips {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .calc-2col-result {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  @media (min-width: 480px) {
+    .calc-hero-section { padding: 52px 24px 44px; }
+    .calc-hero-h1 { font-size: 40px !important; }
+    .calc-corpus-num { font-size: 40px !important; }
+    .calc-stat-chips { grid-template-columns: 1fr 1fr 1fr; }
+    .calc-2col-result { grid-template-columns: 1fr 1fr; }
+  }
+`;
+
 // ─── Formatters ───────────────────────────────────────────────────────
 function fmt(n: number): string {
   if (n >= 10000000) return '₹' + (n / 10000000).toFixed(2) + ' Cr';
@@ -208,13 +231,13 @@ function SIPCalc() {
             <p style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1.5px', opacity: 0.5, fontFamily: 'var(--font-body)', margin: '0 0 8px' }}>
               Your corpus
             </p>
-            <p style={{ fontSize: '40px', fontWeight: 800, fontFamily: 'var(--font-body)', margin: 0, color: '#F4C430', lineHeight: 1.1 }}>
+            <p className="calc-corpus-num" style={{ fontWeight: 800, fontFamily: 'var(--font-body)', margin: 0, color: '#F4C430', lineHeight: 1.1 }}>
               {fmt(corpus)}
             </p>
           </div>
 
           {/* 3 stat chips */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
+          <div className="calc-stat-chips">
             {[
               { l: 'Invested', v: fmt(invested), bg: '#F8F7F4', c: '#374151' },
               { l: 'Returns', v: fmt(corpus - invested), bg: '#F0FDF4', c: '#16A34A' },
@@ -310,7 +333,7 @@ function InflationCalc() {
         {/* Results */}
         <div style={{ flex: '1 1 280px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {/* Two cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div className="calc-2col-result">
             <div style={{ borderRadius: '14px', padding: '20px 16px', background: '#F8F7F4', border: '1px solid #E8E4DE', textAlign: 'center' }}>
               <p style={{ fontSize: '11px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '0 0 8px' }}>Today's value</p>
               <p style={{ fontSize: '22px', fontWeight: 700, color: '#374151', fontFamily: 'var(--font-body)', margin: 0 }}>{fmt(amount)}</p>
@@ -423,7 +446,7 @@ function FDvsMFCalc() {
         {/* Results */}
         <div style={{ flex: '1 1 280px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
           {/* Two comparison cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div className="calc-2col-result">
             <div style={{ borderRadius: '14px', padding: '18px 14px', background: '#EFF6FF', border: '1px solid #93C5FD', textAlign: 'center' }}>
               <p style={{ fontSize: '11px', color: '#1D4ED8', fontFamily: 'var(--font-body)', margin: '0 0 6px', fontWeight: 700 }}>FD Final Value</p>
               <p style={{ fontSize: '20px', fontWeight: 800, color: '#1E3A5F', fontFamily: 'var(--font-body)', margin: '0 0 4px' }}>{fmt(fdValue)}</p>
@@ -485,12 +508,13 @@ export default function CalculatorsPage() {
         <meta name="description" content="Free retirement calculators for Indians. Calculate your SIP, corpus goal, and inflation-adjusted returns." />
         <link rel="canonical" href="https://corpuscalc.com/calculators" />
       </Helmet>
+      <style>{CALC_STYLES}</style>
       <Navbar />
 
       {/* Hero */}
-      <div style={{ background: 'linear-gradient(135deg, #0f2318 0%, #1c3d2a 60%, #0f2318 100%)', padding: '52px 24px 44px' }}>
+      <div className="calc-hero-section" style={{ background: 'linear-gradient(135deg, #0f2318 0%, #1c3d2a 60%, #0f2318 100%)' }}>
         <div style={{ maxWidth: '760px', margin: '0 auto', textAlign: 'center' }}>
-          <h1 style={{ fontSize: '40px', fontWeight: 800, color: '#fff', fontFamily: 'var(--font-display)', margin: '0 0 12px', lineHeight: 1.2 }}>
+          <h1 className="calc-hero-h1" style={{ fontWeight: 800, color: '#fff', fontFamily: 'var(--font-display)', margin: '0 0 12px', lineHeight: 1.2 }}>
             Retirement Calculators
           </h1>
           <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.65)', fontFamily: 'var(--font-body)', margin: 0 }}>

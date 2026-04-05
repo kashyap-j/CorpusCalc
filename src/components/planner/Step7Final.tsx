@@ -95,7 +95,7 @@ export default function Step7Final() {
       {/* ── Key Metrics ── */}
       <div className="space-y-3">
         <h3 className="text-base font-semibold text-foreground font-body">Key Numbers</h3>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Metric label="Current age" value={String(S.age)} />
           <Metric label="Retirement age" value={String(S.retAge)} sub={`${years} years to go`} />
           <Metric label="Life expectancy" value={String(S.lifeE)} sub={`${dur} years of retirement`} />

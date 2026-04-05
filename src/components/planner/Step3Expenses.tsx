@@ -3,6 +3,17 @@ import { usePlannerStore } from '../../store/plannerStore';
 import { fmt, totMoIncome, totMoExp, totYrExp, moSurplus } from '../../lib/math';
 import StepHeader from './StepHeader';
 
+const S3_STYLES = `
+  .s3-2col {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  @media (min-width: 480px) {
+    .s3-2col { grid-template-columns: 1fr 1fr; }
+  }
+`;
+
 function ToggleGroup({
   value,
   options,
@@ -72,6 +83,7 @@ export default function Step3Expenses() {
 
   return (
     <div>
+      <style>{S3_STYLES}</style>
       <StepHeader step={3} title="Monthly Life" oneLiner="Where does it all go? Let's find out — and not panic." />
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -103,7 +115,7 @@ export default function Step3Expenses() {
             {/* Monthly */}
             <div>
               <p style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#9CA3AF', fontFamily: 'var(--font-body)', marginBottom: '12px' }}>Monthly</p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <div className="s3-2col">
                 {MONTHLY_FIELDS.map(({ label, key }) => (
                   <div key={key}>
                     <label style={fieldLabel}>{label}</label>
@@ -121,7 +133,7 @@ export default function Step3Expenses() {
             {/* Yearly */}
             <div>
               <p style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#9CA3AF', fontFamily: 'var(--font-body)', marginBottom: '12px' }}>Yearly (one-time)</p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <div className="s3-2col">
                 {YEARLY_FIELDS.map(({ label, key }) => (
                   <div key={key}>
                     <label style={fieldLabel}>{label}</label>

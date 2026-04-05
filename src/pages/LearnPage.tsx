@@ -3,6 +3,15 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
+
+const LEARN_STYLES = `
+  .learn-hero-section { padding: 36px 20px 30px !important; }
+  .learn-hero-h1 { font-size: 28px !important; }
+  @media (min-width: 480px) {
+    .learn-hero-section { padding: 64px 24px 52px !important; }
+    .learn-hero-h1 { font-size: 42px !important; }
+  }
+`;
 import { getAllArticles } from '../lib/sanity';
 
 type DisplayArticle = {
@@ -268,19 +277,20 @@ export default function LearnPage() {
         <meta name="description" content="Plain English guides on SIPs, corpus strategies, inflation, and Indian tax planning for retirement." />
         <link rel="canonical" href="https://corpuscalc.com/knowledge" />
       </Helmet>
+      <style>{LEARN_STYLES}</style>
       <Navbar />
 
       {/* Hero */}
       <div
+        className="learn-hero-section"
         style={{
           background: 'linear-gradient(135deg, #0f2318 0%, #1c3d2a 60%, #0f2318 100%)',
-          padding: '64px 24px 52px',
         }}
       >
         <div style={{ maxWidth: '760px', margin: '0 auto', textAlign: 'center' }}>
           <h1
+            className="learn-hero-h1"
             style={{
-              fontSize: '42px',
               fontWeight: 800,
               color: '#fff',
               fontFamily: 'var(--font-display)',

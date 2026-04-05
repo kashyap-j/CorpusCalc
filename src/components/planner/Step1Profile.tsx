@@ -40,6 +40,17 @@ export default function Step1Profile() {
 
   return (
     <div>
+      <style>{`
+        .s1-age-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 14px;
+          align-items: start;
+        }
+        @media (min-width: 480px) {
+          .s1-age-grid { grid-template-columns: 1fr 1fr 1fr; }
+        }
+      `}</style>
       <StepHeader step={1} title="Your Retirement Profile" oneLiner="A few basics — this is easier than filling a tax form, promise." />
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -55,7 +66,7 @@ export default function Step1Profile() {
         </div>
 
         {/* Age row */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '14px', alignItems: 'start' }}>
+        <div className="s1-age-grid">
           <div style={{ minHeight: '80px' }}>
             <label htmlFor="profile-age" style={{ ...label, color: ageErr ? '#DC2626' : '#6B7280' }}>
               Current age <span style={{ color: '#e8622a' }}>*</span>

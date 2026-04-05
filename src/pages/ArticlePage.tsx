@@ -241,7 +241,7 @@ function LocalBody({ blocks }: { blocks: LocalBlock[] }) {
                 {block.rows.map((row, j) => (
                   <tr key={j} style={{ background: j % 2 === 0 ? '#fff' : '#F0FDF4' }}>
                     {row.map((cell, k) => (
-                      <td key={k} style={{ padding: '10px 16px', fontSize: '13px', color: '#374151', fontFamily: 'var(--font-body)', borderTop: '1px solid #E8E4DE', lineHeight: 1.5, whiteSpace: 'nowrap' }}>{cell}</td>
+                      <td key={k} style={{ padding: '10px 16px', fontSize: '13px', color: '#374151', fontFamily: 'var(--font-body)', borderTop: '1px solid #E8E4DE', lineHeight: 1.5 }}>{cell}</td>
                     ))}
                   </tr>
                 ))}

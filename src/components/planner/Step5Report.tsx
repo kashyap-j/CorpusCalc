@@ -2,6 +2,26 @@ import { usePlannerStore } from '../../store/plannerStore';
 import { fmt, compute } from '../../lib/math';
 import StepHeader from './StepHeader';
 
+const S5_STYLES = `
+  .s5-eq-row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .s5-eq-op { display: none; }
+  @media (min-width: 480px) {
+    .s5-eq-row {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .s5-eq-op {
+      display: flex;
+      align-items: center;
+    }
+  }
+`;
+
 export default function Step5Report() {
   const { state: S } = usePlannerStore();
   const r = compute(S);
@@ -9,6 +29,7 @@ export default function Step5Report() {
 
   return (
     <div>
+      <style>{S5_STYLES}</style>
       <StepHeader step={5} title="Your Retirement Story" oneLiner={`This is what ${yearsOfDiscipline} years of discipline looks like. Impressive.`} />
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -54,17 +75,17 @@ export default function Step5Report() {
           <p style={{ fontSize: '14px', color: '#78350F', fontFamily: 'var(--font-body)', lineHeight: 1.6, margin: '0 0 12px' }}>
             Your monthly expenses at retirement will be <strong>{fmt(r.moAtRet)}/mo</strong> (today's expenses inflated at {S.inflation}% for {r.years} years). To fund {r.dur} years of retirement, you need roughly <strong>×{r.mult}</strong> that amount — the famous corpus multiplier.
           </p>
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <div className="s5-eq-row">
             <div style={{ flex: 1, minWidth: '120px', background: '#fff', borderRadius: '10px', padding: '12px', border: '1px solid #FDE68A', textAlign: 'center' }}>
               <p style={{ fontSize: '11px', color: '#92400E', fontFamily: 'var(--font-body)', margin: '0 0 4px', opacity: 0.7 }}>Monthly at retirement</p>
               <p style={{ fontSize: '18px', fontWeight: 700, color: '#78350F', fontFamily: 'var(--font-body)', margin: 0 }}>{fmt(r.moAtRet)}</p>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', fontSize: '20px', color: '#92400E', opacity: 0.5 }}>×</div>
+            <div className="s5-eq-op" style={{ fontSize: '20px', color: '#92400E', opacity: 0.5 }}>×</div>
             <div style={{ flex: 1, minWidth: '120px', background: '#fff', borderRadius: '10px', padding: '12px', border: '1px solid #FDE68A', textAlign: 'center' }}>
               <p style={{ fontSize: '11px', color: '#92400E', fontFamily: 'var(--font-body)', margin: '0 0 4px', opacity: 0.7 }}>Corpus multiplier</p>
               <p style={{ fontSize: '18px', fontWeight: 700, color: '#78350F', fontFamily: 'var(--font-body)', margin: 0 }}>×{r.mult}</p>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', fontSize: '20px', color: '#92400E', opacity: 0.5 }}>=</div>
+            <div className="s5-eq-op" style={{ fontSize: '20px', color: '#92400E', opacity: 0.5 }}>=</div>
             <div style={{ flex: 1, minWidth: '120px', background: '#fff', borderRadius: '10px', padding: '12px', border: '1px solid #FDE68A', textAlign: 'center' }}>
               <p style={{ fontSize: '11px', color: '#92400E', fontFamily: 'var(--font-body)', margin: '0 0 4px', opacity: 0.7 }}>Required corpus</p>
               <p style={{ fontSize: '18px', fontWeight: 700, color: '#78350F', fontFamily: 'var(--font-body)', margin: 0 }}>{fmt(r.reqCorpus)}</p>

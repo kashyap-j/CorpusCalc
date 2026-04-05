@@ -147,15 +147,20 @@ export default function LoginGate({ variant, onSuccess, onClose }: LoginGateProp
           from { transform: rotate(0deg); }
           to   { transform: rotate(360deg); }
         }
+        .lg-modal {
+          width: 100%;
+          max-width: 400px;
+          background: #fff;
+          border-radius: 24px;
+          padding: 20px 16px;
+          box-shadow: 0 24px 80px rgba(15,35,24,0.25);
+        }
+        @media (min-width: 480px) {
+          .lg-modal { padding: 32px 28px; }
+        }
       `}</style>
 
-      <div style={{
-        width: '100%', maxWidth: '400px',
-        background: '#fff',
-        borderRadius: '24px',
-        padding: '32px 28px',
-        boxShadow: '0 24px 80px rgba(15,35,24,0.25)',
-      }}>
+      <div className="lg-modal">
         {/* Icon */}
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
           <div style={{

@@ -8,6 +8,23 @@ import {
 } from '../../lib/math';
 import StepHeader from './StepHeader';
 
+const DEPLOY_STYLES = `
+  .deploy-2col-concept {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .deploy-3col-chips {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  @media (min-width: 480px) {
+    .deploy-2col-concept { grid-template-columns: 1fr 1fr; }
+    .deploy-3col-chips { grid-template-columns: 1fr 1fr 1fr; }
+  }
+`;
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export type KidGoal = {
@@ -647,12 +664,13 @@ export default function DeployCorpusUI({ totalCorpus, moAtRet, kidsGoals }: Depl
 
   return (
     <div>
+      <style>{DEPLOY_STYLES}</style>
       <StepHeader step={6} title="Deploy Your Corpus" oneLiner="The end game. Put your money to work so it outlasts you." />
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
         {/* Concept explainer */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+        <div className="deploy-2col-concept">
           <div style={{ borderRadius: '12px', background: '#F0FDF4', border: '1px solid #86EFAC', borderLeft: '4px solid #16A34A', padding: '12px 14px' }}>
             <p style={{ fontSize: '13px', fontWeight: 700, color: '#15803D', fontFamily: 'var(--font-body)', margin: '0 0 4px' }}>Debt</p>
             <p style={{ fontSize: '11px', color: '#166534', fontFamily: 'var(--font-body)', margin: 0, lineHeight: 1.4 }}>Principal fixed. Interest income covers your expenses each year.</p>
@@ -781,7 +799,7 @@ export default function DeployCorpusUI({ totalCorpus, moAtRet, kidsGoals }: Depl
 
         {/* Mix summary chips */}
         {S.dep.length > 0 && depTotal > 0 && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
+          <div className="deploy-3col-chips">
             {[
               { label: 'Debt %', value: fmtPct(S.dep.filter(d => d.t === 'i').reduce((s, d) => s + d.a, 0) / depTotal * 100) },
               { label: 'Equity %', value: fmtPct(S.dep.filter(d => d.t === 'g').reduce((s, d) => s + d.a, 0) / depTotal * 100) },

@@ -129,7 +129,7 @@ function KidCard({ kid, index, onUpdate, onRemove }: {
           {kid.inclUG && (
             <div style={{ padding: '12px', borderRadius: '10px', border: '1px solid #E8E4DE', background: '#FAFAF8' }}>
               <p style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#6B7280', fontFamily: 'var(--font-body)', margin: '0 0 10px 0' }}>UG Education</p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
+              <div className="s4k-3col">
                 <div>
                   <label style={fieldLabel}>Start age</label>
                   <input type="number" min={kid.age + 1} max={25} value={kid.ugStartAge || ''}
@@ -154,7 +154,7 @@ function KidCard({ kid, index, onUpdate, onRemove }: {
           {kid.inclPG && (
             <div style={{ padding: '12px', borderRadius: '10px', border: '1px solid #E8E4DE', background: '#FAFAF8' }}>
               <p style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#6B7280', fontFamily: 'var(--font-body)', margin: '0 0 10px 0' }}>PG Education</p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
+              <div className="s4k-3col">
                 <div>
                   <label style={fieldLabel}>Start age</label>
                   <input type="number" min={kid.age + 1} max={30} value={kid.pgStartAge || ''}
@@ -179,7 +179,7 @@ function KidCard({ kid, index, onUpdate, onRemove }: {
           {kid.inclMar && (
             <div style={{ padding: '12px', borderRadius: '10px', border: '1px solid #E8E4DE', background: '#FAFAF8' }}>
               <p style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#6B7280', fontFamily: 'var(--font-body)', margin: '0 0 10px 0' }}>Marriage</p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <div className="s4k-2col-mar">
                 <div>
                   <label style={fieldLabel}>Age at marriage</label>
                   <input type="number" min={kid.age + 1} max={40} value={kid.marAge || ''}
@@ -241,6 +241,23 @@ function KidCard({ kid, index, onUpdate, onRemove }: {
   );
 }
 
+const S4K_STYLES = `
+  .s4k-3col {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .s4k-2col-mar {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  @media (min-width: 480px) {
+    .s4k-3col { grid-template-columns: 1fr 1fr 1fr; }
+    .s4k-2col-mar { grid-template-columns: 1fr 1fr; }
+  }
+`;
+
 export default function Step4Kids() {
   const { state: S, update } = usePlannerStore();
 
@@ -277,6 +294,7 @@ export default function Step4Kids() {
     <div>
       <StepHeader step={4} title="Kids Goals" oneLiner="Their dreams, your numbers. Let's make both work." />
 
+      <style>{S4K_STYLES}</style>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {S.kids.length === 0 && (
           <div style={{ borderRadius: '14px', background: '#F8F7F4', border: '1px solid #E8E4DE', padding: '32px 16px', textAlign: 'center' }}>
