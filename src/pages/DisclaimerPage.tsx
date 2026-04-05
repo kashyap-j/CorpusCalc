@@ -67,99 +67,62 @@ export default function DisclaimerPage() {
         <Section title="1. Not a Registered Financial Advisor">
           <p>
             CorpusCalc is an independent educational platform and is <strong>not registered with
-            the Securities and Exchange Board of India (SEBI)</strong> as an Investment Advisor,
-            Portfolio Manager, or Research Analyst under the SEBI (Investment Advisers) Regulations,
-            2013 or any other applicable regulation.
-          </p>
-          <p style={{ marginTop: '0.75rem' }}>
-            We do not hold any licence, registration, or authorisation from SEBI, IRDAI, PFRDA,
-            RBI, or any other regulatory body in India to provide financial, insurance, or
-            investment advisory services.
+            SEBI</strong> as an Investment Advisor, Portfolio Manager, or Research Analyst. We hold
+            no licence or authorisation from SEBI, IRDAI, PFRDA, RBI, or any other Indian regulatory
+            body to provide financial or investment advisory services.
           </p>
         </Section>
 
         <Section title="2. Educational Purpose Only">
           <p>
-            All content on CorpusCalc — including articles, retirement calculators, SIP estimators,
-            inflation calculators, withdrawal planners, and the glossary — is designed to help
-            individuals <strong>understand concepts</strong> related to retirement planning. It is
-            meant to build financial literacy and awareness, not to direct any specific financial action.
-          </p>
-          <p style={{ marginTop: '0.75rem' }}>
-            The information presented is general in nature and may not be appropriate or applicable
-            to your individual circumstances, financial situation, risk appetite, or long-term goals.
+            All content on CorpusCalc — including articles, calculators, and planning tools — is
+            designed to build financial literacy, not to direct any specific financial action. The
+            information is general in nature and may not apply to your individual circumstances,
+            risk appetite, or long-term goals.
           </p>
         </Section>
 
         <Section title="3. No Guarantee of Accuracy">
           <p>
-            While we make reasonable efforts to ensure that the information and calculator outputs
-            on CorpusCalc are accurate and up to date, we make <strong>no representations or
-            warranties</strong> — express or implied — regarding the accuracy, completeness,
-            timeliness, or suitability of any content.
-          </p>
-          <p style={{ marginTop: '0.75rem' }}>
-            Financial data, tax laws, contribution limits (e.g., NPS, PPF, EPF), and market
-            conditions change frequently. Always verify important figures against official government
-            and regulatory sources before acting on them.
+            We make <strong>no representations or warranties</strong> regarding the accuracy,
+            completeness, or timeliness of any content on CorpusCalc. Financial data, tax laws,
+            and contribution limits change frequently — always verify figures against official
+            government and regulatory sources before acting on them.
           </p>
         </Section>
 
         <Section title="4. Past Performance Disclaimer">
           <p>
-            Any historical returns, benchmark comparisons, or example investment scenarios presented
-            on CorpusCalc are for <strong>illustrative purposes only</strong>. Past performance of
-            any asset class, index, fund, or investment strategy is <strong>not indicative of
-            future results</strong>.
-          </p>
-          <p style={{ marginTop: '0.75rem' }}>
-            Mutual fund investments, equity markets, and other financial instruments are subject to
-            market risks. The value of investments can go down as well as up. You may receive back
-            less than you originally invested. Please read all scheme-related documents carefully
-            before investing.
+            Any historical returns or example scenarios are for <strong>illustrative purposes
+            only</strong> — past performance is <strong>not indicative of future results</strong>.
+            All investments are subject to market risks and you may receive back less than you
+            originally invested.
           </p>
         </Section>
 
         <Section title="5. Calculator Outputs Are Projections, Not Promises">
           <p>
-            The retirement corpus estimates, SIP projections, and withdrawal calculations generated
-            by CorpusCalc are based on user-supplied inputs and simplified financial models. They
-            assume constant rates of return, fixed inflation, and uninterrupted contributions — none
-            of which are guaranteed in practice.
-          </p>
-          <p style={{ marginTop: '0.75rem' }}>
-            Real-world outcomes will differ from projections due to market volatility, changes in
-            income, expenses, inflation, health costs, and other unpredictable factors. These tools
-            help you <em>think</em> about retirement planning; they do not <em>plan</em> your retirement.
+            Calculator outputs are based on simplified models and user-supplied inputs, assuming
+            constant returns and uninterrupted contributions — none of which are guaranteed in
+            practice. Real-world outcomes will differ due to market volatility, income changes, and
+            other unpredictable factors.
           </p>
         </Section>
 
         <Section title="6. Consult a Qualified Professional">
           <p>
-            Before making any financial decision — including investing in mutual funds, choosing
-            insurance products, contributing to NPS or PPF, or planning your retirement withdrawal
-            strategy — you should consult a qualified professional such as:
-          </p>
-          <ul style={{ paddingLeft: '1.25rem', marginTop: '0.5rem' }}>
-            <li style={{ marginBottom: '0.5rem' }}>A SEBI Registered Investment Advisor (RIA)</li>
-            <li style={{ marginBottom: '0.5rem' }}>A Certified Financial Planner (CFP)</li>
-            <li style={{ marginBottom: '0.5rem' }}>A Chartered Accountant (CA) for tax planning</li>
-            <li style={{ marginBottom: '0.5rem' }}>An IRDAI-licensed insurance advisor for insurance needs</li>
-          </ul>
-          <p style={{ marginTop: '0.75rem' }}>
-            A qualified advisor can assess your complete financial picture and provide personalised
-            guidance that no general calculator or article can replicate.
+            Before making any financial decision, consult a qualified professional such as a SEBI
+            Registered Investment Advisor (RIA), Certified Financial Planner (CFP), Chartered
+            Accountant (CA), or IRDAI-licensed insurance advisor. A qualified advisor can assess
+            your complete financial picture in ways no calculator or article can replicate.
           </p>
         </Section>
 
         <Section title="7. No Liability">
           <p>
-            CorpusCalc and its operators expressly disclaim all liability for any loss, damage,
-            or harm — financial or otherwise — arising directly or indirectly from reliance on
-            any information, calculator output, or content available on this website.
-          </p>
-          <p style={{ marginTop: '0.75rem' }}>
-            Your use of CorpusCalc is entirely at your own discretion and risk.
+            CorpusCalc and its operators expressly disclaim all liability for any loss or harm
+            arising from reliance on any content or calculator output on this website. Your use
+            of CorpusCalc is entirely at your own discretion and risk.
           </p>
         </Section>
 

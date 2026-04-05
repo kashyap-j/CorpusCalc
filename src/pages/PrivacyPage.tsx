@@ -57,103 +57,59 @@ export default function PrivacyPage() {
         </div>
 
         <Section title="1. Information We Collect">
-          <p>We collect the following types of information:</p>
-          <ul style={{ paddingLeft: '1.25rem', marginTop: '0.5rem' }}>
-            <li style={{ marginBottom: '0.5rem' }}>
-              <strong>Account information:</strong> When you sign up, we collect your email address
-              via Supabase Authentication. We may also store your name if provided via OAuth
-              (Google sign-in).
-            </li>
-            <li style={{ marginBottom: '0.5rem' }}>
-              <strong>Usage data:</strong> We collect anonymous analytics on which calculators and
-              features are used, page views, and general navigation patterns to improve the product.
-            </li>
-            <li style={{ marginBottom: '0.5rem' }}>
-              <strong>Planner data:</strong> If you use the retirement planner, your inputs
-              (retirement age, corpus goal, monthly savings) may be saved to your account in our
-              database to enable persistence across sessions.
-            </li>
-            <li style={{ marginBottom: '0.5rem' }}>
-              <strong>Feedback submissions:</strong> If you submit feedback via the About page, we
-              store the message and any contact details you voluntarily provide.
-            </li>
-          </ul>
+          <p>
+            We collect your email address via our secure authentication provider at sign-up, plus
+            your name if you use third-party sign-in. We also collect anonymous usage analytics,
+            retirement planner inputs you save, and any feedback you voluntarily submit.
+          </p>
         </Section>
 
         <Section title="2. How We Use Your Information">
-          <p>We use the information collected to:</p>
-          <ul style={{ paddingLeft: '1.25rem', marginTop: '0.5rem' }}>
-            <li style={{ marginBottom: '0.5rem' }}>Provide and maintain the CorpusCalc service</li>
-            <li style={{ marginBottom: '0.5rem' }}>Authenticate your identity and secure your account</li>
-            <li style={{ marginBottom: '0.5rem' }}>Save your planner preferences and calculation history</li>
-            <li style={{ marginBottom: '0.5rem' }}>Understand how users interact with our tools to improve functionality</li>
-            <li style={{ marginBottom: '0.5rem' }}>Respond to feedback or support requests you initiate</li>
-          </ul>
-          <p style={{ marginTop: '0.75rem' }}>
-            We do <strong>not</strong> use your data for advertising, profiling, or automated decision-making.
+          <p>
+            We use your data to provide the service, authenticate your identity, save planner
+            preferences, and improve functionality. We do <strong>not</strong> use your data for
+            advertising, profiling, or automated decision-making.
           </p>
         </Section>
 
-        <Section title="3. Authentication (Supabase)">
+        <Section title="3. Authentication">
           <p>
-            CorpusCalc uses <strong>Supabase</strong> for user authentication. When you create an account
-            or log in, your credentials are handled by Supabase's secure infrastructure. We do not store
-            raw passwords. Authentication tokens are stored in your browser's local storage to keep you
-            signed in across sessions.
-          </p>
-          <p style={{ marginTop: '0.75rem' }}>
-            If you sign in via Google OAuth, your email address and name are passed from Google to
-            Supabase and stored in our user database. No other Google account data is accessed.
+            CorpusCalc uses our secure authentication provider to handle logins — we never store raw
+            passwords, and session tokens are kept in your browser's local storage. If you use
+            third-party sign-in, only your email and name are stored; no additional account data is
+            accessed.
           </p>
         </Section>
 
         <Section title="4. Data Sharing and Third Parties">
           <p>
-            We <strong>do not sell, rent, or trade</strong> your personal information to any third party.
-            We share data only with the following service providers who help us operate CorpusCalc:
-          </p>
-          <ul style={{ paddingLeft: '1.25rem', marginTop: '0.5rem' }}>
-            <li style={{ marginBottom: '0.5rem' }}>
-              <strong>Supabase:</strong> Database and authentication infrastructure. Data is stored
-              on Supabase's servers (AWS-based) and governed by Supabase's Privacy Policy.
-            </li>
-            <li style={{ marginBottom: '0.5rem' }}>
-              <strong>Sanity.io:</strong> Content management for articles and educational resources.
-              No personal user data is shared with Sanity.
-            </li>
-          </ul>
-          <p style={{ marginTop: '0.75rem' }}>
-            We may disclose information if required by law or to protect the rights and safety of
-            CorpusCalc users.
+            We <strong>do not sell, rent, or trade</strong> your personal information to any third
+            party. We share data only with our secure authentication provider (database and auth
+            infrastructure) and Sanity.io (content management only — no personal data shared).
           </p>
         </Section>
 
         <Section title="5. Cookies and Local Storage">
           <p>
-            CorpusCalc uses browser <strong>local storage</strong> to persist your authentication
-            session (via Supabase) and your planner inputs between visits. We do not use third-party
-            advertising cookies.
-          </p>
-          <p style={{ marginTop: '0.75rem' }}>
-            You can clear local storage at any time through your browser settings, which will sign
-            you out and reset any saved preferences.
+            CorpusCalc uses browser <strong>local storage</strong> to persist your session via our
+            secure authentication provider and save planner inputs between visits — we do not use
+            third-party advertising cookies. You can clear this through your browser settings at any
+            time, which will sign you out.
           </p>
         </Section>
 
         <Section title="6. Data Retention">
           <p>
-            We retain your account data for as long as your account is active. If you wish to delete
-            your account and all associated data, please contact us at the email below. Anonymous
-            usage analytics may be retained indefinitely in aggregated form.
+            We retain your account data for as long as your account is active. Contact us at the
+            email below to request deletion of your account and all associated data.
           </p>
         </Section>
 
         <Section title="7. Security">
           <p>
-            We take reasonable steps to protect your data. All data in transit is encrypted via
-            HTTPS/TLS. Supabase provides row-level security (RLS) to ensure users can only access
-            their own data. However, no system is 100% secure, and we cannot guarantee absolute
-            security.
+            All data in transit is encrypted via HTTPS/TLS, and our secure authentication provider
+            implements row-level security so users can only access their own data. No system is 100%
+            secure, and we cannot guarantee absolute security.
           </p>
         </Section>
 
@@ -165,39 +121,19 @@ export default function PrivacyPage() {
         </Section>
 
         <Section title="9. Your Rights">
-          <p>You have the right to:</p>
-          <ul style={{ paddingLeft: '1.25rem', marginTop: '0.5rem' }}>
-            <li style={{ marginBottom: '0.5rem' }}>Access the personal data we hold about you</li>
-            <li style={{ marginBottom: '0.5rem' }}>Request correction of inaccurate data</li>
-            <li style={{ marginBottom: '0.5rem' }}>Request deletion of your account and associated data</li>
-            <li style={{ marginBottom: '0.5rem' }}>Withdraw consent at any time by deleting your account</li>
-          </ul>
-          <p style={{ marginTop: '0.75rem' }}>
-            To exercise any of these rights, contact us at the email address below.
+          <p>
+            You may request access, correction, or deletion of your personal data, or withdraw
+            consent at any time by deleting your account. Contact us at the email below to exercise
+            any of these rights.
           </p>
         </Section>
 
         <Section title="10. Changes to This Policy">
           <p>
-            We may update this Privacy Policy from time to time. When we do, we will update the
-            "Last updated" date at the top. Continued use of CorpusCalc after changes constitutes
-            your acceptance of the revised policy.
+            We may update this Privacy Policy from time to time, reflected by updating the "Last
+            updated" date at the top. Continued use of CorpusCalc after changes constitutes your
+            acceptance of the revised policy.
           </p>
-        </Section>
-
-        <Section title="11. Contact">
-          <p>
-            If you have questions or concerns about this Privacy Policy, please reach out to us at:
-          </p>
-          <div style={{
-            marginTop: '0.75rem', padding: '1rem 1.25rem', borderRadius: '0.75rem',
-            background: 'hsl(38 35% 94%)', border: '1px solid hsl(38 20% 90%)',
-          }}>
-            <p style={{ margin: 0, fontWeight: 600 }}>CorpusCalc</p>
-            <p style={{ margin: '0.25rem 0 0', color: 'hsl(153 40% 18%)' }}>
-              contact@corpuscalc.in
-            </p>
-          </div>
         </Section>
 
       </div>

@@ -67,101 +67,67 @@ export default function TermsPage() {
         <Section title="2. Nature of the Service — Not Financial Advice">
           <p>
             CorpusCalc provides <strong>financial calculators and educational content</strong> for
-            retirement planning purposes. All outputs — including corpus projections, SIP estimates,
-            inflation-adjusted values, and withdrawal scenarios — are <strong>for informational
-            purposes only</strong>.
-          </p>
-          <p style={{ marginTop: '0.75rem' }}>
-            Nothing on CorpusCalc constitutes financial advice, investment advice, tax advice, or
-            any professional advisory service. The calculations are based on the inputs you provide
-            and simplified mathematical models. They do not account for your individual financial
-            situation, tax liabilities, risk tolerance, or personal circumstances.
-          </p>
-          <p style={{ marginTop: '0.75rem' }}>
-            You should always consult a qualified financial advisor, chartered accountant, or SEBI
-            Registered Investment Advisor (RIA) before making any financial decisions.
+            informational purposes only — all outputs, including corpus projections and SIP estimates,
+            do not constitute financial, investment, or tax advice. Always consult a qualified
+            financial advisor or SEBI Registered Investment Advisor before making financial decisions.
           </p>
         </Section>
 
         <Section title="3. User Accounts and Responsibilities">
-          <p>When you create an account, you agree to:</p>
-          <ul style={{ paddingLeft: '1.25rem', marginTop: '0.5rem' }}>
-            <li style={{ marginBottom: '0.5rem' }}>Provide accurate and current information</li>
-            <li style={{ marginBottom: '0.5rem' }}>Keep your login credentials secure and confidential</li>
-            <li style={{ marginBottom: '0.5rem' }}>Notify us immediately if you suspect unauthorised access</li>
-            <li style={{ marginBottom: '0.5rem' }}>Not share your account with others</li>
-            <li style={{ marginBottom: '0.5rem' }}>Accept full responsibility for all activity under your account</li>
-          </ul>
-          <p style={{ marginTop: '0.75rem' }}>
-            We reserve the right to suspend or terminate accounts that violate these Terms.
+          <p>
+            By creating an account, you agree to provide accurate information, keep your credentials
+            secure, and accept full responsibility for all activity under your account. We reserve
+            the right to suspend or terminate accounts that violate these Terms.
           </p>
         </Section>
 
         <Section title="4. Acceptable Use">
-          <p>You agree not to:</p>
-          <ul style={{ paddingLeft: '1.25rem', marginTop: '0.5rem' }}>
-            <li style={{ marginBottom: '0.5rem' }}>Use the Service for any unlawful purpose</li>
-            <li style={{ marginBottom: '0.5rem' }}>Attempt to reverse-engineer, scrape, or extract data from the Service</li>
-            <li style={{ marginBottom: '0.5rem' }}>Interfere with the security or performance of the Service</li>
-            <li style={{ marginBottom: '0.5rem' }}>Transmit harmful, misleading, or offensive content via any feedback channels</li>
-            <li style={{ marginBottom: '0.5rem' }}>Impersonate another person or entity</li>
-          </ul>
+          <p>
+            You agree not to use the Service for any unlawful purpose, reverse-engineer or scrape
+            it, interfere with its security or performance, transmit harmful content, or impersonate
+            others. Violations may result in immediate account termination.
+          </p>
         </Section>
 
         <Section title="5. Intellectual Property">
           <p>
-            All content on CorpusCalc — including text, articles, calculator logic, design, graphics,
-            and code — is the intellectual property of CorpusCalc and is protected under applicable
-            Indian and international copyright laws.
-          </p>
-          <p style={{ marginTop: '0.75rem' }}>
-            You are granted a limited, non-exclusive, non-transferable licence to access and use the
-            Service for your personal, non-commercial retirement planning purposes. You may not
-            reproduce, distribute, modify, or create derivative works from any content on CorpusCalc
-            without our prior written consent.
+            All content on CorpusCalc — including text, calculator logic, design, and code — is
+            protected under Indian and international copyright laws. You are granted a limited,
+            non-exclusive licence for personal, non-commercial use only; reproduction or distribution
+            without prior written consent is prohibited.
           </p>
         </Section>
 
-        <Section title="6. Content from Sanity CMS">
+        <Section title="6. Educational Content">
           <p>
-            Educational articles and knowledge-base content on CorpusCalc are managed through
-            Sanity CMS. This content is provided for general educational purposes and is subject
-            to change without notice. We do not guarantee the completeness, accuracy, or timeliness
-            of any article.
+            Articles and guides on CorpusCalc are managed through our content system and provided
+            for general educational purposes only. We do not guarantee the completeness, accuracy,
+            or timeliness of any article.
           </p>
         </Section>
 
         <Section title="7. Limitation of Liability">
           <p>
-            To the maximum extent permitted by law, CorpusCalc and its operators shall not be
-            liable for any direct, indirect, incidental, special, or consequential damages arising
-            from your use of the Service, including but not limited to:
-          </p>
-          <ul style={{ paddingLeft: '1.25rem', marginTop: '0.5rem' }}>
-            <li style={{ marginBottom: '0.5rem' }}>Errors or inaccuracies in calculator outputs</li>
-            <li style={{ marginBottom: '0.5rem' }}>Financial decisions made based on information from this site</li>
-            <li style={{ marginBottom: '0.5rem' }}>Unauthorised access to your account</li>
-            <li style={{ marginBottom: '0.5rem' }}>Interruption or unavailability of the Service</li>
-          </ul>
-          <p style={{ marginTop: '0.75rem' }}>
-            Your use of CorpusCalc is entirely at your own risk.
+            To the maximum extent permitted by law, CorpusCalc shall not be liable for any damages
+            arising from use of the Service, including calculator errors, financial decisions made
+            based on this site, or interruptions to availability. Your use of CorpusCalc is entirely
+            at your own risk.
           </p>
         </Section>
 
         <Section title="8. Third-Party Links">
           <p>
-            CorpusCalc may contain links to external websites or resources. We are not responsible
-            for the content, accuracy, or practices of any third-party sites. Linking to an external
-            resource does not constitute our endorsement of that resource.
+            CorpusCalc may contain links to external websites; we are not responsible for their
+            content, accuracy, or practices. Linking to an external resource does not constitute
+            our endorsement.
           </p>
         </Section>
 
         <Section title="9. Modifications to the Service">
           <p>
             We reserve the right to modify, suspend, or discontinue any part of the Service at any
-            time without prior notice. We may also update these Terms periodically. The "Last updated"
-            date at the top will reflect the most recent revision. Continued use after updates
-            constitutes acceptance of the revised Terms.
+            time, and may update these Terms periodically. Continued use after updates constitutes
+            acceptance of the revised Terms.
           </p>
         </Section>
 
@@ -173,20 +139,6 @@ export default function TermsPage() {
           </p>
         </Section>
 
-        <Section title="11. Contact">
-          <p>
-            For questions about these Terms, please contact us at:
-          </p>
-          <div style={{
-            marginTop: '0.75rem', padding: '1rem 1.25rem', borderRadius: '0.75rem',
-            background: 'hsl(38 35% 94%)', border: '1px solid hsl(38 20% 90%)',
-          }}>
-            <p style={{ margin: 0, fontWeight: 600 }}>CorpusCalc</p>
-            <p style={{ margin: '0.25rem 0 0', color: 'hsl(153 40% 18%)' }}>
-              contact@corpuscalc.in
-            </p>
-          </div>
-        </Section>
 
       </div>
 
