@@ -7,7 +7,11 @@ const quickLinks = [
   { label: "About", href: "/about" },
 ];
 
-const legalLinks = ["Privacy Policy", "Terms", "Disclaimer"];
+const legalLinks = [
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms", href: "/terms" },
+  { label: "Disclaimer", href: "/disclaimer" },
+];
 
 const Footer = () => (
   <footer className="py-16" style={{ background: "hsl(150, 15%, 28%)" }}>
@@ -48,14 +52,14 @@ const Footer = () => (
           <h4 className="text-sm font-bold font-body text-primary-foreground mb-4">Legal</h4>
           <div className="flex flex-col gap-2.5">
             {legalLinks.map((l) => (
-              <a
-                key={l}
-                href="#"
+              <Link
+                key={l.label}
+                to={l.href}
                 className="text-sm font-body transition-colors hover:text-warm-gold"
                 style={{ color: "hsl(var(--primary-foreground) / 0.5)" }}
               >
-                {l}
-              </a>
+                {l.label}
+              </Link>
             ))}
           </div>
         </div>

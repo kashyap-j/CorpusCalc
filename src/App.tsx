@@ -12,6 +12,9 @@ const AboutPage      = lazy(() => import('./pages/AboutPage'));
 const NotFoundPage   = lazy(() => import('./pages/NotFoundPage'));
 const AuthCallback   = lazy(() => import('./pages/AuthCallback'));
 const AccountPage    = lazy(() => import('./pages/AccountPage'));
+const PrivacyPage    = lazy(() => import('./pages/PrivacyPage'));
+const TermsPage      = lazy(() => import('./pages/TermsPage'));
+const DisclaimerPage = lazy(() => import('./pages/DisclaimerPage'));
 
 const Spinner = () => (
   <div style={{
@@ -43,6 +46,9 @@ export default function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/account" element={<AccountPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/disclaimer" element={<DisclaimerPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
