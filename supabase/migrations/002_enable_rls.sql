@@ -27,25 +27,24 @@ CREATE POLICY "saved_plans: delete own rows"
 -- ─── user_plans ───────────────────────────────────────────────────────────────
 -- Full CRUD: users can only access their own plan row.
 -- NOTE: 001_create_user_plans.sql already enables RLS and adds SELECT/INSERT/UPDATE
--- policies. The DELETE policy and any missing policies are added here defensively
--- using CREATE POLICY IF NOT EXISTS (Postgres 15+ / Supabase).
+-- policies. The DELETE policy and any missing policies are added here defensively.
 
 ALTER TABLE user_plans ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY IF NOT EXISTS "Users can read own plan"
+CREATE POLICY "Users can read own plan"
   ON user_plans FOR SELECT
   USING (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "Users can insert own plan"
+CREATE POLICY "Users can insert own plan"
   ON user_plans FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "Users can update own plan"
+CREATE POLICY "Users can update own plan"
   ON user_plans FOR UPDATE
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "user_plans: delete own row"
+CREATE POLICY "user_plans: delete own row"
   ON user_plans FOR DELETE
   USING (auth.uid() = user_id);
 
