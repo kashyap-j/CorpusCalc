@@ -1,173 +1,74 @@
 -- Migration: 002_enable_rls.sql
--- Enables Row Level Security on all user-owned tables and creates
--- per-operation policies so users can only access their own rows.
--- NOTE: user_plans already has RLS enabled in 001_create_user_plans.sql.
+-- Enables Row Level Security on all user-facing tables and creates
+-- appropriate policies based on each table's access pattern.
 
--- ─── users ────────────────────────────────────────────────────────────────────
--- Uses auth.uid() = id because the primary key IS the auth user id.
+-- ─── saved_plans ──────────────────────────────────────────────────────────────
+-- Full CRUD: users can only access their own saved plans.
 
-ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE saved_plans ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "users: select own row"
-  ON users FOR SELECT
-  USING (auth.uid() = id);
-
-CREATE POLICY "users: insert own row"
-  ON users FOR INSERT
-  WITH CHECK (auth.uid() = id);
-
-CREATE POLICY "users: update own row"
-  ON users FOR UPDATE
-  USING (auth.uid() = id)
-  WITH CHECK (auth.uid() = id);
-
-CREATE POLICY "users: delete own row"
-  ON users FOR DELETE
-  USING (auth.uid() = id);
-
--- ─── retirement_plans ─────────────────────────────────────────────────────────
-
-ALTER TABLE retirement_plans ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "retirement_plans: select own rows"
-  ON retirement_plans FOR SELECT
+CREATE POLICY "saved_plans: select own rows"
+  ON saved_plans FOR SELECT
   USING (auth.uid() = user_id);
 
-CREATE POLICY "retirement_plans: insert own rows"
-  ON retirement_plans FOR INSERT
+CREATE POLICY "saved_plans: insert own rows"
+  ON saved_plans FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "retirement_plans: update own rows"
-  ON retirement_plans FOR UPDATE
+CREATE POLICY "saved_plans: update own rows"
+  ON saved_plans FOR UPDATE
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "retirement_plans: delete own rows"
-  ON retirement_plans FOR DELETE
+CREATE POLICY "saved_plans: delete own rows"
+  ON saved_plans FOR DELETE
   USING (auth.uid() = user_id);
 
--- ─── plan_inputs ──────────────────────────────────────────────────────────────
+-- ─── user_plans ───────────────────────────────────────────────────────────────
+-- Full CRUD: users can only access their own plan row.
+-- NOTE: 001_create_user_plans.sql already enables RLS and adds SELECT/INSERT/UPDATE
+-- policies. The DELETE policy and any missing policies are added here defensively
+-- using CREATE POLICY IF NOT EXISTS (Postgres 15+ / Supabase).
 
-ALTER TABLE plan_inputs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_plans ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "plan_inputs: select own rows"
-  ON plan_inputs FOR SELECT
+CREATE POLICY IF NOT EXISTS "Users can read own plan"
+  ON user_plans FOR SELECT
   USING (auth.uid() = user_id);
 
-CREATE POLICY "plan_inputs: insert own rows"
-  ON plan_inputs FOR INSERT
+CREATE POLICY IF NOT EXISTS "Users can insert own plan"
+  ON user_plans FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "plan_inputs: update own rows"
-  ON plan_inputs FOR UPDATE
+CREATE POLICY IF NOT EXISTS "Users can update own plan"
+  ON user_plans FOR UPDATE
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "plan_inputs: delete own rows"
-  ON plan_inputs FOR DELETE
+CREATE POLICY IF NOT EXISTS "user_plans: delete own row"
+  ON user_plans FOR DELETE
   USING (auth.uid() = user_id);
 
--- ─── assets ───────────────────────────────────────────────────────────────────
+-- ─── plan_events ──────────────────────────────────────────────────────────────
+-- SELECT + INSERT only: users can read and record their own events.
+-- No UPDATE or DELETE to preserve the integrity of the event log.
 
-ALTER TABLE assets ENABLE ROW LEVEL SECURITY;
+ALTER TABLE plan_events ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "assets: select own rows"
-  ON assets FOR SELECT
+CREATE POLICY "plan_events: select own rows"
+  ON plan_events FOR SELECT
   USING (auth.uid() = user_id);
 
-CREATE POLICY "assets: insert own rows"
-  ON assets FOR INSERT
+CREATE POLICY "plan_events: insert own rows"
+  ON plan_events FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "assets: update own rows"
-  ON assets FOR UPDATE
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
+-- ─── feedback ─────────────────────────────────────────────────────────────────
+-- Public INSERT: anyone (including unauthenticated users) can submit feedback.
+-- No SELECT/UPDATE/DELETE exposed to clients.
 
-CREATE POLICY "assets: delete own rows"
-  ON assets FOR DELETE
-  USING (auth.uid() = user_id);
+ALTER TABLE feedback ENABLE ROW LEVEL SECURITY;
 
--- ─── sip_entries ──────────────────────────────────────────────────────────────
-
-ALTER TABLE sip_entries ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "sip_entries: select own rows"
-  ON sip_entries FOR SELECT
-  USING (auth.uid() = user_id);
-
-CREATE POLICY "sip_entries: insert own rows"
-  ON sip_entries FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "sip_entries: update own rows"
-  ON sip_entries FOR UPDATE
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "sip_entries: delete own rows"
-  ON sip_entries FOR DELETE
-  USING (auth.uid() = user_id);
-
--- ─── calculator_sessions ──────────────────────────────────────────────────────
-
-ALTER TABLE calculator_sessions ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "calculator_sessions: select own rows"
-  ON calculator_sessions FOR SELECT
-  USING (auth.uid() = user_id);
-
-CREATE POLICY "calculator_sessions: insert own rows"
-  ON calculator_sessions FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "calculator_sessions: update own rows"
-  ON calculator_sessions FOR UPDATE
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "calculator_sessions: delete own rows"
-  ON calculator_sessions FOR DELETE
-  USING (auth.uid() = user_id);
-
--- ─── article_reads ────────────────────────────────────────────────────────────
-
-ALTER TABLE article_reads ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "article_reads: select own rows"
-  ON article_reads FOR SELECT
-  USING (auth.uid() = user_id);
-
-CREATE POLICY "article_reads: insert own rows"
-  ON article_reads FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "article_reads: update own rows"
-  ON article_reads FOR UPDATE
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "article_reads: delete own rows"
-  ON article_reads FOR DELETE
-  USING (auth.uid() = user_id);
-
--- ─── user_preferences ─────────────────────────────────────────────────────────
-
-ALTER TABLE user_preferences ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "user_preferences: select own rows"
-  ON user_preferences FOR SELECT
-  USING (auth.uid() = user_id);
-
-CREATE POLICY "user_preferences: insert own rows"
-  ON user_preferences FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "user_preferences: update own rows"
-  ON user_preferences FOR UPDATE
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "user_preferences: delete own rows"
-  ON user_preferences FOR DELETE
-  USING (auth.uid() = user_id);
+CREATE POLICY "feedback: public insert"
+  ON feedback FOR INSERT
+  WITH CHECK (true);
