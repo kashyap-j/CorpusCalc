@@ -166,7 +166,7 @@ export default function AboutPage() {
               Retirement planning that's honest about India
             </h1>
             <p style={{ fontSize: '16px', color: '#6B7280', fontFamily: 'var(--font-body)', margin: 0, lineHeight: 1.75 }}>
-              CorpusCalc was built out of frustration. Most retirement calculators assume Western markets, ignore inflation seriously, and skip the hard stuff — phased drawdown, kids goals, spouse timelines.
+              CorpusCalc was built out of frustration. Most retirement calculators assume Western markets, ignore inflation seriously, and skip the hard stuff: phased drawdown, children's goals, spouse timelines.
             </p>
           </div>
 
@@ -179,7 +179,7 @@ export default function AboutPage() {
               },
               {
                 title: 'What makes it different',
-                body: 'CorpusCalc simulates retirement in phases because life isn\'t linear. Your 60s look different from your 80s. It accounts for the corpus depletion problem — when interest income doesn\'t cover inflation-adjusted expenses — and shows you exactly when your money runs out if you don\'t plan well.',
+                body: 'CorpusCalc simulates retirement in phases because life isn\'t linear. Your 60s look different from your 80s. It accounts for the corpus depletion problem: the point where interest income no longer covers inflation-adjusted expenses. It shows you exactly when your money runs out if you don\'t plan well.',
               },
               {
                 title: 'Who it\'s for',
@@ -214,10 +214,10 @@ export default function AboutPage() {
               CorpusCalc is an <strong>educational planning tool</strong>, not a registered investment advisor. The projections and numbers shown are illustrations based on the inputs you provide and assumed returns.
             </p>
             <p style={{ fontSize: '13px', color: '#78350F', fontFamily: 'var(--font-body)', margin: '0 0 8px', lineHeight: 1.7 }}>
-              Actual returns will vary. Markets can — and do — deliver very different outcomes from historical averages. Tax laws change. Life circumstances change.
+              Actual returns will vary. Markets can and do deliver very different outcomes from historical averages. Tax laws change. Life circumstances change.
             </p>
             <p style={{ fontSize: '13px', color: '#78350F', fontFamily: 'var(--font-body)', margin: 0, lineHeight: 1.7 }}>
-              Always consult a SEBI-registered financial advisor before making investment decisions. This tool is meant to help you think and ask better questions — not to replace professional advice.
+              Always consult a SEBI-registered financial advisor before making investment decisions. This tool is meant to help you think and ask better questions, not to replace professional advice.
             </p>
           </div>
 
