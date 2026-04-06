@@ -288,6 +288,19 @@ export default function LearnPage() {
         <title>Knowledge Hub – Retirement Planning Guides | CorpusCalc</title>
         <meta name="description" content="Plain English guides on SIPs, corpus strategies, inflation, and Indian tax planning for retirement." />
         <link rel="canonical" href="https://corpuscalc.com/knowledge" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          "name": "CorpusCalc Knowledge Hub",
+          "url": "https://corpuscalc.com/knowledge",
+          "itemListElement": FALLBACK_ARTICLES.map((a, i) => ({
+            "@type": "ListItem",
+            "position": i + 1,
+            "url": `https://corpuscalc.com/knowledge/${a.slug}`,
+            "name": a.title,
+            "description": a.excerpt,
+          })),
+        })}</script>
       </Helmet>
       <style>{LEARN_STYLES}</style>
       <Navbar />
