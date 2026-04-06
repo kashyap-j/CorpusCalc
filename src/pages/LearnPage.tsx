@@ -22,6 +22,8 @@ type DisplayArticle = {
   readingTime: number;
   publishedAt: string;
   tags: string[];
+  seoTitle?: string;
+  seoDescription?: string;
 };
 
 const TAG_COLORS: Record<string, string> = {
@@ -44,6 +46,8 @@ const FALLBACK_ARTICLES: DisplayArticle[] = [
     tags: ['Inflation', 'Strategy'],
     readingTime: 5,
     publishedAt: '2026-04-04',
+    seoTitle: 'How Global Wars Are Making Retirement More Expensive | CorpusCalc',
+    seoDescription: 'Geopolitical conflicts drive inflation and impact Indian retirement planning. Here\'s how to prepare.',
   },
   {
     id: 'dollar-rupee-retirement',
@@ -53,6 +57,8 @@ const FALLBACK_ARTICLES: DisplayArticle[] = [
     tags: ['Strategy', 'Basics'],
     readingTime: 4,
     publishedAt: '2026-04-04',
+    seoTitle: 'Dollar-Rupee Story: Why Your Retirement Number Changes | CorpusCalc',
+    seoDescription: 'Every time the rupee weakens, your retirement corpus needs grow. Here\'s what to do about it.',
   },
   {
     id: 'china-slowdown-mutual-funds',
@@ -62,6 +68,8 @@ const FALLBACK_ARTICLES: DisplayArticle[] = [
     tags: ['Strategy', 'SIP'],
     readingTime: 5,
     publishedAt: '2026-04-04',
+    seoTitle: "China's Slowdown: What It Means for Your Mutual Funds | CorpusCalc",
+    seoDescription: "How China's economic slowdown affects Indian mutual funds and what retirement planners should do about it.",
   },
   {
     id: 'us-fed-rates-india-sip',
@@ -71,6 +79,8 @@ const FALLBACK_ARTICLES: DisplayArticle[] = [
     tags: ['SIP', 'Strategy'],
     readingTime: 5,
     publishedAt: '2026-04-04',
+    seoTitle: 'US Fed Rate Hikes and Your Indian SIP: The Connection | CorpusCalc',
+    seoDescription: 'How US Federal Reserve rate decisions quietly affect your Indian SIP returns and retirement corpus.',
   },
   {
     id: 'oil-price-retirement-india',
@@ -80,6 +90,8 @@ const FALLBACK_ARTICLES: DisplayArticle[] = [
     tags: ['Inflation', 'Basics'],
     readingTime: 4,
     publishedAt: '2026-04-04',
+    seoTitle: 'Oil at $100: How Middle East Tensions Affect Your SIP | CorpusCalc',
+    seoDescription: 'Rising oil prices reshape Indian retirement planning. Here\'s what $100 oil means for your corpus.',
   },
 ];
 
