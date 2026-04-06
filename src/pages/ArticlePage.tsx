@@ -414,26 +414,35 @@ export default function ArticlePage() {
         <meta name="description" content={metaDescription} />
         {metaFocusKeyword && <meta name="keywords" content={metaFocusKeyword} />}
         <meta name="author" content={localArticle?.author ?? 'CorpusCalc'} />
+        <meta name="robots" content="index, follow" />
         <link rel="canonical" href={canonicalUrl} />
         <meta property="og:type" content="article" />
         <meta property="og:title" content={metaOgTitle} />
         <meta property="og:description" content={metaOgDescription} />
         <meta property="og:url" content={canonicalUrl} />
-        {sanityArticle?.featuredImage?.asset && (
-          <meta property="og:image" content={urlFor(sanityArticle.featuredImage.asset as object).width(1200).url()} />
-        )}
+        <meta property="og:image" content={sanityArticle?.featuredImage?.asset ? urlFor(sanityArticle.featuredImage.asset as object).width(1200).url() : 'https://corpuscalc.com/og-image.png'} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="628" />
+        <meta property="og:site_name" content="CorpusCalc" />
+        <meta property="og:locale" content="en_IN" />
+        {publishedAt && <meta property="article:published_time" content={new Date(publishedAt).toISOString()} />}
+        <meta property="article:author" content={localArticle?.author ?? 'CorpusCalc'} />
+        {tags.map(tag => <meta key={tag} property="article:tag" content={tag} />)}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={metaOgTitle} />
         <meta name="twitter:description" content={metaOgDescription} />
+        <meta name="twitter:image" content={sanityArticle?.featuredImage?.asset ? urlFor(sanityArticle.featuredImage.asset as object).width(1200).url() : 'https://corpuscalc.com/og-image.png'} />
+        <meta name="twitter:site" content="@corpuscalc" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Article",
           "headline": title,
           "description": excerpt,
+          "image": sanityArticle?.featuredImage?.asset ? urlFor(sanityArticle.featuredImage.asset as object).width(1200).url() : 'https://corpuscalc.com/og-image.png',
           "datePublished": publishedAt ? new Date(publishedAt).toISOString() : '',
           "dateModified": publishedAt ? new Date(publishedAt).toISOString() : '',
           "author": { "@type": "Organization", "name": "CorpusCalc" },
-          "publisher": { "@type": "Organization", "name": "CorpusCalc", "url": "https://corpuscalc.com" },
+          "publisher": { "@type": "Organization", "name": "CorpusCalc", "url": "https://corpuscalc.com", "logo": { "@type": "ImageObject", "url": "https://corpuscalc.com/og-image.png" } },
           "url": typeof window !== 'undefined' ? window.location.href : canonicalUrl,
         })}</script>
       </Helmet>
