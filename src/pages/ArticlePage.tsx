@@ -328,17 +328,20 @@ const portableComponents = {
     ),
   },
   types: {
-    cta: () => (
-      <div style={{ borderLeft: '4px solid #e8622a', background: '#FFF5F0', borderRadius: '0 12px 12px 0', padding: '18px 20px', margin: '32px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-        <div>
-          <p style={{ fontSize: '15px', fontWeight: 700, color: '#0f2318', fontFamily: 'var(--font-body)', margin: '0 0 3px' }}>Calculate your retirement corpus →</p>
-          <p style={{ fontSize: '13px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: 0 }}>Free, India-specific. No sign-up required.</p>
+    cta: ({ value }: { value?: unknown }) => {
+      console.log('CTA value:', value);
+      return (
+        <div style={{ borderLeft: '4px solid #e8622a', background: '#FFF5F0', borderRadius: '0 12px 12px 0', padding: '18px 20px', margin: '32px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+          <div>
+            <p style={{ fontSize: '15px', fontWeight: 700, color: '#0f2318', fontFamily: 'var(--font-body)', margin: '0 0 3px' }}>Calculate your retirement corpus →</p>
+            <p style={{ fontSize: '13px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: 0 }}>Free, India-specific. No sign-up required.</p>
+          </div>
+          <Link to="/plan" style={{ display: 'inline-block', padding: '9px 20px', borderRadius: '10px', background: '#e8622a', color: '#fff', fontSize: '13px', fontWeight: 700, fontFamily: 'var(--font-body)', textDecoration: 'none', whiteSpace: 'nowrap' }}>
+            Open CorpusCalc
+          </Link>
         </div>
-        <Link to="/plan" style={{ display: 'inline-block', padding: '9px 20px', borderRadius: '10px', background: '#e8622a', color: '#fff', fontSize: '13px', fontWeight: 700, fontFamily: 'var(--font-body)', textDecoration: 'none', whiteSpace: 'nowrap' }}>
-          Open CorpusCalc
-        </Link>
-      </div>
-    ),
+      );
+    },
     table: ({ value }: { value?: { rows?: { cells: string[] }[] } }) => {
       const rows = value?.rows ?? [];
       if (rows.length === 0) return null;
