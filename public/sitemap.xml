@@ -37,4 +37,39 @@
     <priority>0.5</priority>
   </url>
 
+  <url>
+    <loc>https://corpuscalc.com/knowledge/china-slowdown-mutual-funds</loc>
+    <lastmod>2026-04-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://corpuscalc.com/knowledge/dollar-rupee-retirement</loc>
+    <lastmod>2026-04-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://corpuscalc.com/knowledge/global-wars-retirement-inflation</loc>
+    <lastmod>2026-04-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://corpuscalc.com/knowledge/oil-price-retirement-india</loc>
+    <lastmod>2026-04-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://corpuscalc.com/knowledge/us-fed-rates-india-sip</loc>
+    <lastmod>2026-04-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
 </urlset>
