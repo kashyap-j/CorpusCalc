@@ -327,6 +327,35 @@ const portableComponents = {
       <li style={{ fontSize: '16px', color: '#374151', fontFamily: 'var(--font-body)', lineHeight: 1.7 }}>{children}</li>
     ),
   },
+  types: {
+    table: ({ value }: { value?: { rows?: { cells: string[] }[] } }) => {
+      const rows = value?.rows ?? [];
+      if (rows.length === 0) return null;
+      const [headerRow, ...bodyRows] = rows;
+      return (
+        <div style={{ overflowX: 'auto', margin: '24px 0' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px', fontFamily: 'var(--font-body)', color: '#374151' }}>
+            <thead>
+              <tr>
+                {headerRow.cells.map((cell, i) => (
+                  <th key={i} style={{ padding: '10px 14px', background: '#0f2318', color: '#fff', fontWeight: 700, textAlign: 'left', borderBottom: '2px solid #e8622a' }}>{cell}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {bodyRows.map((row, ri) => (
+                <tr key={ri} style={{ background: ri % 2 === 0 ? '#F8F7F4' : '#fff' }}>
+                  {row.cells.map((cell, ci) => (
+                    <td key={ci} style={{ padding: '9px 14px', borderBottom: '1px solid #E8E4DE' }}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    },
+  },
 };
 
 // ─── Share section ────────────────────────────────────────────────────
