@@ -8,7 +8,7 @@
 # SPA fallback — all routes serve index.html
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/200.html"
   status = 200
   force = false
 
