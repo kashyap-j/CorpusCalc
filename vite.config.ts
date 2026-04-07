@@ -8,6 +8,9 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
   },
+  build: {
+    target: 'chrome79',
+  },
   plugins: [
     react(),
     tailwindcss(),
@@ -35,6 +38,7 @@ export default defineConfig({
         categories: ['finance', 'productivity'],
       },
       workbox: {
+        inlineWorkboxRuntime: true,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp}'],
         runtimeCaching: [
           {

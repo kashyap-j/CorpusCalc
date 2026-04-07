@@ -6,8 +6,30 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "postbuild": "react-snap",
     "lint": "eslint .",
     "preview": "vite preview"
+  },
+  "reactSnap": {
+    "source": "dist",
+    "destination": "dist",
+    "include": [
+      "/",
+      "/knowledge",
+      "/plan",
+      "/calculators",
+      "/about",
+      "/privacy",
+      "/terms",
+      "/disclaimer",
+      "/knowledge/china-slowdown-mutual-funds",
+      "/knowledge/dollar-rupee-retirement",
+      "/knowledge/global-wars-retirement-inflation",
+      "/knowledge/oil-price-retirement-india",
+      "/knowledge/us-fed-rates-india-sip"
+    ],
+    "puppeteerArgs": ["--no-sandbox", "--disable-setuid-sandbox"],
+    "skipThirdPartyRequests": true
   },
   "dependencies": {
     "@portabletext/react": "^6.0.3",
@@ -35,6 +57,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
+    "react-snap": "^1.23.0",
     "tailwindcss": "^4.2.2",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.57.0",
