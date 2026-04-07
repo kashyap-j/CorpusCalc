@@ -5,43 +5,7 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# Pre-rendered routes — serve static HTML directly
-[[redirects]]
-  from = "/knowledge/:splat"
-  to = "/knowledge/:splat/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/about"
-  to = "/about/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/calculators"
-  to = "/calculators/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/plan"
-  to = "/plan/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/privacy"
-  to = "/privacy/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/terms"
-  to = "/terms/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/disclaimer"
-  to = "/disclaimer/index.html"
-  status = 200
-
-# SPA fallback — all other routes serve index.html
+# SPA fallback — all routes serve index.html
 [[redirects]]
   from = "/*"
   to = "/index.html"
