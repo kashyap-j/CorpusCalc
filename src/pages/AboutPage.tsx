@@ -53,12 +53,11 @@ function FeedbackForm() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!msg.trim() || rateLimited) return;
+    if (!name.trim() || !email.trim() || !msg.trim() || rateLimited) return;
     setStatus('sending');
     try {
       const { error } = await supabase
-        .from('feedback')
-        .insert([{ name: name.trim() || null, email: email.trim() || null, message: msg.trim() }]);
+        .rpc('submit_feedback', { p_name: name, p_email: email, p_message: msg });
       if (error) throw error;
       const updated = [...submissions, Date.now()];
       recordSubmission(submissions);
@@ -102,12 +101,12 @@ function FeedbackForm() {
     <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
       <div className="about-2col-feedback">
         <div>
-          <label htmlFor="feedback-name" style={lbl}>Name (optional)</label>
-          <input id="feedback-name" type="text" placeholder="Your name" value={name} onChange={e => setName(e.target.value)} style={inp} />
+          <label htmlFor="feedback-name" style={lbl}>Name *</label>
+          <input id="feedback-name" type="text" placeholder="Your name" value={name} onChange={e => setName(e.target.value)} style={inp} required />
         </div>
         <div>
-          <label htmlFor="feedback-email" style={lbl}>Email (optional)</label>
-          <input id="feedback-email" type="email" placeholder="For a reply" value={email} onChange={e => setEmail(e.target.value)} style={inp} />
+          <label htmlFor="feedback-email" style={lbl}>Email *</label>
+          <input id="feedback-email" type="email" placeholder="For a reply" value={email} onChange={e => setEmail(e.target.value)} style={inp} required />
         </div>
       </div>
       <div>
@@ -131,12 +130,12 @@ function FeedbackForm() {
       </div>
       <button
         type="submit"
-        disabled={status === 'sending' || !msg.trim() || rateLimited}
+        disabled={status === 'sending' || !name.trim() || !email.trim() || !msg.trim() || rateLimited}
         style={{
           padding: '12px 24px', borderRadius: '12px', border: 'none',
-          background: status === 'sending' || !msg.trim() || rateLimited ? '#9CA3AF' : '#0f2318',
+          background: status === 'sending' || !name.trim() || !email.trim() || !msg.trim() || rateLimited ? '#9CA3AF' : '#0f2318',
           color: '#fff', fontSize: '14px', fontWeight: 700,
-          fontFamily: 'var(--font-body)', cursor: status === 'sending' || !msg.trim() || rateLimited ? 'not-allowed' : 'pointer',
+          fontFamily: 'var(--font-body)', cursor: status === 'sending' || !name.trim() || !email.trim() || !msg.trim() || rateLimited ? 'not-allowed' : 'pointer',
           transition: 'all 0.2s',
         }}
       >
