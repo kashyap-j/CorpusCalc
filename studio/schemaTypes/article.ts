@@ -141,6 +141,16 @@ export const article = defineType({
       rows: 2,
       description: 'Description shown in social share previews. Falls back to SEO Description.',
     }),
+    defineField({
+      name: 'author',
+      title: 'Author',
+      type: 'string',
+    }),
+    defineField({
+      name: 'canonicalUrl',
+      title: 'Canonical URL',
+      type: 'url',
+    }),
   ],
   preview: {
     select: {
