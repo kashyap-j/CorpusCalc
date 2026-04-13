@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { supabase } from '../lib/supabase';
 import { usePlannerStore } from '../store/plannerStore';
 
@@ -89,6 +90,10 @@ export default function AuthCallback() {
       justifyContent: 'center', height: '100vh', gap: '16px',
       background: '#f4f2ee', fontFamily: 'var(--font-body)',
     }}>
+      <Helmet>
+        <title>Signing in… | CorpusCalc</title>
+        <meta name="description" content="Please wait while we complete your sign-in." />
+      </Helmet>
       <div style={{
         width: 40, height: 40,
         border: '3px solid #e8e4de',

@@ -149,8 +149,8 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-background font-body">
       <Helmet>
-        <title>About CorpusCalc – India's Retirement Planning Tool</title>
-        <meta name="description" content="Learn about CorpusCalc, built to help Indians plan smarter retirements with clear tools and honest guides." />
+        <title>About CorpusCalc | Free Retirement Planner for India</title>
+        <meta name="description" content="Learn about CorpusCalc — a free, India-specific retirement planning tool built to help you retire with confidence." />
         <link rel="canonical" href="https://corpuscalc.com/about" />
       </Helmet>
       <style>{ABOUT_STYLES}</style>

@@ -11,8 +11,8 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-background font-body">
       <Helmet>
-        <title>CorpusCalc – Retirement Planner for India</title>
-        <meta name="description" content="Plan your retirement corpus with SIP calculators, inflation tools, and expert guides tailored for India." />
+        <title>CorpusCalc — Retirement Planner for India</title>
+        <meta name="description" content="Build your personalised retirement plan in 6 steps. Calculate your corpus, deploy it in phases, plan kids goals, and print your final report. Free, India-specific." />
         <link rel="canonical" href="https://corpuscalc.com/" />
       </Helmet>
       <Navbar />

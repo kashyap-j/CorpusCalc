@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 
@@ -18,6 +19,10 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
 export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-background font-body">
+      <Helmet>
+        <title>Privacy Policy | CorpusCalc</title>
+        <meta name="description" content="Learn how CorpusCalc collects, uses, and protects your personal information." />
+      </Helmet>
       <Navbar />
 
       {/* Hero */}

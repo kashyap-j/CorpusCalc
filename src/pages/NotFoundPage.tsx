@@ -1,10 +1,15 @@
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 
 export default function NotFoundPage() {
   return (
     <div className="min-h-screen bg-background font-body">
+      <Helmet>
+        <title>Page Not Found | CorpusCalc</title>
+        <meta name="description" content="The page you're looking for doesn't exist. Head back to CorpusCalc to plan your retirement." />
+      </Helmet>
       <Navbar />
       <div className="container py-24" style={{ textAlign: 'center' }}>
         <div style={{ maxWidth: '480px', margin: '0 auto' }}>

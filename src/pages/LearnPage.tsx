@@ -285,8 +285,8 @@ export default function LearnPage() {
   return (
     <div className="min-h-screen bg-background font-body">
       <Helmet>
-        <title>Knowledge Hub – Retirement Planning Guides | CorpusCalc</title>
-        <meta name="description" content="Plain English guides on SIPs, corpus strategies, inflation, and Indian tax planning for retirement." />
+        <title>Retirement Planning Articles & Guides | CorpusCalc</title>
+        <meta name="description" content="Read expert articles on retirement planning, SIP, inflation, and financial independence in India." />
         <link rel="canonical" href="https://corpuscalc.com/knowledge" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import type { User } from '@supabase/supabase-js';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
@@ -133,6 +134,10 @@ export default function AccountPage() {
 
   return (
     <div className="min-h-screen bg-background font-body">
+      <Helmet>
+        <title>My Account | CorpusCalc</title>
+        <meta name="description" content="View your saved retirement plan and account details on CorpusCalc." />
+      </Helmet>
       <Navbar />
 
       {/* Hero strip */}

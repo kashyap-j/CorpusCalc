@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 
@@ -18,6 +19,10 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-background font-body">
+      <Helmet>
+        <title>Terms of Use | CorpusCalc</title>
+        <meta name="description" content="Read the terms and conditions for using CorpusCalc's retirement planning tools." />
+      </Helmet>
       <Navbar />
 
       {/* Hero */}

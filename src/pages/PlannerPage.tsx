@@ -12,7 +12,7 @@ export default function PlannerPage() {
     <>
       <Helmet>
         <title>Build Your Retirement Plan | CorpusCalc</title>
-        <meta name="description" content="Create a personalised retirement plan based on your age, income, and goals. Start planning today." />
+        <meta name="description" content="Create a personalised 6-step retirement plan tailored for India. Calculate your corpus, SIP, and deployment strategy for free." />
         <link rel="canonical" href="https://corpuscalc.com/plan" />
       </Helmet>
       <PlannerShell />

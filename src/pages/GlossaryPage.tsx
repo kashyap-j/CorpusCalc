@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 
@@ -62,6 +63,10 @@ export default function GlossaryPage() {
 
   return (
     <div className="min-h-screen bg-background font-body">
+      <Helmet>
+        <title>Retirement & Investment Glossary – Key Terms Explained | CorpusCalc</title>
+        <meta name="description" content="Understand SIP, corpus, XIRR, expense ratio and more. A plain-English glossary of retirement and investment terms for Indian investors." />
+      </Helmet>
       <Navbar />
       <div className="container py-12">
         <div style={{ maxWidth: '720px', margin: '0 auto' }}>

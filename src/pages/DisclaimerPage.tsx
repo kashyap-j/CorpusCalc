@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 
@@ -18,6 +19,10 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
 export default function DisclaimerPage() {
   return (
     <div className="min-h-screen bg-background font-body">
+      <Helmet>
+        <title>Disclaimer | CorpusCalc</title>
+        <meta name="description" content="CorpusCalc is for educational purposes only. Read our full disclaimer before making any investment decisions." />
+      </Helmet>
       <Navbar />
 
       {/* Hero */}
