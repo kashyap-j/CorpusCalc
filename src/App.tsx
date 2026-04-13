@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ScrollToTop from './components/ui/ScrollToTop';
 
 const HomePage       = lazy(() => import('./pages/HomePage'));
@@ -41,7 +41,10 @@ export default function App() {
           <Route path="/plan" element={<PlannerPage />} />
           <Route path="/knowledge" element={<LearnPage />} />
           <Route path="/knowledge/:slug" element={<ArticlePage />} />
-          <Route path="/calculators" element={<CalculatorsPage />} />
+          <Route path="/calculators" element={<Navigate to="/calculators/sip-calculator" replace />} />
+          <Route path="/calculators/sip-calculator" element={<CalculatorsPage />} />
+          <Route path="/calculators/inflation-calculator" element={<CalculatorsPage />} />
+          <Route path="/calculators/fd-vs-mf-calculator" element={<CalculatorsPage />} />
           <Route path="/glossary" element={<GlossaryPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />

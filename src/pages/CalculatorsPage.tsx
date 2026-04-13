@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
   AreaChart, Area, LineChart, Line,
@@ -492,21 +493,42 @@ function FDvsMFCalc() {
 
 // ─── Tab definitions ──────────────────────────────────────────────────
 const TABS = [
-  { id: 0, label: 'SIP Growth' },
-  { id: 1, label: 'Inflation Reality' },
-  { id: 2, label: 'FD vs MF' },
+  { id: 0, label: 'SIP Growth',       path: '/calculators/sip-calculator' },
+  { id: 1, label: 'Inflation Reality', path: '/calculators/inflation-calculator' },
+  { id: 2, label: 'FD vs MF',         path: '/calculators/fd-vs-mf-calculator' },
+];
+
+const SEO = [
+  {
+    title: 'SIP Calculator – See How Your SIP Grows | CorpusCalc',
+    description: 'Calculate how much your monthly SIP will grow over time. Plan your retirement corpus with CorpusCalc\'s free SIP growth calculator.',
+    canonical: 'https://corpuscalc.com/calculators/sip-calculator',
+  },
+  {
+    title: 'Inflation Calculator – See How Inflation Eats Your Money | CorpusCalc',
+    description: 'Find out how inflation reduces your purchasing power over time. Plan smarter with CorpusCalc\'s inflation reality calculator.',
+    canonical: 'https://corpuscalc.com/calculators/inflation-calculator',
+  },
+  {
+    title: 'FD vs Mutual Fund Calculator – Which Grows More? | CorpusCalc',
+    description: 'Compare fixed deposit returns vs mutual fund growth over time. Make informed retirement investment decisions with CorpusCalc.',
+    canonical: 'https://corpuscalc.com/calculators/fd-vs-mf-calculator',
+  },
 ];
 
 // ─── Page ─────────────────────────────────────────────────────────────
 export default function CalculatorsPage() {
-  const [activeTab, setActiveTab] = useState(0);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const activeTab = Math.max(0, TABS.findIndex(t => t.path === location.pathname));
+  const seo = SEO[activeTab];
 
   return (
     <div className="min-h-screen bg-background font-body">
       <Helmet>
-        <title>Retirement Calculators – SIP, Corpus & Inflation | CorpusCalc</title>
-        <meta name="description" content="Free retirement calculators for Indians. Calculate your SIP, corpus goal, and inflation-adjusted returns." />
-        <link rel="canonical" href="https://corpuscalc.com/calculators" />
+        <title>{seo.title}</title>
+        <meta name="description" content={seo.description} />
+        <link rel="canonical" href={seo.canonical} />
       </Helmet>
       <style>{CALC_STYLES}</style>
       <Navbar />
@@ -529,7 +551,7 @@ export default function CalculatorsPage() {
           {TABS.map(tab => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => navigate(tab.path)}
               style={{
                 padding: '8px 22px',
                 borderRadius: '20px',
