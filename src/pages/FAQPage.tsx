@@ -1,4 +1,6 @@
 import { Helmet } from 'react-helmet-async';
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
 
 const faqData = [
   {
@@ -208,7 +210,7 @@ function slugify(text: string): string {
 
 export default function FAQPage() {
   return (
-    <>
+    <div className="min-h-screen bg-background font-body">
       <Helmet>
         <title>Retirement Planning FAQ - CorpusCalc</title>
         <meta
@@ -234,6 +236,7 @@ export default function FAQPage() {
         <meta name="twitter:image" content="https://corpuscalc.com/og-image.png" />
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>
+      <Navbar />
 
       <main style={{ maxWidth: '860px', margin: '0 auto', padding: '48px 24px 80px' }}>
 
@@ -434,6 +437,7 @@ export default function FAQPage() {
           </a>
         </div>
       </main>
-    </>
+      <Footer />
+    </div>
   );
 }
