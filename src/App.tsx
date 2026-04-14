@@ -17,26 +17,11 @@ const TermsPage      = lazy(() => import('./pages/TermsPage'));
 const DisclaimerPage = lazy(() => import('./pages/DisclaimerPage'));
 const FAQPage        = lazy(() => import('./pages/FAQPage'));
 
-const Spinner = () => (
-  <div style={{
-    display: 'flex', justifyContent: 'center', alignItems: 'center',
-    height: '100vh', background: '#f4f2ee',
-  }}>
-    <div style={{
-      width: 40, height: 40,
-      border: '3px solid #e8e4de',
-      borderTop: '3px solid #e8622a',
-      borderRadius: '50%',
-      animation: 'spin 0.8s linear infinite',
-    }} />
-  </div>
-);
-
 export default function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <Suspense fallback={<Spinner />}>
+      <Suspense fallback={<div style={{ minHeight: '100vh', background: '#f9f6f1' }} />}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/plan" element={<PlannerPage />} />
