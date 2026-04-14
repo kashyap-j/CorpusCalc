@@ -17,6 +17,7 @@ const today = new Date().toISOString().slice(0, 10);
 const staticPages = [
   { url: 'https://corpuscalc.com/', priority: '1.0', changefreq: 'daily' },
   { url: 'https://corpuscalc.com/knowledge', priority: '0.9', changefreq: 'weekly' },
+  { url: 'https://corpuscalc.com/faq', priority: '0.8', changefreq: 'monthly' },
 ];
 
 const articles = await client.fetch(

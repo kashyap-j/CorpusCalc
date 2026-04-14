@@ -5,6 +5,7 @@ const quickLinks = [
   { label: "Knowledge", href: "/knowledge" },
   { label: "Calculators", href: "/calculators" },
   { label: "About", href: "/about" },
+  { label: "FAQ", href: "/faq" },
 ];
 
 const legalLinks = [

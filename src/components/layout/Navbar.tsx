@@ -11,6 +11,7 @@ const navLinks = [
   { label: 'Knowledge', href: '/knowledge' },
   { label: 'Calculators', href: '/calculators' },
   { label: 'About', href: '/about' },
+  { label: 'FAQ', href: '/faq' },
 ];
 
 function getInitials(user: User): string {
