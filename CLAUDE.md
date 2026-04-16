@@ -87,6 +87,7 @@ corpuscalc/
 | `/calculators/inflation-calculator` | `CalculatorsPage` | Inflation Reality calculator |
 | `/calculators/fd-vs-mf-calculator` | `CalculatorsPage` | FD vs Mutual Fund calculator |
 | `/glossary` | `GlossaryPage` | Static glossary (terms hardcoded in component) |
+| `/faq` | `FAQPage` | 35 Q&As across 7 categories, details/summary accordions, JSON-LD FAQPage schema |
 | `/about` | `AboutPage` | About page + feedback form |
 | `/auth/callback` | `AuthCallback` | OAuth code exchange, always redirects away |
 | `/account` | `AccountPage` | Auth-gated, shows saved plan summary |
@@ -135,6 +136,23 @@ Three standalone calculators in a single `CalculatorsPage` component. Active tab
 
 ### Articles (`/knowledge`)
 Articles are stored in Sanity CMS. The `ArticlePage` fetches by slug via GROQ. Both Sanity-native articles and a legacy local fallback format (`LocalArticle`) are supported — the page tries Sanity first, falls back to a hardcoded local map.
+
+### FAQ Page (`/faq`)
+A static FAQ page with 35 Q&As organised into 7 categories:
+1. **Retirement Planning Basics** (7 questions) — corpus size, 25x rule, how to calculate, how much to save
+2. **FIRE and Early Retirement** (5 questions) — Lean/Fat/Barista FIRE, retiring at 40, FIRE investments
+3. **SIP and Mutual Funds** (5 questions) — SIP amount, step-up SIP, expected returns, direct vs regular plans
+4. **Inflation and Real Returns** (4 questions) — India inflation rate, real rate of return, healthcare inflation
+5. **PPF, NPS, EPF and Tax Saving** (5 questions) — PPF vs NPS vs ELSS, 80CCD, EPF contribution
+6. **Saving for Kids** (4 questions) — education costs, separate SIPs, marriage goal planning
+7. **Using Your Corpus After Retirement** (5 questions) — bucket strategy, withdrawal rate, healthcare fund, longevity risk
+
+Implementation details:
+- Native `<details>`/`<summary>` HTML accordions — no JavaScript state, no third-party component
+- Category jump-links rendered as pill-shaped anchor tags at the top
+- JSON-LD `FAQPage` schema injected via `<script type="application/ld+json">` in Helmet (all 35 questions included)
+- Full per-page SEO: `<title>`, `<meta name="description">`, `<meta name="robots" content="index, follow">`, `<link rel="canonical">`, `og:title`, `og:description`, `og:url`, `og:image`, `twitter:card`, `twitter:title`, `twitter:description`, `twitter:image`
+- CTA block at the bottom links to `/plan`
 
 ### Feedback Form (`/about`)
 Submits via `supabase.rpc('submit_feedback', { p_name, p_email, p_message })`. Name and email are required. Rate-limited client-side (1 submission per session via a flag).
@@ -185,6 +203,12 @@ npx sanity deploy
 
 `public/sitemap.xml` is **generated dynamically** at build time by `scripts/generate-sitemap.mjs`. It fetches all published articles from Sanity and combines them with static page entries. The file is then copied to `dist/sitemap.xml` by Vite automatically (standard `public/` handling).
 
+**Static entries currently in sitemap:**
+- `/` — `priority 1.0`, `changefreq daily`
+- `/knowledge` — `priority 0.9`, `changefreq weekly`
+- `/faq` — `priority 0.8`, `changefreq monthly`
+- All Sanity articles — `priority 0.8`, `changefreq monthly`, `lastmod` from Sanity `publishedAt`
+
 The build script is:
 ```json
 "build": "node scripts/generate-sitemap.mjs && tsc -b && vite build"
@@ -195,15 +219,40 @@ To regenerate the sitemap without a full build:
 node scripts/generate-sitemap.mjs
 ```
 
+**Domain:** All sitemap URLs use `https://corpuscalc.com` (not `.in`).
+
 ---
 
 ## SEO Conventions
 
-- Every page has a `<Helmet>` block with `<title>` and `<meta name="description">`.
-- `index.html` has **no** static `<title>` or `<meta name="description">` — react-helmet-async owns those.
-- `index.html` does contain static Open Graph, Twitter Card, canonical, and keywords tags (these are site-wide fallbacks).
-- Article pages pull `seoTitle`/`seoDescription`/`ogTitle`/`ogDescription` from Sanity fields.
-- Calculator sub-pages each have their own canonical URL (`/calculators/sip-calculator`, etc.).
+**Domain:** `https://corpuscalc.com` — used in all canonical URLs, og:url, og:image, and sitemap entries.
+
+### index.html (site-wide fallbacks)
+`index.html` has **no** static `<title>`, `<meta name="description">`, or `<link rel="canonical">` — react-helmet-async owns those per page. `index.html` does contain static site-wide fallback tags:
+- `<meta name="keywords">`, `<meta name="author">`, `<meta name="robots" content="index, follow">`
+- Open Graph: `og:type`, `og:url` (`https://corpuscalc.com`), `og:title`, `og:description`, `og:image` (`https://corpuscalc.com/og-image.png`), `og:image:width` (1200), `og:image:height` (628), `og:locale` (`en_IN`), `og:site_name`
+- Twitter Card: `twitter:card` (`summary_large_image`), `twitter:title`, `twitter:description`, `twitter:image`
+
+### Per-page Helmet blocks
+Every page implements its own full Helmet block with:
+- `<title>` and `<meta name="description">`
+- `<meta name="robots" content="index, follow">`
+- `<link rel="canonical" href="https://corpuscalc.com/[path]">`
+- `og:type`, `og:title`, `og:description`, `og:url`, `og:image`
+- `twitter:card`, `twitter:title`, `twitter:description`, `twitter:image`
+
+### JSON-LD Structured Data
+- `/faq` — `FAQPage` schema with all 35 questions as `Question`/`Answer` pairs, injected via `<script type="application/ld+json">` in the Helmet block
+- Other pages: no JSON-LD currently (future candidates: `WebSite` on home, `Article` on knowledge articles)
+
+### Article pages
+Pull `seoTitle`/`seoDescription`/`ogTitle`/`ogDescription` from Sanity fields.
+
+### Calculator sub-pages
+Each has its own canonical URL (`/calculators/sip-calculator`, `/calculators/inflation-calculator`, `/calculators/fd-vs-mf-calculator`).
+
+### Google Search Console status (as of April 2026)
+8 pages indexed. `/faq` submitted for indexing. Not yet indexed pages are still being crawled.
 
 ---
 
@@ -223,6 +272,28 @@ node scripts/generate-sitemap.mjs
 - **CSS variables** for fonts: `var(--font-body)` (DM Sans), `var(--font-display)` (Playfair Display).
 - **Colour palette:** `#0f2318` (dark green, primary), `#e8622a` (orange, accent), `#F4C430` (yellow, highlight), `#16A34A` (positive/growth green).
 - Do not mix Tailwind and inline styles on the same element.
+
+---
+
+## Performance
+
+### Code Splitting / Lazy Loading
+All 14 page components are lazy-loaded via `React.lazy()` in `src/App.tsx`:
+`HomePage`, `PlannerPage`, `LearnPage`, `ArticlePage`, `CalculatorsPage`, `GlossaryPage`, `AboutPage`, `NotFoundPage`, `AuthCallback`, `AccountPage`, `PrivacyPage`, `TermsPage`, `DisclaimerPage`, `FAQPage`.
+
+The `<Suspense>` fallback is a plain blank div — no spinner component:
+```tsx
+<Suspense fallback={<div style={{ minHeight: '100vh', background: '#f9f6f1' }} />}>
+```
+There is no `Spinner` component in the codebase — do not add one as a Suspense fallback.
+
+### Font Loading
+Fonts (DM Sans + Playfair Display) are loaded non-blocking via the preload pattern in `index.html`:
+```html
+<link rel="preload" href="https://fonts.googleapis.com/css2?..." as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="..."></noscript>
+```
+This prevents fonts from being render-blocking. Do not revert to a standard `<link rel="stylesheet">` for Google Fonts.
 
 ---
 
