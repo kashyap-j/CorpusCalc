@@ -69,6 +69,10 @@ corpuscalc/
 │   └── generate-sitemap.mjs  # Runs before build, fetches articles from Sanity
 ├── public/
 │   └── sitemap.xml     # Overwritten by generate-sitemap.mjs on every build
+├── .claude/
+│   ├── launch.json     # Dev server configurations for Claude Preview (App + Sanity Studio)
+│   ├── settings.json
+│   └── settings.local.json
 └── index.html          # GA4 script, fonts, PWA meta — no static <title> or <meta description>
 ```
 
@@ -221,6 +225,14 @@ node scripts/generate-sitemap.mjs
 
 **Domain:** All sitemap URLs use `https://corpuscalc.com` (not `.in`).
 
+### Articles added to sitemap (2026-04-22)
+Three new articles were published in Sanity and manually added to `public/sitemap.xml` (all `lastmod: 2026-04-21`):
+- `/knowledge/trump-fires-powell-fed-independence-india-impact`
+- `/knowledge/fire-movement-india-corpus-calculation-early-retirement`
+- `/knowledge/india-just-blocked-its-own-gold-imports-5-tonnes-are-stuck-at-customs-what-should-you-do`
+
+> **Slug note:** The gold import article was published with a Sanity-generated slug (`india-just-blocked-its-own-gold-imports-...`) instead of the intended short slug (`india-gold-import-halt-retirement-portfolio-2026`). If the short slug is needed, correct it in Sanity Studio and update the sitemap.
+
 ---
 
 ## SEO Conventions
@@ -253,6 +265,7 @@ Each has its own canonical URL (`/calculators/sip-calculator`, `/calculators/inf
 
 ### Google Search Console status (as of April 2026)
 8 pages indexed. `/faq` submitted for indexing. Not yet indexed pages are still being crawled.
+3 new article URLs submitted for indexing on 2026-04-22 (Trump/Powell, FIRE India, Gold Import Halt). Indexing typically takes 1–3 days.
 
 ---
 
@@ -314,6 +327,16 @@ npm run preview
 ```
 
 The dev server runs on `http://localhost:5173`. Port is strict — if it's already in use the server will not start.
+
+### Claude Preview (dev server launcher)
+`.claude/launch.json` defines two server configurations for use with the Claude Preview tool:
+
+| Name | Command | Port |
+|---|---|---|
+| CorpusCalc App | `npm run dev` | 5173 |
+| Sanity Studio | `npm --prefix studio run dev` | 3333 |
+
+When working inside Claude Code, use `preview_start` with the server name instead of running `npm run dev` manually in a terminal.
 
 ---
 
