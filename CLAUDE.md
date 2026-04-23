@@ -326,3 +326,36 @@ The dev server runs on `http://localhost:5173`. Port is strict — if it's alrea
 - **SIP growth modes**: `flat` = no step-up, `salary` = SIP grows at salary growth %, `fixed` = SIP increases by a fixed annual rupee amount.
 - **Glossary data**: Currently hardcoded in `GlossaryPage.tsx`, not fetched from Sanity despite the schema existing.
 - **`studio/sanity.cli.ts` is gitignored**: Do not commit it. It contains the deployment `appId`. The file must exist locally for `npx sanity deploy` to work.
+
+---
+
+## Work in Progress — Feature Status
+
+### OG Tag Injection via Netlify Edge Function — STATUS: LIVE ✅
+
+- **Problem:** `react-helmet-async` sets meta tags client-side. Bots don't execute JS so they were seeing homepage defaults from `index.html` for all article pages.
+- **Solution:** Netlify Edge Function at `netlify/edge-functions/og-inject.ts`
+- Intercepts `/knowledge/*` requests, detects bots by user-agent string
+- Fetches article OG fields from Sanity REST API (no SDK needed in edge runtime)
+- Injects 14 meta tags + `<title>` + `<meta name="description">` before `</head>` in the HTML
+- Real users are unaffected — `context.next()` fires immediately for non-bots
+- Verified working via: `curl -A "facebookexternalhit/1.1" [article-url]`
+- Article-specific title, description, and featured image now correctly appear when sharing on WhatsApp, Twitter, LinkedIn, Facebook
+- `netlify.toml` updated with `[[edge_functions]]` block for `/knowledge/*` path (placed after `[build.environment]`)
+
+### YouTube Embed — STATUS: PAUSED
+
+- Package `react-lite-youtube-embed` v3.5.1 is installed but unused
+- `src/components/ui/YouTubeEmbed.tsx` exists with named export `YouTubeEmbed`
+- Sanity GROQ query in `getArticleBySlug` already includes `youtubeVideos` in projection
+- `ArticlePage.tsx` is fully reverted — no YouTube import, no JSX block
+- **Root cause of failure:** Chrome service worker from production build was intercepting dev server requests and returning cached old bundle
+- **Fix before next attempt:** Unregister service worker in Chrome DevTools → Application → Service Workers → Unregister `corpuscalc.com` scope, then clear site data for `localhost`, restart dev server, test in Incognito
+- Three changes needed in `ArticlePage.tsx` when resuming (see `YOUTUBE_EMBED_SESSION_NOTES.md`)
+
+### Social Share Buttons in ArticlePage — STATUS: NOT YET IMPLEMENTED
+
+- `ShareSection` component exists but only has WhatsApp + Copy Link
+- Needs upgrading to add Twitter/X and LinkedIn share buttons
+- Needs to be placed in two locations: below article title and near bottom CTA
+- Blocked on OG tags being correct first (now done ✅) — implement next session
