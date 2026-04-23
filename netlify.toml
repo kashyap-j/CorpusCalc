@@ -1,3 +1,7 @@
+[[edge_functions]]
+  function = "og-inject"
+  path = "/knowledge/*"
+
 [build]
   command = "npm install --legacy-peer-deps && npm run build"
   publish = "dist"
