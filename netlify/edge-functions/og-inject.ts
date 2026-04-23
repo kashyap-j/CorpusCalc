@@ -2,7 +2,9 @@ import type { Context } from "https://edge.netlify.com";
 
 const BOT_AGENTS = [
   'whatsapp', 'twitterbot', 'facebookexternalhit', 'linkedinbot',
-  'telegrambot', 'slackbot', 'discordbot', 'googlebot', 'bingbot'
+  'telegrambot', 'slackbot', 'discordbot', 'googlebot', 'bingbot',
+  'opengraph', 'ogimage', 'preview', 'crawler', 'spider', 'bot',
+  'curl', 'wget', 'python-requests', 'axios', 'node-fetch'
 ];
 
 const SANITY_PROJECT_ID = '55cj92zk';
