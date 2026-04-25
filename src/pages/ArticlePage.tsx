@@ -373,7 +373,7 @@ const portableComponents = {
 };
 
 // ─── Share section ────────────────────────────────────────────────────
-function ShareSection({ title }: { title: string }) {
+function ShareSection({ title, label = 'Found this useful?' }: { title: string; label?: string }) {
   const [copied, setCopied] = useState(false);
 
   const url = window.location.href;
@@ -389,7 +389,7 @@ function ShareSection({ title }: { title: string }) {
 
   return (
     <div style={{ marginTop: '40px', padding: '24px', borderRadius: '14px', background: '#F8F7F4', border: '1px solid #E8E4DE', textAlign: 'center' }}>
-      <p style={{ fontSize: '15px', fontWeight: 700, color: '#0f2318', fontFamily: 'var(--font-body)', margin: '0 0 14px' }}>Found this useful?</p>
+      <p style={{ fontSize: '15px', fontWeight: 700, color: '#0f2318', fontFamily: 'var(--font-body)', margin: '0 0 14px' }}>{label}</p>
       <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
         <a href={`https://wa.me/?text=${encodeURIComponent(`${title} — ${url}`)}`} target="_blank" rel="noopener noreferrer"
           style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', padding: '9px 18px', borderRadius: '10px', background: '#25D366', color: '#fff', fontSize: '13px', fontWeight: 600, fontFamily: 'var(--font-body)', textDecoration: 'none' }}>
@@ -571,6 +571,9 @@ export default function ArticlePage() {
                 {excerpt}
               </p>
             )}
+
+            {/* Share — top */}
+            <ShareSection title={title} label="Share this article" />
 
             {/* Featured image (Sanity only) */}
             {!useLocal && sanityArticle?.featuredImage?.asset && (
