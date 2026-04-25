@@ -353,9 +353,12 @@ The dev server runs on `http://localhost:5173`. Port is strict — if it's alrea
 - **Fix before next attempt:** Unregister service worker in Chrome DevTools → Application → Service Workers → Unregister `corpuscalc.com` scope, then clear site data for `localhost`, restart dev server, test in Incognito
 - Three changes needed in `ArticlePage.tsx` when resuming (see `YOUTUBE_EMBED_SESSION_NOTES.md`)
 
-### Social Share Buttons in ArticlePage — STATUS: NOT YET IMPLEMENTED
+### Social Share Buttons in ArticlePage — STATUS: LIVE ✅
 
-- `ShareSection` component exists but only has WhatsApp + Copy Link
-- Needs upgrading to add Twitter/X and LinkedIn share buttons
-- Needs to be placed in two locations: below article title and near bottom CTA
-- Blocked on OG tags being correct first (now done ✅) — implement next session
+- ShareSection component upgraded with 4 buttons: WhatsApp → Twitter/X → LinkedIn → Copy Link
+- Placed in two locations: below article title and near bottom CTA
+- Twitter/X: black button, bold X, opens twitter.com/intent/tweet
+- LinkedIn: #0A66C2 blue button, "in" label, opens LinkedIn share offsite URL
+- WhatsApp and Copy Link retained from original implementation
+- All buttons use inline styles, identical height/padding, flexWrap on mobile
+- OG tags (via Netlify Edge Function) ensure correct title/image appear on all platforms when shared
