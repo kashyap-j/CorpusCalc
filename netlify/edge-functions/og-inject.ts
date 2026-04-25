@@ -79,7 +79,21 @@ export default async function handler(req: Request, context: Context) {
     <title>${escapeHtml(title)}</title>
     <meta name="description" content="${escapeAttr(description)}" />`;
 
-  const patched = html.replace('</head>', `${injected}\n</head>`);
+  const STRIP_TAGS = [
+    /<meta\s+property="og:title"[^>]*>/gi,
+    /<meta\s+property="og:description"[^>]*>/gi,
+    /<meta\s+property="og:image"[^>]*>/gi,
+    /<meta\s+property="og:image:width"[^>]*>/gi,
+    /<meta\s+property="og:image:height"[^>]*>/gi,
+    /<meta\s+name="twitter:title"[^>]*>/gi,
+    /<meta\s+name="twitter:description"[^>]*>/gi,
+    /<meta\s+name="twitter:image"[^>]*>/gi,
+  ];
+
+  let stripped = html;
+  for (const pattern of STRIP_TAGS) stripped = stripped.replace(pattern, '');
+
+  const patched = stripped.replace('</head>', `${injected}\n</head>`);
 
   return new Response(patched, {
     status: res.status,
