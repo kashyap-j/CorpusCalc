@@ -362,3 +362,7 @@ The dev server runs on `http://localhost:5173`. Port is strict — if it's alrea
 - WhatsApp and Copy Link retained from original implementation
 - All buttons use inline styles, identical height/padding, flexWrap on mobile
 - OG tags (via Netlify Edge Function) ensure correct title/image appear on all platforms when shared
+- Edge Function updated: strips duplicate OG/twitter tags before injection, LinkedInBot added to bot detection
+- Twitter/X share confirmed working with article-specific title and image
+- LinkedIn share dialog shows generic OG data due to aggressive caching — Post Inspector confirms code is correct, cache will clear naturally
+- Known limitation: LinkedIn cache can take several hours to days to reflect updated OG tags
