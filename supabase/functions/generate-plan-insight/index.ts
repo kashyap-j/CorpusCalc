@@ -116,7 +116,8 @@ async function callAnthropic(userMessage: string): Promise<InsightOutput> {
   const data = await res.json();
   const content: string = data.content?.[0]?.text ?? "";
 
-  return JSON.parse(content) as InsightOutput;
+  const cleaned = content.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/,'').trim();
+  return JSON.parse(cleaned) as InsightOutput;
 }
 
 Deno.serve(async (req: Request) => {
