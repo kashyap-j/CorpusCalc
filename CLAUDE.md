@@ -326,6 +326,7 @@ The dev server runs on `http://localhost:5173`. Port is strict — if it's alrea
 - **SIP growth modes**: `flat` = no step-up, `salary` = SIP grows at salary growth %, `fixed` = SIP increases by a fixed annual rupee amount.
 - **Glossary data**: Currently hardcoded in `GlossaryPage.tsx`, not fetched from Sanity despite the schema existing.
 - **`studio/sanity.cli.ts` is gitignored**: Do not commit it. It contains the deployment `appId`. The file must exist locally for `npx sanity deploy` to work.
+- **Supabase CLI not required for Edge Function deployment:** Deploy via Supabase Management API using direct PATCH to `https://api.supabase.com/v1/projects/{ref}/functions/{name}`. Requires `SUPABASE_ACCESS_TOKEN` (from supabase.com/dashboard/account/tokens). Claude Code can handle this deployment without any local CLI install.
 
 ---
 
@@ -357,10 +358,36 @@ The dev server runs on `http://localhost:5173`. Port is strict — if it's alrea
 
 - Deployed at: https://oxjlzwvnhfopttcyeeao.supabase.co/functions/v1/generate-plan-insight
 - Model: claude-sonnet-4-6, max_tokens: 1500
-- Rate limiting: 24h per plan_hash
+- Rate limiting: 24h per plan_hash (HTTP 429 on repeat)
 - `plan_insights` table created in Supabase with RLS
-- Output schema note: model returns `type`/`title` instead of `severity`/`label` — align when building frontend UI in Week 2
-- Test confirmed: returns valid summary, diagnostics, suggestions with India-specific financial context
+- Output schema LOCKED — always returns exactly: `type`/`title`/`detail` for diagnostics, `title`/`detail`/`stateDiff` for suggestions
+- `esm.sh` import removed — uses direct `fetch()` against Supabase PostgREST API, no external deps at cold start
+- Deployed via Supabase Management API (no CLI required)
+
+**System prompt rules (do not remove):**
+- EPF rule: for any salaried user, always check if existingInvestments seems low for their age/salary and flag EPF blind spot by name
+- Optimisation rule: if sipAmount < 20% of salaryIncome, always suggest at least one of: NPS 80CCD(1B), step-up SIP, ELSS — name the section and rupee benefit
+- Schema rule: only use field names `type`/`title`/`detail`/`stateDiff` — never `message`/`label`/`rationale`/`impact`/`description`/`body`
+
+**Prompt eval status — 5/5 passing as of April 26, 2026:**
+- S1 Late Starter ✅ — EPF blind spot caught, corpus shortfall flagged
+- S2 Early FIRE Seeker ✅ — equity allocation, 40yr horizon, sequence-of-returns risk flagged
+- S3 Overconfident Saver ✅ — ₹4.9Cr shortfall, inflation reality check
+- S4 Dual Income No Kids ✅ — NPS 80CCD(1B) + step-up SIP suggested
+- S5 Near Retirement Panic ✅ — debt allocation, longevity risk, 8yr runway flagged
+
+### AIInsightPanel Component — STATUS: NOT STARTED (Week 2 Tuesday)
+
+- Location: `src/components/planner/AIInsightPanel.tsx`
+- Desktop: fixed right panel 400px, slides in from right
+- Mobile: bottom sheet, slides up (drag-dismiss Week 3)
+- Trigger: login-gated button on Step 5
+- 5 states: idle, loading, loaded, error, rate-limited
+- Diagnostic card colours: critical=#fef2f2/border #dc2626, warning=#fff7ed/border #e8622a, positive=#f0fdf4/border #16A34A, info=#f0f9ff/border #0ea5e9
+- Apply button: visual only in Week 2, store wiring in Week 2 Saturday, undo in Week 3
+- `plan_hash`: SHA-256 of `JSON.stringify(plannerState)` via Web Crypto API
+- Inline styles only — no Tailwind inside this component (matches planner convention)
+- Do NOT touch `math.ts` or change any existing Step component layout
 
 ### Social Share Buttons in ArticlePage — STATUS: LIVE ✅
 
