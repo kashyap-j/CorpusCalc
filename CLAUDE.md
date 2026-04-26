@@ -353,6 +353,15 @@ The dev server runs on `http://localhost:5173`. Port is strict — if it's alrea
 - **Fix before next attempt:** Unregister service worker in Chrome DevTools → Application → Service Workers → Unregister `corpuscalc.com` scope, then clear site data for `localhost`, restart dev server, test in Incognito
 - Three changes needed in `ArticlePage.tsx` when resuming (see `YOUTUBE_EMBED_SESSION_NOTES.md`)
 
+### generate-plan-insight Edge Function — STATUS: LIVE ✅
+
+- Deployed at: https://oxjlzwvnhfopttcyeeao.supabase.co/functions/v1/generate-plan-insight
+- Model: claude-sonnet-4-6, max_tokens: 1500
+- Rate limiting: 24h per plan_hash
+- `plan_insights` table created in Supabase with RLS
+- Output schema note: model returns `type`/`title` instead of `severity`/`label` — align when building frontend UI in Week 2
+- Test confirmed: returns valid summary, diagnostics, suggestions with India-specific financial context
+
 ### Social Share Buttons in ArticlePage — STATUS: LIVE ✅
 
 - ShareSection component upgraded with 4 buttons: WhatsApp → Twitter/X → LinkedIn → Copy Link
