@@ -1,5 +1,3 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
 const MODEL = "claude-sonnet-4-6";
 const MAX_TOKENS = 1500;
@@ -188,31 +186,29 @@ Deno.serve(async (req: Request) => {
     });
   }
 
-  const supabase = createClient(supabaseUrl, supabaseServiceKey);
+  const sbHeaders = {
+    "Content-Type": "application/json",
+    "apikey": supabaseServiceKey,
+    "Authorization": `Bearer ${supabaseServiceKey}`,
+  };
 
   // Rate limiting: hash the planState and check for recent identical request
   const planHash = await generateHash(JSON.stringify(planState));
 
-  const { data: existing, error: queryError } = await supabase
-    .from("plan_insights")
-    .select("id, created_at")
-    .eq("plan_hash", planHash)
-    .gt("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
-    .limit(1)
-    .maybeSingle();
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const rateRes = await fetch(
+    `${supabaseUrl}/rest/v1/plan_insights?plan_hash=eq.${encodeURIComponent(planHash)}&created_at=gt.${encodeURIComponent(since)}&limit=1`,
+    { headers: sbHeaders }
+  ).catch((e) => { console.error("Rate limit check failed:", e); return null; });
 
-  if (queryError) {
-    console.error("Rate limit check failed:", queryError);
-  }
-
-  if (existing) {
-    return new Response(
-      JSON.stringify({ error: "rate_limited", retryAfter: "24h" }),
-      {
-        status: 429,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+  if (rateRes && rateRes.ok) {
+    const rows = await rateRes.json();
+    if (Array.isArray(rows) && rows.length > 0) {
+      return new Response(
+        JSON.stringify({ error: "rate_limited", retryAfter: "24h" }),
+        { status: 429, headers: { "Content-Type": "application/json" } }
+      );
+    }
   }
 
   const userMessage = buildUserMessage(planState);
@@ -234,16 +230,20 @@ Deno.serve(async (req: Request) => {
   }
 
   // Persist to plan_insights
-  const { error: insertError } = await supabase.from("plan_insights").insert({
-    user_id: userId,
-    plan_hash: planHash,
-    input_summary: planState,
-    output,
-  });
+  const insertRes = await fetch(`${supabaseUrl}/rest/v1/plan_insights`, {
+    method: "POST",
+    headers: { ...sbHeaders, "Prefer": "return=minimal" },
+    body: JSON.stringify({
+      user_id: userId,
+      plan_hash: planHash,
+      input_summary: planState,
+      output,
+    }),
+  }).catch((e) => { console.error("Failed to persist insight:", e); return null; });
 
-  if (insertError) {
-    console.error("Failed to persist insight:", insertError);
-    // Non-fatal — still return the insight to the user
+  if (insertRes && !insertRes.ok) {
+    const errBody = await insertRes.text();
+    console.error("Insert failed:", insertRes.status, errBody);
   }
 
   return new Response(JSON.stringify(output), {
