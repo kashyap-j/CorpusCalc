@@ -55,7 +55,8 @@ corpuscalc/
 │   ├── lib/
 │   │   ├── math.ts     # All corpus/SIP/phase math — pure functions, no side effects
 │   │   ├── sanity.ts   # Sanity client + GROQ queries
-│   │   └── supabase.ts # Supabase client + table helpers
+│   │   ├── supabase.ts # Supabase client + table helpers
+│   │   └── hash.ts     # SHA-256 plan_hash utility — takes PlannerState, returns hex string
 │   └── store/
 │       ├── plannerStore.ts  # Planner state (Zustand + localStorage persist)
 │       └── authStore.ts     # Auth state (Zustand, no persist)
@@ -166,6 +167,7 @@ Submits via `supabase.rpc('submit_feedback', { p_name, p_email, p_message })`. N
 | `user_plans` | One row per user. Stores `user_id`, `inputs` (full planner state as JSON), `corpus_result` (number), `updated_at`. Upserted on conflict with `user_id`. |
 | `visit_counter` | Single row (`id = 1`) with a `count` column. Incremented via `increment_visit_counter()` RPC on each `/plan` load. |
 | `feedback` | Written via `submit_feedback(p_name, p_email, p_message)` RPC. RLS is enforced — the RPC is used instead of direct insert to respect row-level security. |
+| `plan_insights` | Stores insight results per plan_hash. Rate limiting enforced — 1 request per hash per 24h. |
 
 Auth uses Supabase Google OAuth. The `AuthCallback` page exchanges the OAuth code for a session and redirects to the pre-auth destination stored in `sessionStorage`.
 
@@ -327,6 +329,7 @@ The dev server runs on `http://localhost:5173`. Port is strict — if it's alrea
 - **Glossary data**: Currently hardcoded in `GlossaryPage.tsx`, not fetched from Sanity despite the schema existing.
 - **`studio/sanity.cli.ts` is gitignored**: Do not commit it. It contains the deployment `appId`. The file must exist locally for `npx sanity deploy` to work.
 - **Supabase CLI not required for Edge Function deployment:** Deploy via Supabase Management API using direct PATCH to `https://api.supabase.com/v1/projects/{ref}/functions/{name}`. Requires `SUPABASE_ACCESS_TOKEN` (from supabase.com/dashboard/account/tokens). Claude Code can handle this deployment without any local CLI install.
+- **plan_hash DEV bypass**: `src/lib/hash.ts` appends `Date.now()` to the hash when `import.meta.env.DEV` is true. This prevents the 24h rate limit from blocking repeated local testing. It never reaches production — `import.meta.env.DEV` is false in Vite production builds automatically.
 
 ---
 
@@ -376,23 +379,43 @@ The dev server runs on `http://localhost:5173`. Port is strict — if it's alrea
 - S4 Dual Income No Kids ✅ — NPS 80CCD(1B) + step-up SIP suggested
 - S5 Near Retirement Panic ✅ — debt allocation, longevity risk, 8yr runway flagged
 
-### AIInsightPanel Component — STATUS: LIVE ✅
+### notify-waitlist-signup Edge Function — STATUS: LIVE ✅
+
+- Deployed at: https://oxjlzwvnhfopttcyeeao.supabase.co/functions/v1/notify-waitlist-signup
+- Trigger: "Join the waitlist →" click in AIInsightPanel.tsx
+- Payload: { name, email, plan_hash, timestamp } — name and email from Supabase user object
+- Sends email to kashyap@corpuscalc.com via Resend API
+- Subject: "New RIA Waitlist Signup — [user email]"
+- RESEND_API_KEY from Supabase secrets — never hardcoded
+- No rate limiting — signups are low volume
+- Returns 200 on success, 500 on failure. Client fails silently on error.
+- Deployed via Supabase Management API direct fetch (no CLI required)
+
+### CorpusCalc Insights Panel (AIInsightPanel.tsx) — STATUS: LIVE ✅
 
 - Location: `src/components/planner/AIInsightPanel.tsx`
-- Desktop: fixed right panel 400px, slides in from right (Framer Motion spring)
-- Mobile: bottom sheet 85vh, slides up — `isMobile = window.innerWidth <= 768`
-- Trigger: login-gated button on Step 5 (`src/components/planner/Step5Report.tsx`)
-- 5 states: loading (shimmer skeleton), loaded, error, rate-limited — no idle state
-- Diagnostic card colours: critical=#fef2f2/border #dc2626, warning=#fff7ed/border #e8622a, positive=#f0fdf4/border #16A34A, info=#f0f9ff/border #0ea5e9
-- Apply button: visual only (logs to console, 2s "Applied ✓" feedback) — store wiring pending
-- `plan_hash`: SHA-256 of `JSON.stringify(plannerState)` + `Date.now()` suffix in DEV (bypasses 24h cache during development)
-- Elite waitlist form in footer — inserts to `elite_waitlist` Supabase table
-- Inline styles only — no Tailwind inside this component (matches planner convention)
-- All 5 browser tests passed (T1 happy path, T2 auth gate, T3 mobile code-verified, T4 rate-limit 429, T5 error state)
-
-**Pending (Week 3):**
-- Apply button store wiring: `store.update(s.stateDiff)` — field map in component comments
-- Drag-dismiss on mobile bottom sheet
+- Trigger: login-gated button on Step 5 — Tab 1 (Solo/Spouse) and Tab 2 (With Kids)
+- Desktop: fixed right panel 400px, slides in from right via Framer Motion AnimatePresence
+- Mobile: bottom sheet slides up via Framer Motion AnimatePresence
+- plan_hash: SHA-256 of JSON.stringify(plannerState) via Web Crypto API — source: `src/lib/hash.ts`
+  DEV bypass: appends Date.now() when `import.meta.env.DEV` is true (never reaches production)
+- Edge Function: POST to https://oxjlzwvnhfopttcyeeao.supabase.co/functions/v1/generate-plan-insight
+  Authorization: Bearer ${VITE_SUPABASE_ANON_KEY}
+- 5 states: idle / loading / loaded / error / rate-limited
+- Rate limit: 24h per plan_hash. Countdown timer shown from localStorage key `cc_last_insight_call`
+- Health Score pill: derived from diagnostics severity mix, no additional API call
+  all positive = green (#16A34A) 90+, any critical = red (#dc2626) <60, otherwise amber (#e8622a)
+- Diagnostics: compact 3-column table (coloured dot | title | one-line detail)
+  critical=#fef2f2/border #dc2626, warning=#fff7ed/border #e8622a,
+  positive=#f0fdf4/border #16A34A, info=#f0f9ff/border #0ea5e9
+- Suggestions: stateDiff rendered as Field | Value mini-table using `fmt()` from math.ts
+- Apply button: calls `store.update(stateDiff)`, reruns `compute()`, shows "Applied ✓" on success.
+  Undo deferred to Week 3.
+- Loading: 3 skeleton pulse rows via inline CSS keyframes. No spinner component.
+- All styling: inline styles only — no Tailwind inside this component
+- Label: "CorpusCalc Insights" everywhere in user-facing strings. File not renamed.
+- Elite waitlist CTA: "Want personalised advice from a SEBI Registered Investment Adviser (RIA)? Join the waitlist →"
+- Waitlist click fires notify-waitlist-signup Edge Function (fire-and-forget, fails silently)
 
 ### Social Share Buttons in ArticlePage — STATUS: LIVE ✅
 

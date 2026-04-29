@@ -4,7 +4,7 @@ import { usePlannerStore } from '../../store/plannerStore';
 import { useAuthStore } from '../../store/authStore';
 import { supabase } from '../../lib/supabase';
 import { computePlanHash } from '../../lib/hash';
-import { fmt } from '../../lib/math';
+import { fmt, compute } from '../../lib/math';
 import type { PlannerState } from '../../lib/math';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -158,6 +158,7 @@ function RateLimitedCard() {
 
 async function fetchInsights(
   plannerState: PlannerState,
+  cr: ReturnType<typeof compute>,
   userId: string | undefined,
   signal?: AbortSignal
 ): Promise<InsightData> {
@@ -169,7 +170,21 @@ async function fetchInsights(
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
     },
-    body: JSON.stringify({ plannerState, plan_hash: hash, userId }),
+    body: JSON.stringify({
+      plannerState,
+      plan_hash: hash,
+      userId,
+      computedResult: {
+        totalCorpus: cr.totalCorpus,
+        reqCorpus: cr.reqCorpus,
+        gap: cr.gap,
+        pct: Math.round(cr.pct),
+        onTrack: cr.onTrack,
+        years: cr.years,
+        dur: cr.dur,
+        mult: cr.mult,
+      },
+    }),
   });
 
   if (res.status === 429) throw Object.assign(new Error('rate-limited'), { status: 429 });
@@ -202,6 +217,7 @@ export default function AIInsightPanel({ isOpen, onClose }: AIInsightPanelProps)
   const [insightData, setInsightData] = useState<InsightData | null>(null);
   const [errorMsg, setErrorMsg] = useState('');
   const [appliedSet, setAppliedSet] = useState<Set<number>>(new Set());
+  const [computedResult, setComputedResult] = useState<ReturnType<typeof compute> | null>(null);
 
   // Waitlist form state
   const [waitlistExpanded, setWaitlistExpanded] = useState(false);
@@ -222,7 +238,9 @@ export default function AIInsightPanel({ isOpen, onClose }: AIInsightPanelProps)
     setInsightData(null);
     setAppliedSet(new Set());
     const snapshot = plannerStateRef.current;
-    fetchInsights(snapshot, user?.id, controller.signal)
+    const cr = compute(snapshot);
+    setComputedResult(cr);
+    fetchInsights(snapshot, cr, user?.id, controller.signal)
       .then(data => { setInsightData(data); setPanelState('loaded'); })
       .catch((err: Error & { status?: number }) => {
         if (controller.signal.aborted) return;
@@ -236,7 +254,9 @@ export default function AIInsightPanel({ isOpen, onClose }: AIInsightPanelProps)
     setPanelState('loading');
     setInsightData(null);
     setErrorMsg('');
-    fetchInsights(plannerStateRef.current, user?.id)
+    const cr = compute(plannerStateRef.current);
+    setComputedResult(cr);
+    fetchInsights(plannerStateRef.current, cr, user?.id)
       .then(data => { setInsightData(data); setPanelState('loaded'); })
       .catch((err: Error & { status?: number }) => {
         if (err.status === 429) setPanelState('rate-limited');
@@ -245,16 +265,17 @@ export default function AIInsightPanel({ isOpen, onClose }: AIInsightPanelProps)
   };
 
   const handleApply = (idx: number, diff: Partial<PlannerState>) => {
-    // Validate keys against current store shape before applying
     const validDiff: Partial<PlannerState> = {};
     for (const key of Object.keys(diff) as (keyof PlannerState)[]) {
       if (key in plannerState) {
         (validDiff as Record<string, unknown>)[key] = diff[key];
-      } else {
-        console.warn('[AIInsightPanel] Skipping unknown stateDiff key:', key);
       }
     }
-    if (Object.keys(validDiff).length > 0) update(validDiff);
+    if (Object.keys(validDiff).length > 0) {
+      update(validDiff);
+      // Re-run compute with merged state so the corpus snapshot updates immediately
+      setComputedResult(compute({ ...plannerState, ...validDiff } as PlannerState));
+    }
     setAppliedSet(prev => new Set([...prev, idx]));
     setTimeout(() => setAppliedSet(prev => { const n = new Set(prev); n.delete(idx); return n; }), 2000);
   };
@@ -375,6 +396,30 @@ export default function AIInsightPanel({ isOpen, onClose }: AIInsightPanelProps)
               {/* ── Body ────────────────────────────────────────────────────── */}
               <div style={{ flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', gap: 20, overflowY: 'auto' }}>
 
+                {/* Corpus snapshot — computed client-side, shows instantly before AI responds */}
+                {computedResult && (
+                  <div style={{ borderRadius: 12, background: '#F8F7F4', border: '1px solid #E8E4DE', padding: '14px 16px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+                      <div>
+                        <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '0 0 4px' }}>Projected</p>
+                        <p style={{ fontSize: 22, fontWeight: 800, color: '#0f2318', fontFamily: 'var(--font-body)', margin: 0, lineHeight: 1.1 }}>{fmt(computedResult.totalCorpus)}</p>
+                      </div>
+                      <div>
+                        <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '0 0 4px' }}>Required</p>
+                        <p style={{ fontSize: 22, fontWeight: 800, color: '#0f2318', fontFamily: 'var(--font-body)', margin: 0, lineHeight: 1.1 }}>{fmt(computedResult.reqCorpus)}</p>
+                      </div>
+                    </div>
+                    <div style={{ background: '#E8E4DE', borderRadius: 4, height: 6, overflow: 'hidden', marginBottom: 8 }}>
+                      <div style={{ height: '100%', borderRadius: 4, background: computedResult.onTrack ? '#16A34A' : '#e8622a', width: `${Math.min(Math.round(computedResult.pct), 100)}%`, transition: 'width 0.6s ease' }} />
+                    </div>
+                    <p style={{ fontSize: 12, fontWeight: 600, margin: 0, fontFamily: 'var(--font-body)', color: computedResult.onTrack ? '#16A34A' : '#dc2626' }}>
+                      {computedResult.onTrack
+                        ? `${Math.round(computedResult.pct)}% funded — Surplus ${fmt(Math.abs(computedResult.gap))} ✓`
+                        : `${Math.round(computedResult.pct)}% funded — Gap ${fmt(computedResult.gap)}`}
+                    </p>
+                  </div>
+                )}
+
                 {/* Loading — 3 skeleton rows */}
                 {panelState === 'loading' && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -418,11 +463,7 @@ export default function AIInsightPanel({ isOpen, onClose }: AIInsightPanelProps)
                       <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px', color: '#9CA3AF', fontFamily: 'var(--font-body)', margin: '0 0 8px' }}>
                         Summary
                       </p>
-                      <p style={{
-                        fontSize: 14, color: '#374151', fontFamily: 'var(--font-body)', lineHeight: 1.65, margin: 0,
-                        display: '-webkit-box', WebkitLineClamp: 3,
-                        WebkitBoxOrient: 'vertical', overflow: 'hidden',
-                      }}>
+                      <p style={{ fontSize: 14, color: '#374151', fontFamily: 'var(--font-body)', lineHeight: 1.65, margin: 0 }}>
                         {insightData.summary}
                       </p>
                     </div>
@@ -504,20 +545,22 @@ export default function AIInsightPanel({ isOpen, onClose }: AIInsightPanelProps)
                                   </div>
                                 )}
 
-                                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                  <button
-                                    onClick={() => handleApply(i, s.stateDiff)}
-                                    style={{
-                                      padding: '6px 14px', borderRadius: 8,
-                                      background: appliedSet.has(i) ? '#16A34A' : '#0f2318',
-                                      border: 'none', color: '#fff', fontSize: 12, fontWeight: 600,
-                                      fontFamily: 'var(--font-body)', cursor: 'pointer',
-                                      transition: 'background 0.2s',
-                                    }}
-                                  >
-                                    {appliedSet.has(i) ? 'Applied ✓' : 'Apply'}
-                                  </button>
-                                </div>
+                                {diffEntries.length > 0 && (
+                                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                    <button
+                                      onClick={() => handleApply(i, s.stateDiff)}
+                                      style={{
+                                        padding: '6px 14px', borderRadius: 8,
+                                        background: appliedSet.has(i) ? '#16A34A' : '#0f2318',
+                                        border: 'none', color: '#fff', fontSize: 12, fontWeight: 600,
+                                        fontFamily: 'var(--font-body)', cursor: 'pointer',
+                                        transition: 'background 0.2s',
+                                      }}
+                                    >
+                                      {appliedSet.has(i) ? 'Applied ✓' : 'Apply to plan'}
+                                    </button>
+                                  </div>
+                                )}
                               </div>
                             );
                           })}

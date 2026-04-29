@@ -1,6 +1,6 @@
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
-const MODEL = "claude-sonnet-4-6";
-const MAX_TOKENS = 1500;
+const MODEL = "claude-haiku-4-5-20251001"; // Fast model — insights don't need Sonnet
+const MAX_TOKENS = 600;
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -25,6 +25,17 @@ interface PlanState {
   gap: number;
 }
 
+interface ComputedResult {
+  totalCorpus: number;
+  reqCorpus: number;
+  gap: number;
+  pct: number;
+  onTrack: boolean;
+  years: number;
+  dur: number;
+  mult: number;
+}
+
 interface InsightOutput {
   summary: string;
   diagnostics: unknown[];
@@ -39,12 +50,13 @@ async function generateHash(data: string): Promise<string> {
     .join("");
 }
 
-// Maps Zustand PlannerState fields to the PlanState shape the AI prompt expects
-function derivePlanState(raw: unknown): PlanState | null {
+// Maps Zustand PlannerState fields → PlanState for the AI prompt
+function derivePlanState(raw: unknown, cr?: ComputedResult): PlanState | null {
   if (!raw || typeof raw !== "object") return null;
   const s = raw as Record<string, unknown>;
 
-  const age = Number(s.age ?? s.currentAge ?? 30);
+  // curAge is the Zustand field name — s.age / s.currentAge are fallbacks only
+  const age = Number(s.curAge ?? s.age ?? s.currentAge ?? 30);
   const retAge = Number(s.retAge ?? s.retirementAge ?? 60);
   const lifeE = Number(s.lifeE ?? s.lifeExpectancy ?? 85);
   const yearsToRet = retAge - age;
@@ -56,7 +68,7 @@ function derivePlanState(raw: unknown): PlanState | null {
 
   const monthlyExp = s.expMode === "quick"
     ? Number(s.expQMo ?? s.monthlyExpenses ?? 0)
-    : Number(s.monthlyExpenses ?? 0);
+    : Number(s.monthlyExpenses ?? 0) || Number(s.expQMo ?? 0);
   const annualExp = s.expMode === "quick"
     ? Number(s.expQYr ?? s.annualExpenses ?? 0)
     : Number(s.annualExpenses ?? 0);
@@ -67,18 +79,19 @@ function derivePlanState(raw: unknown): PlanState | null {
       ? Number(s.invQuick ?? 0)
       : Number(s.invMF ?? 0) + Number(s.invEQ ?? 0) + Number(s.invPF ?? 0) + Number(s.invDT ?? 0);
 
-  // Compute projections if not provided
-  let corpusResult = s.corpusResult !== undefined ? Number(s.corpusResult) : -1;
-  let requiredCorpus = s.requiredCorpus !== undefined ? Number(s.requiredCorpus) : -1;
+  // Prefer client-computed values (accurate) over edge-function estimates (simplified)
+  let corpusResult: number;
+  let requiredCorpus: number;
 
-  if (corpusResult < 0) {
+  if (cr && cr.totalCorpus > 0) {
+    corpusResult = cr.totalCorpus;
+    requiredCorpus = cr.reqCorpus;
+  } else {
     const r = sipReturn / 100 / 12;
     const n = yearsToRet * 12;
     const existingGrown = existing * Math.pow(1 + invGR / 100, yearsToRet);
     const sipCorpus = r > 0 ? sipAmt * ((Math.pow(1 + r, n) - 1) / r) : sipAmt * n;
     corpusResult = Math.round(existingGrown + sipCorpus);
-  }
-  if (requiredCorpus < 0) {
     const moAtRet = monthlyExp * Math.pow(1 + inflation / 100, yearsToRet);
     const retDur = lifeE - retAge;
     const mult = retDur <= 20 ? 25 : retDur <= 30 ? 30 : 35;
@@ -123,55 +136,31 @@ Corpus required at retirement: ₹${p.requiredCorpus}
 Gap: ₹${Math.abs(p.gap)} (${gapLabel})`;
 }
 
-const SYSTEM_PROMPT = `You are a retirement planning analyst specialising in Indian personal finance. You analyse retirement corpus plans and provide honest, specific, actionable feedback.
+const SYSTEM_PROMPT = `You are a retirement planning analyst for Indian personal finance. Respond with valid JSON only — no preamble, no markdown.
 
-You understand:
-- Indian inflation runs 5-7% annually (healthcare 8-10%)
-- The 25x/30x/35x corpus multiplier rule based on retirement duration
-- SIP compounding over long periods in Indian equity mutual funds (expected 10-12% CAGR)
-- The difference between corpus required and corpus projected is the "gap" — the central diagnostic
-- Indian retirement context: joint families, real estate as asset, EPF/PPF/NPS as instruments
+Context:
+- Indian inflation: 5-7% (healthcare 8-10%)
+- Corpus multiplier: 25x/30x/35x based on retirement duration
+- SIP CAGR expectation: 10-12% in equity mutual funds
 
-Rules for your response:
-- Always respond with valid JSON only — no preamble, no markdown, no explanation outside the JSON
-- summary: 2-3 sentences, direct address, use rupee numbers.
-- diagnostics: 3-5 items. Be specific — mention actual numbers from the plan, not generic advice.
-- EPF rule: For any salaried user (salaryIncome > 0), check whether existingInvestments seems low relative to their age and salary. A 42-year-old earning ₹1.2L/month should have accumulated significant EPF by now. If existingInvestments appears to exclude EPF, flag it explicitly — many Indians forget to count EPF in their corpus. Always mention EPF by name.
-- suggestions: 2-3 items. Each must be concrete and specific to this plan. stateDiff must contain only valid PlannerState fields that would improve the plan.
-- Optimisation rule: If the user has investable surplus (sipAmount is less than 20% of salaryIncome), always include at least one tax-optimisation suggestion. Candidates in order of priority: NPS 80CCD(1B) — additional ₹50,000 deduction beyond 80C; step-up SIP — increasing SIP by 10% annually; ELSS for 80C if not already maximised. Name the specific section (80CCD, 80C) and the rupee benefit.
-- Never use the word "robust". Never say "it's important to". Never use corporate jargon.
-- Write like a smart friend who knows finance, not like a financial advisor covering liability.
+Rules:
+- summary: 2 sentences max, 35 words max, use ₹ numbers, address the person by name.
+- diagnostics: 3-5 items. Each detail must be max 15 words and include one specific number from the plan.
+- EPF rule: If salaryIncome > 0 and existingCorpus seems low for age/salary, flag EPF blind spot by name.
+- suggestions: 2-3 items. detail max 15 words. stateDiff must use valid PlannerState field names only.
+- Tax rule: If sipAmount < 20% of salaryIncome, suggest NPS 80CCD(1B) ₹50k deduction, step-up SIP, or ELSS 80C.
+- Never say "robust", "it's important to", or use corporate jargon.
 
-You must return valid JSON matching this exact schema — no other field names are acceptable:
+Schema — use ONLY these field names, no others:
 {
-  "summary": "string — 2-3 sentences, direct address, rupee numbers",
-  "diagnostics": [
-    {
-      "type": "critical | warning | positive | info",
-      "title": "short label, max 8 words",
-      "detail": "1-2 sentences with specific rupee numbers where possible"
-    }
-  ],
-  "suggestions": [
-    {
-      "title": "action-oriented label, max 8 words",
-      "detail": "1-2 sentences explaining what to do and why",
-      "stateDiff": {}
-    }
-  ]
-}
-Use ONLY these field names: type, title, detail, stateDiff. Never use message, label, rationale, impact, description, body, or any other variant.`;
+  "summary": "string",
+  "diagnostics": [{ "type": "critical|warning|positive|info", "title": "max 8 words", "detail": "max 15 words with one number" }],
+  "suggestions": [{ "title": "max 8 words", "detail": "max 15 words", "stateDiff": {} }]
+}`;
 
 async function callAnthropic(userMessage: string): Promise<InsightOutput> {
   const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
   if (!apiKey) throw new Error("ANTHROPIC_API_KEY not set");
-
-  const reqBody = {
-    model: MODEL,
-    max_tokens: MAX_TOKENS,
-    system: SYSTEM_PROMPT,
-    messages: [{ role: "user", content: userMessage }],
-  };
 
   const res = await fetch(ANTHROPIC_API_URL, {
     method: "POST",
@@ -180,7 +169,12 @@ async function callAnthropic(userMessage: string): Promise<InsightOutput> {
       "x-api-key": apiKey,
       "anthropic-version": "2023-06-01",
     },
-    body: JSON.stringify(reqBody),
+    body: JSON.stringify({
+      model: MODEL,
+      max_tokens: MAX_TOKENS,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: "user", content: userMessage }],
+    }),
   });
 
   if (!res.ok) {
@@ -217,9 +211,9 @@ Deno.serve(async (req: Request) => {
     return jsonResp({ error: "invalid_json" }, 400);
   }
 
-  // Accept plannerState (new) or planState (old) field name
   const rawPlan = parsed.plannerState ?? parsed.planState;
-  const planState = derivePlanState(rawPlan);
+  const cr = parsed.computedResult as ComputedResult | undefined;
+  const planState = derivePlanState(rawPlan, cr);
   if (!planState) {
     return jsonResp({ error: "missing_fields" }, 400);
   }
@@ -254,20 +248,12 @@ Deno.serve(async (req: Request) => {
   }
 
   const userMessage = buildUserMessage(planState);
-  let output: InsightOutput | undefined;
+  let output: InsightOutput;
 
   try {
     output = await callAnthropic(userMessage);
   } catch (err) {
-    console.error("Anthropic attempt 1 failed:", err);
-    try {
-      output = await callAnthropic(userMessage);
-    } catch (err2) {
-      console.error("Anthropic attempt 2 failed:", err2);
-    }
-  }
-
-  if (!output) {
+    console.error("Anthropic call failed:", err);
     return jsonResp({ error: "ai_unavailable" }, 500);
   }
 
