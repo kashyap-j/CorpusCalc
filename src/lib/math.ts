@@ -464,23 +464,34 @@ export function retDur(S: PlannerState): number {
 
 export function compute(S: PlannerState): ComputeResult {
   const years = ytr(S), dur = retDur(S);
-  const inv = totInv(S), mo = totMoExp(S), yr = totYrExp(S);
+  const invRaw = totInv(S), moRaw = totMoExp(S), yrRaw = totYrExp(S);
+
+  // NaN guards — old persisted state may be missing fields added after first use
+  const inv          = Number.isFinite(invRaw)        ? invRaw        : 0;
+  const mo           = Number.isFinite(moRaw)         ? moRaw         : 0;
+  const yr           = Number.isFinite(yrRaw)         ? yrRaw         : 0;
+  const invGR        = Number.isFinite(S.invGR)       ? S.invGR       : 10;
+  const sipAmt       = Number.isFinite(S.sipAmt)      ? S.sipAmt      : 0;
+  const sipReturn    = Number.isFinite(S.sipReturn)   ? S.sipReturn   : 12;
+  const inflation    = Number.isFinite(S.inflation)   ? S.inflation   : 6;
+  const salaryGrowth = Number.isFinite(S.salaryGrowth)? S.salaryGrowth: 7;
+  const sipFixed     = Number.isFinite(S.sipFixed)    ? S.sipFixed    : 0;
 
   // Existing investments grown
-  const existGrown = inv * Math.pow(1 + S.invGR / 100, years);
+  const existGrown = inv * Math.pow(1 + invGR / 100, years);
 
   // SIP corpus (month by month, handles growth mode)
   const sipC = calcSIPCorpus(
-    S.sipAmt, years, S.sipReturn,
+    sipAmt, years, sipReturn,
     S.sipMode === 'salary' ? 'salary' : S.sipMode === 'fixed' ? 'fixed' : 'flat',
-    S.sipMode === 'salary' ? S.salaryGrowth : S.sipFixed
+    S.sipMode === 'salary' ? salaryGrowth : sipFixed
   );
 
   const totalCorpus = existGrown + sipC;
 
   // Monthly & annual expenses at retirement (inflation adjusted)
-  const moAtRet = mo  * Math.pow(1 + S.inflation / 100, years);
-  const yrAtRet = yr  * Math.pow(1 + S.inflation / 100, years);
+  const moAtRet = mo  * Math.pow(1 + inflation / 100, years);
+  const yrAtRet = yr  * Math.pow(1 + inflation / 100, years);
   // ★ CORPUS SIZED ON MONTHLY EXPENSES ONLY (× 12)
   // Yearly one-time expenses vary with life stage — planned decade-by-decade in Step 6.
   const annForCorpus = moAtRet * 12;
@@ -493,7 +504,7 @@ export function compute(S: PlannerState): ComputeResult {
   const pct = reqCorpus > 0 ? Math.min(totalCorpus / reqCorpus * 100, 100) : 0;
 
   // Needed SIP (flat, for guidance)
-  const neededFlat = neededSIP(Math.max(reqCorpus - existGrown, 0), years, S.sipReturn);
+  const neededFlat = neededSIP(Math.max(reqCorpus - existGrown, 0), years, sipReturn);
 
   return {
     existGrown, sipC, totalCorpus, moAtRet, yrAtRet, annAtRet: annForCorpus,

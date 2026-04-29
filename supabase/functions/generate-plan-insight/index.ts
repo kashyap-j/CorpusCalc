@@ -2,6 +2,12 @@ const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
 const MODEL = "claude-sonnet-4-6";
 const MAX_TOKENS = 1500;
 
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
 interface PlanState {
   name: string;
   currentAge: number;
@@ -19,27 +25,10 @@ interface PlanState {
   gap: number;
 }
 
-interface RequestBody {
-  planState: PlanState;
-  userId: string;
-}
-
-interface Diagnostic {
-  severity: "critical" | "warning" | "ok";
-  label: string;
-  detail: string;
-}
-
-interface Suggestion {
-  label: string;
-  impact: string;
-  stateDiff: Record<string, unknown>;
-}
-
 interface InsightOutput {
   summary: string;
-  diagnostics: Diagnostic[];
-  suggestions: Suggestion[];
+  diagnostics: unknown[];
+  suggestions: unknown[];
 }
 
 async function generateHash(data: string): Promise<string> {
@@ -48,6 +37,72 @@ async function generateHash(data: string): Promise<string> {
   return Array.from(new Uint8Array(buffer))
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
+}
+
+// Maps Zustand PlannerState fields to the PlanState shape the AI prompt expects
+function derivePlanState(raw: unknown): PlanState | null {
+  if (!raw || typeof raw !== "object") return null;
+  const s = raw as Record<string, unknown>;
+
+  const age = Number(s.age ?? s.currentAge ?? 30);
+  const retAge = Number(s.retAge ?? s.retirementAge ?? 60);
+  const lifeE = Number(s.lifeE ?? s.lifeExpectancy ?? 85);
+  const yearsToRet = retAge - age;
+  const salary = Number(s.salaryMonthly ?? s.salaryIncome ?? 0);
+  const sipAmt = Number(s.sipAmt ?? s.sipAmount ?? 0);
+  const sipReturn = Number(s.sipReturn ?? 12);
+  const inflation = Number(s.inflation ?? 6);
+  const invGR = Number(s.invGR ?? 10);
+
+  const monthlyExp = s.expMode === "quick"
+    ? Number(s.expQMo ?? s.monthlyExpenses ?? 0)
+    : Number(s.monthlyExpenses ?? 0);
+  const annualExp = s.expMode === "quick"
+    ? Number(s.expQYr ?? s.annualExpenses ?? 0)
+    : Number(s.annualExpenses ?? 0);
+
+  const existing = s.existingCorpus !== undefined
+    ? Number(s.existingCorpus)
+    : s.invMode === "quick"
+      ? Number(s.invQuick ?? 0)
+      : Number(s.invMF ?? 0) + Number(s.invEQ ?? 0) + Number(s.invPF ?? 0) + Number(s.invDT ?? 0);
+
+  // Compute projections if not provided
+  let corpusResult = s.corpusResult !== undefined ? Number(s.corpusResult) : -1;
+  let requiredCorpus = s.requiredCorpus !== undefined ? Number(s.requiredCorpus) : -1;
+
+  if (corpusResult < 0) {
+    const r = sipReturn / 100 / 12;
+    const n = yearsToRet * 12;
+    const existingGrown = existing * Math.pow(1 + invGR / 100, yearsToRet);
+    const sipCorpus = r > 0 ? sipAmt * ((Math.pow(1 + r, n) - 1) / r) : sipAmt * n;
+    corpusResult = Math.round(existingGrown + sipCorpus);
+  }
+  if (requiredCorpus < 0) {
+    const moAtRet = monthlyExp * Math.pow(1 + inflation / 100, yearsToRet);
+    const retDur = lifeE - retAge;
+    const mult = retDur <= 20 ? 25 : retDur <= 30 ? 30 : 35;
+    requiredCorpus = Math.round(moAtRet * 12 * mult);
+  }
+
+  const sipMode = String(s.sipMode ?? s.sipGrowthMode ?? "flat") as "flat" | "salary" | "fixed";
+
+  return {
+    name: String(s.name ?? "User"),
+    currentAge: age,
+    retirementAge: retAge,
+    lifeExpectancy: lifeE,
+    monthlyExpenses: monthlyExp,
+    annualExpenses: annualExp,
+    salaryIncome: salary,
+    existingCorpus: existing,
+    sipAmount: sipAmt,
+    sipGrowthMode: sipMode,
+    yearsToRetirement: yearsToRet,
+    corpusResult,
+    requiredCorpus,
+    gap: requiredCorpus - corpusResult,
+  };
 }
 
 function buildUserMessage(p: PlanState): string {
@@ -65,7 +120,7 @@ Monthly SIP: ₹${p.sipAmount} (${p.sipGrowthMode} growth)
 
 Corpus projected at retirement: ₹${p.corpusResult}
 Corpus required at retirement: ₹${p.requiredCorpus}
-Gap: ₹${p.gap} (${gapLabel})`;
+Gap: ₹${Math.abs(p.gap)} (${gapLabel})`;
 }
 
 const SYSTEM_PROMPT = `You are a retirement planning analyst specialising in Indian personal finance. You analyse retirement corpus plans and provide honest, specific, actionable feedback.
@@ -111,7 +166,7 @@ async function callAnthropic(userMessage: string): Promise<InsightOutput> {
   const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
   if (!apiKey) throw new Error("ANTHROPIC_API_KEY not set");
 
-  const body = {
+  const reqBody = {
     model: MODEL,
     max_tokens: MAX_TOKENS,
     system: SYSTEM_PROMPT,
@@ -125,7 +180,7 @@ async function callAnthropic(userMessage: string): Promise<InsightOutput> {
       "x-api-key": apiKey,
       "anthropic-version": "2023-06-01",
     },
-    body: JSON.stringify(body),
+    body: JSON.stringify(reqBody),
   });
 
   if (!res.ok) {
@@ -135,55 +190,44 @@ async function callAnthropic(userMessage: string): Promise<InsightOutput> {
 
   const data = await res.json();
   const content: string = data.content?.[0]?.text ?? "";
-
-  const cleaned = content.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/,'').trim();
+  const cleaned = content.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```\s*$/, "").trim();
   return JSON.parse(cleaned) as InsightOutput;
+}
+
+function jsonResp(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json", ...CORS },
+  });
 }
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-      },
-    });
+    return new Response(null, { headers: CORS });
   }
 
   if (req.method !== "POST") {
-    return new Response(JSON.stringify({ error: "method_not_allowed" }), {
-      status: 405,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResp({ error: "method_not_allowed" }, 405);
   }
 
-  let body: RequestBody;
+  let parsed: Record<string, unknown>;
   try {
-    body = await req.json();
+    parsed = await req.json() as Record<string, unknown>;
   } catch {
-    return new Response(JSON.stringify({ error: "invalid_json" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResp({ error: "invalid_json" }, 400);
   }
 
-  const { planState, userId } = body;
-  if (!planState || !userId) {
-    return new Response(JSON.stringify({ error: "missing_fields" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
+  // Accept plannerState (new) or planState (old) field name
+  const rawPlan = parsed.plannerState ?? parsed.planState;
+  const planState = derivePlanState(rawPlan);
+  if (!planState) {
+    return jsonResp({ error: "missing_fields" }, 400);
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!supabaseUrl || !supabaseServiceKey) {
-    console.error("Supabase env vars not set");
-    return new Response(JSON.stringify({ error: "server_misconfigured" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonResp({ error: "server_misconfigured" }, 500);
   }
 
   const sbHeaders = {
@@ -192,65 +236,47 @@ Deno.serve(async (req: Request) => {
     "Authorization": `Bearer ${supabaseServiceKey}`,
   };
 
-  // Rate limiting: hash the planState and check for recent identical request
-  const planHash = await generateHash(JSON.stringify(planState));
+  const planHash = typeof parsed.plan_hash === "string"
+    ? parsed.plan_hash
+    : await generateHash(JSON.stringify(planState));
 
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
   const rateRes = await fetch(
     `${supabaseUrl}/rest/v1/plan_insights?plan_hash=eq.${encodeURIComponent(planHash)}&created_at=gt.${encodeURIComponent(since)}&limit=1`,
     { headers: sbHeaders }
-  ).catch((e) => { console.error("Rate limit check failed:", e); return null; });
+  ).catch(() => null);
 
-  if (rateRes && rateRes.ok) {
+  if (rateRes?.ok) {
     const rows = await rateRes.json();
     if (Array.isArray(rows) && rows.length > 0) {
-      return new Response(
-        JSON.stringify({ error: "rate_limited", retryAfter: "24h" }),
-        { status: 429, headers: { "Content-Type": "application/json" } }
-      );
+      return jsonResp({ error: "rate_limited", retryAfter: "24h" }, 429);
     }
   }
 
   const userMessage = buildUserMessage(planState);
+  let output: InsightOutput | undefined;
 
-  let output: InsightOutput;
   try {
     output = await callAnthropic(userMessage);
   } catch (err) {
-    console.error("Anthropic call failed (attempt 1):", err);
+    console.error("Anthropic attempt 1 failed:", err);
     try {
       output = await callAnthropic(userMessage);
-    } catch (retryErr) {
-      console.error("Anthropic call failed (attempt 2):", retryErr);
-      return new Response(JSON.stringify({ error: "ai_unavailable" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
+    } catch (err2) {
+      console.error("Anthropic attempt 2 failed:", err2);
     }
   }
 
-  // Persist to plan_insights
-  const insertRes = await fetch(`${supabaseUrl}/rest/v1/plan_insights`, {
-    method: "POST",
-    headers: { ...sbHeaders, "Prefer": "return=minimal" },
-    body: JSON.stringify({
-      user_id: userId,
-      plan_hash: planHash,
-      input_summary: planState,
-      output,
-    }),
-  }).catch((e) => { console.error("Failed to persist insight:", e); return null; });
-
-  if (insertRes && !insertRes.ok) {
-    const errBody = await insertRes.text();
-    console.error("Insert failed:", insertRes.status, errBody);
+  if (!output) {
+    return jsonResp({ error: "ai_unavailable" }, 500);
   }
 
-  return new Response(JSON.stringify(output), {
-    status: 200,
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    },
-  });
+  const userId = typeof parsed.userId === "string" ? parsed.userId : null;
+  await fetch(`${supabaseUrl}/rest/v1/plan_insights`, {
+    method: "POST",
+    headers: { ...sbHeaders, "Prefer": "return=minimal" },
+    body: JSON.stringify({ user_id: userId, plan_hash: planHash, input_summary: planState, output }),
+  }).catch((e) => console.error("Insert failed:", e));
+
+  return jsonResp(output);
 });

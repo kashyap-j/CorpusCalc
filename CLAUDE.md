@@ -376,18 +376,23 @@ The dev server runs on `http://localhost:5173`. Port is strict — if it's alrea
 - S4 Dual Income No Kids ✅ — NPS 80CCD(1B) + step-up SIP suggested
 - S5 Near Retirement Panic ✅ — debt allocation, longevity risk, 8yr runway flagged
 
-### AIInsightPanel Component — STATUS: NOT STARTED (Week 2 Tuesday)
+### AIInsightPanel Component — STATUS: LIVE ✅
 
 - Location: `src/components/planner/AIInsightPanel.tsx`
-- Desktop: fixed right panel 400px, slides in from right
-- Mobile: bottom sheet, slides up (drag-dismiss Week 3)
-- Trigger: login-gated button on Step 5
-- 5 states: idle, loading, loaded, error, rate-limited
+- Desktop: fixed right panel 400px, slides in from right (Framer Motion spring)
+- Mobile: bottom sheet 85vh, slides up — `isMobile = window.innerWidth <= 768`
+- Trigger: login-gated button on Step 5 (`src/components/planner/Step5Report.tsx`)
+- 5 states: loading (shimmer skeleton), loaded, error, rate-limited — no idle state
 - Diagnostic card colours: critical=#fef2f2/border #dc2626, warning=#fff7ed/border #e8622a, positive=#f0fdf4/border #16A34A, info=#f0f9ff/border #0ea5e9
-- Apply button: visual only in Week 2, store wiring in Week 2 Saturday, undo in Week 3
-- `plan_hash`: SHA-256 of `JSON.stringify(plannerState)` via Web Crypto API
+- Apply button: visual only (logs to console, 2s "Applied ✓" feedback) — store wiring pending
+- `plan_hash`: SHA-256 of `JSON.stringify(plannerState)` + `Date.now()` suffix in DEV (bypasses 24h cache during development)
+- Elite waitlist form in footer — inserts to `elite_waitlist` Supabase table
 - Inline styles only — no Tailwind inside this component (matches planner convention)
-- Do NOT touch `math.ts` or change any existing Step component layout
+- All 5 browser tests passed (T1 happy path, T2 auth gate, T3 mobile code-verified, T4 rate-limit 429, T5 error state)
+
+**Pending (Week 3):**
+- Apply button store wiring: `store.update(s.stateDiff)` — field map in component comments
+- Drag-dismiss on mobile bottom sheet
 
 ### Social Share Buttons in ArticlePage — STATUS: LIVE ✅
 

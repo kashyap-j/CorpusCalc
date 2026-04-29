@@ -1,10 +1,14 @@
+import { useState } from 'react';
 import AmountInput from './AmountInput';
 import { usePlannerStore } from '../../store/plannerStore';
+import { useAuthStore } from '../../store/authStore';
 import {
   fmt, moSurplus, calcAllKidGoals, totalKidsSIPNeeded,
   computeTab2, type SIPMode,
 } from '../../lib/math';
 import StepHeader from './StepHeader';
+import AuthModal from '../auth/AuthModal';
+import AIInsightPanel from './AIInsightPanel';
 
 function Slider({ label, value, min, max, unit, onChange, hint }: {
   label: string; value: number; min: number; max: number; unit: string;
@@ -40,6 +44,15 @@ const fieldLabel: React.CSSProperties = {
 
 export default function Step5KidsInvest() {
   const { state: S, update } = usePlannerStore();
+  const { user } = useAuthStore();
+
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  const handleInsightClick = () => {
+    if (!user) setShowAuthModal(true);
+    else setIsPanelOpen(true);
+  };
 
   const surplus = moSurplus(S);
   const goals = calcAllKidGoals(S);
@@ -279,7 +292,36 @@ export default function Step5KidsInvest() {
           </>
         )}
 
+        {/* CorpusCalc Insights trigger */}
+        {hasSIP && (
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <button
+              onClick={handleInsightClick}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                padding: '12px 24px', borderRadius: '12px',
+                background: '#e8622a', border: 'none',
+                color: '#fff', fontSize: '14px', fontWeight: 700,
+                fontFamily: 'var(--font-body)', cursor: 'pointer',
+                boxShadow: '0 4px 14px rgba(232, 98, 42, 0.35)',
+                transition: 'opacity 0.15s',
+              }}
+              onMouseOver={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '0.88'; }}
+              onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '1'; }}
+            >
+              <span style={{ fontSize: '16px' }}>✦</span>
+              Get CorpusCalc Insights
+            </button>
+          </div>
+        )}
+
       </div>
+
+      {showAuthModal && (
+        <AuthModal initialTab="login" onClose={() => setShowAuthModal(false)} />
+      )}
+
+      <AIInsightPanel isOpen={isPanelOpen} onClose={() => setIsPanelOpen(false)} />
     </div>
   );
 }

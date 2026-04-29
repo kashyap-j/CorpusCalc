@@ -62,12 +62,14 @@ export default function AuthModal({ initialTab = 'login', onClose }: AuthModalPr
 
   const handleGoogle = async () => {
     setError(''); setLoading(true);
+    // Preserve current path so AuthCallback can return the user here after OAuth
+    sessionStorage.setItem('auth_redirect', window.location.pathname);
     const { error: err } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: `${window.location.origin}/auth/callback`, queryParams: { prompt: 'select_account' } },
     });
     setLoading(false);
-    if (err) setError(err.message);
+    if (err) { sessionStorage.removeItem('auth_redirect'); setError(err.message); }
   };
 
   const inputCls =

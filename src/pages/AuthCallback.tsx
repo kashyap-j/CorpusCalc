@@ -35,7 +35,9 @@ function getPostAuthDestination(): string {
     return '/plan';
   }
 
-  return '/';
+  const redirect = sessionStorage.getItem('auth_redirect') || '/plan';
+  sessionStorage.removeItem('auth_redirect');
+  return redirect;
 }
 
 export default function AuthCallback() {

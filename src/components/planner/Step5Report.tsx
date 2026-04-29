@@ -142,7 +142,7 @@ export default function Step5Report() {
           </div>
         )}
 
-        {/* AI Insights trigger — placed after the on-track/shortfall verdict, highest-intent moment */}
+        {/* CorpusCalc Insights trigger — placed after the on-track/shortfall verdict, highest-intent moment */}
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <button
             onClick={handleInsightClick}
@@ -159,7 +159,7 @@ export default function Step5Report() {
             onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '1'; }}
           >
             <span style={{ fontSize: '16px' }}>✦</span>
-            Get AI Insights
+            Get CorpusCalc Insights
           </button>
         </div>
 
