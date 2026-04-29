@@ -360,17 +360,23 @@ The dev server runs on `http://localhost:5173`. Port is strict — if it's alrea
 ### generate-plan-insight Edge Function — STATUS: LIVE ✅
 
 - Deployed at: https://oxjlzwvnhfopttcyeeao.supabase.co/functions/v1/generate-plan-insight
-- Model: claude-sonnet-4-6, max_tokens: 1500
-- Rate limiting: 24h per plan_hash (HTTP 429 on repeat)
+- Model: `claude-haiku-4-5-20251001` (switched from Sonnet for ~3s response vs 10-15s)
+- max_tokens: 600 (reduced from 1500 — forces concise output, cuts latency)
+- Rate limiting: 24h per plan_hash (HTTP 429 on repeat). No retry on failure — fail fast.
 - `plan_insights` table created in Supabase with RLS
 - Output schema LOCKED — always returns exactly: `type`/`title`/`detail` for diagnostics, `title`/`detail`/`stateDiff` for suggestions
 - `esm.sh` import removed — uses direct `fetch()` against Supabase PostgREST API, no external deps at cold start
 - Deployed via Supabase Management API (no CLI required)
+- Accepts `computedResult` in POST payload — client sends actual `compute()` output so AI uses
+  correct corpus numbers instead of its own simplified estimates
+- **Bug fixed:** `curAge` field mapping — was reading `s.age` (undefined → defaulted to 30),
+  now reads `s.curAge ?? s.age ?? s.currentAge`. This caused completely wrong corpus projections.
 
 **System prompt rules (do not remove):**
 - EPF rule: for any salaried user, always check if existingInvestments seems low for their age/salary and flag EPF blind spot by name
 - Optimisation rule: if sipAmount < 20% of salaryIncome, always suggest at least one of: NPS 80CCD(1B), step-up SIP, ELSS — name the section and rupee benefit
 - Schema rule: only use field names `type`/`title`/`detail`/`stateDiff` — never `message`/`label`/`rationale`/`impact`/`description`/`body`
+- Detail brevity rule: each diagnostic `detail` must be max 15 words and include one specific number
 
 **Prompt eval status — 5/5 passing as of April 26, 2026:**
 - S1 Late Starter ✅ — EPF blind spot caught, corpus shortfall flagged
@@ -401,16 +407,21 @@ The dev server runs on `http://localhost:5173`. Port is strict — if it's alrea
   DEV bypass: appends Date.now() when `import.meta.env.DEV` is true (never reaches production)
 - Edge Function: POST to https://oxjlzwvnhfopttcyeeao.supabase.co/functions/v1/generate-plan-insight
   Authorization: Bearer ${VITE_SUPABASE_ANON_KEY}
+  Payload includes `computedResult` (actual `compute()` output) so AI receives correct numbers
 - 5 states: idle / loading / loaded / error / rate-limited
 - Rate limit: 24h per plan_hash. Countdown timer shown from localStorage key `cc_last_insight_call`
+- **Corpus snapshot card**: shown instantly on panel open (no AI wait) — computed client-side
+  Projected | Required big numbers, progress bar, gap/surplus label with colour coding
 - Health Score pill: derived from diagnostics severity mix, no additional API call
   all positive = green (#16A34A) 90+, any critical = red (#dc2626) <60, otherwise amber (#e8622a)
 - Diagnostics: compact 3-column table (coloured dot | title | one-line detail)
   critical=#fef2f2/border #dc2626, warning=#fff7ed/border #e8622a,
   positive=#f0fdf4/border #16A34A, info=#f0f9ff/border #0ea5e9
 - Suggestions: stateDiff rendered as Field | Value mini-table using `fmt()` from math.ts
-- Apply button: calls `store.update(stateDiff)`, reruns `compute()`, shows "Applied ✓" on success.
-  Undo deferred to Week 3.
+- **Apply to plan button**: only rendered when `stateDiff` is non-empty (hidden for advisory suggestions).
+  On click: `store.update(validDiff)` + re-runs `compute()` with merged state → corpus snapshot
+  updates in real-time in the panel. Shows "Applied ✓" for 2s. Undo deferred.
+- Summary: full text, no line-clamp (previously truncated to 3 lines)
 - Loading: 3 skeleton pulse rows via inline CSS keyframes. No spinner component.
 - All styling: inline styles only — no Tailwind inside this component
 - Label: "CorpusCalc Insights" everywhere in user-facing strings. File not renamed.
