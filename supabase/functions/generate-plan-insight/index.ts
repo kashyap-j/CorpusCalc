@@ -236,13 +236,13 @@ Deno.serve(async (req: Request) => {
 
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
   const rateRes = await fetch(
-    `${supabaseUrl}/rest/v1/plan_insights?plan_hash=eq.${encodeURIComponent(planHash)}&created_at=gt.${encodeURIComponent(since)}&limit=1`,
+    `${supabaseUrl}/rest/v1/plan_insights?plan_hash=eq.${encodeURIComponent(planHash)}&created_at=gt.${encodeURIComponent(since)}&limit=3`,
     { headers: sbHeaders }
   ).catch(() => null);
 
   if (rateRes?.ok) {
     const rows = await rateRes.json();
-    if (Array.isArray(rows) && rows.length > 0) {
+    if (Array.isArray(rows) && rows.length >= 3) {
       return jsonResp({ error: "rate_limited", retryAfter: "24h" }, 429);
     }
   }

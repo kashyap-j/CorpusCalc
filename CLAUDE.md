@@ -362,7 +362,7 @@ The dev server runs on `http://localhost:5173`. Port is strict — if it's alrea
 - Deployed at: https://oxjlzwvnhfopttcyeeao.supabase.co/functions/v1/generate-plan-insight
 - Model: `claude-haiku-4-5-20251001` (switched from Sonnet for ~3s response vs 10-15s)
 - max_tokens: 600 (reduced from 1500 — forces concise output, cuts latency)
-- Rate limiting: 24h per plan_hash (HTTP 429 on repeat). No retry on failure — fail fast.
+- Rate limiting: 3 attempts per plan_hash per 24h (HTTP 429 on 4th attempt). No retry on failure — fail fast.
 - `plan_insights` table created in Supabase with RLS
 - Output schema LOCKED — always returns exactly: `type`/`title`/`detail` for diagnostics, `title`/`detail`/`stateDiff` for suggestions
 - `esm.sh` import removed — uses direct `fetch()` against Supabase PostgREST API, no external deps at cold start
