@@ -55,8 +55,8 @@ function derivePlanState(raw: unknown, cr?: ComputedResult): PlanState | null {
   if (!raw || typeof raw !== "object") return null;
   const s = raw as Record<string, unknown>;
 
-  // curAge is the Zustand field name — s.age / s.currentAge are fallbacks only
-  const age = Number(s.curAge ?? s.age ?? s.currentAge ?? 30);
+  // plannerStore uses `age` — s.curAge is never present
+  const age = Number(s.age ?? s.currentAge ?? 30);
   const retAge = Number(s.retAge ?? s.retirementAge ?? 60);
   const lifeE = Number(s.lifeE ?? s.lifeExpectancy ?? 85);
   const yearsToRet = retAge - age;
@@ -118,6 +118,14 @@ function derivePlanState(raw: unknown, cr?: ComputedResult): PlanState | null {
   };
 }
 
+// Formats raw rupee integers to human-readable Indian notation
+function fmtRupees(n: number): string {
+  const abs = Math.abs(n);
+  if (abs >= 10_000_000) return `₹${(n / 10_000_000).toFixed(2).replace(/\.?0+$/, "")} Cr`;
+  if (abs >= 100_000)   return `₹${(n / 100_000).toFixed(2).replace(/\.?0+$/, "")} L`;
+  return `₹${Math.round(n).toLocaleString("en-IN")}`;
+}
+
 function buildUserMessage(p: PlanState): string {
   const gapLabel = p.gap > 0 ? "SHORTFALL" : "SURPLUS";
   return `Analyse this retirement plan:
@@ -126,19 +134,20 @@ Name: ${p.name}
 Current age: ${p.currentAge} | Retirement age: ${p.retirementAge} | Life expectancy: ${p.lifeExpectancy}
 Years to retirement: ${p.yearsToRetirement}
 
-Monthly expenses today: ₹${p.monthlyExpenses} | Annual one-time expenses: ₹${p.annualExpenses}
-Current salary/income: ₹${p.salaryIncome}/month
-Existing investments: ₹${p.existingCorpus}
-Monthly SIP: ₹${p.sipAmount} (${p.sipGrowthMode} growth)
+Monthly expenses today: ${fmtRupees(p.monthlyExpenses)} | Annual one-time expenses: ${fmtRupees(p.annualExpenses)}
+Current salary/income: ${fmtRupees(p.salaryIncome)}/month
+Existing investments: ${fmtRupees(p.existingCorpus)}
+Monthly SIP: ${fmtRupees(p.sipAmount)} (${p.sipGrowthMode} growth)
 
-Corpus projected at retirement: ₹${p.corpusResult}
-Corpus required at retirement: ₹${p.requiredCorpus}
-Gap: ₹${Math.abs(p.gap)} (${gapLabel})`;
+Corpus projected at retirement: ${fmtRupees(p.corpusResult)}
+Corpus required at retirement: ${fmtRupees(p.requiredCorpus)}
+Gap: ${fmtRupees(Math.abs(p.gap))} (${gapLabel})`;
 }
 
 const SYSTEM_PROMPT = `You are a retirement planning analyst for Indian personal finance. Respond with valid JSON only — no preamble, no markdown.
 
 Context:
+- All monetary amounts in the user message are already formatted in Indian notation (₹X Cr, ₹X L, ₹X). Use them as-is — do NOT re-convert or re-scale.
 - Indian inflation: 5-7% (healthcare 8-10%)
 - Corpus multiplier: 25x/30x/35x based on retirement duration
 - SIP CAGR expectation: 10-12% in equity mutual funds

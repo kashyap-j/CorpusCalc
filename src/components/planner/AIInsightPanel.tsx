@@ -156,6 +156,41 @@ function RateLimitedCard() {
 
 // ── Fetch helper ──────────────────────────────────────────────────────────────
 
+/*
+ * fetchInsights — payload sent to generate-plan-insight edge function
+ *
+ * plannerState  (full Zustand store snapshot, all monetary fields in raw ₹ integers):
+ *   name          — user's display name (string)
+ *   age           — current age (integer years)
+ *   retAge        — retirement age (integer years)
+ *   lifeE         — life expectancy (integer years)
+ *   salaryMonthly — monthly salary in ₹
+ *   salaryGrowth  — salary growth rate (%, e.g. 8)
+ *   sipAmt        — monthly SIP in ₹
+ *   sipReturn     — expected SIP CAGR (%, e.g. 12)
+ *   sipMode       — 'flat' | 'salary' | 'fixed'
+ *   sipFixed      — annual SIP step-up in ₹ (used when sipMode='fixed')
+ *   invMode       — 'quick' | 'detailed'
+ *   invQuick      — existing investments total in ₹ (quick mode)
+ *   invMF/invEQ/invPF/invDT — detailed investment buckets in ₹
+ *   invGR         — existing investment growth rate (%, e.g. 10)
+ *   expMode       — 'quick' | 'detailed'
+ *   expQMo        — monthly expenses in ₹ (quick mode)
+ *   expQYr        — annual one-time expenses in ₹
+ *   inflation     — inflation rate (%, e.g. 6)
+ *
+ * computedResult  (output of compute(), all monetary in raw ₹ integers):
+ *   totalCorpus — projected corpus at retirement
+ *   reqCorpus   — required corpus at retirement
+ *   gap         — reqCorpus - totalCorpus (positive = shortfall)
+ *   pct         — totalCorpus / reqCorpus × 100 (integer)
+ *   onTrack     — totalCorpus >= reqCorpus (boolean)
+ *   years       — years to retirement (integer)
+ *   dur         — retirement duration in years (integer)
+ *   mult        — corpus multiplier: 25, 30, or 35
+ *
+ * NOT sent: step, tab, showErrors, phases[], deps[], kids[], any UI/display state
+ */
 async function fetchInsights(
   plannerState: PlannerState,
   cr: ReturnType<typeof compute>,
@@ -218,6 +253,8 @@ export default function AIInsightPanel({ isOpen, onClose }: AIInsightPanelProps)
   const [errorMsg, setErrorMsg] = useState('');
   const [appliedSet, setAppliedSet] = useState<Set<number>>(new Set());
   const [computedResult, setComputedResult] = useState<ReturnType<typeof compute> | null>(null);
+  const [showScoreTooltip, setShowScoreTooltip] = useState(false);
+  const scorePillRef = useRef<HTMLDivElement>(null);
 
   // Waitlist form state
   const [waitlistExpanded, setWaitlistExpanded] = useState(false);
@@ -230,6 +267,14 @@ export default function AIInsightPanel({ isOpen, onClose }: AIInsightPanelProps)
   useEffect(() => {
     if (user?.email && !waitlistEmail) setWaitlistEmail(user.email);
   }, [user?.email]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Dismiss score tooltip on tap-outside (mobile)
+  useEffect(() => {
+    if (!showScoreTooltip || !isMobile) return;
+    const handleDocClick = () => setShowScoreTooltip(false);
+    document.addEventListener('click', handleDocClick);
+    return () => document.removeEventListener('click', handleDocClick);
+  }, [showScoreTooltip, isMobile]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -364,17 +409,41 @@ export default function AIInsightPanel({ isOpen, onClose }: AIInsightPanelProps)
                     <p style={{ fontSize: 17, fontWeight: 700, color: '#0f2318', fontFamily: 'var(--font-body)', margin: 0 }}>
                       CorpusCalc Plan Insights
                     </p>
-                    {/* Health Score pill */}
+                    {/* Health Score pill with tooltip */}
                     {score !== null && (
-                      <div style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        width: 36, height: 36, borderRadius: '50%',
-                        background: scoreColor(score), flexShrink: 0,
-                        boxShadow: `0 0 0 3px ${scoreColor(score)}22`,
-                      }}>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: '#fff', fontFamily: 'var(--font-body)', lineHeight: 1 }}>
-                          {score}
-                        </span>
+                      <div
+                        ref={scorePillRef}
+                        style={{ position: 'relative', display: 'inline-flex', flexShrink: 0 }}
+                        onMouseEnter={() => { if (!isMobile) setShowScoreTooltip(true); }}
+                        onMouseLeave={() => { if (!isMobile) setShowScoreTooltip(false); }}
+                        onClick={(e) => { if (isMobile) { e.stopPropagation(); setShowScoreTooltip(v => !v); } }}
+                      >
+                        {showScoreTooltip && (
+                          <div style={{
+                            position: 'absolute', bottom: 'calc(100% + 8px)', left: '50%',
+                            transform: 'translateX(-50%)',
+                            background: '#0f2318', color: '#fff', fontSize: 12,
+                            padding: '8px 10px', borderRadius: 6,
+                            whiteSpace: 'nowrap', zIndex: 10,
+                            fontFamily: 'var(--font-body)', lineHeight: 1.6,
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                            pointerEvents: 'none',
+                          }}>
+                            Plan Health Score — based on your diagnostics.<br />
+                            90+ = Strong | 60–89 = Needs attention | Below 60 = At risk
+                          </div>
+                        )}
+                        <div style={{
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          width: 36, height: 36, borderRadius: '50%',
+                          background: scoreColor(score),
+                          boxShadow: `0 0 0 3px ${scoreColor(score)}22`,
+                          cursor: 'pointer',
+                        }}>
+                          <span style={{ fontSize: 11, fontWeight: 700, color: '#fff', fontFamily: 'var(--font-body)', lineHeight: 1 }}>
+                            {score}
+                          </span>
+                        </div>
                       </div>
                     )}
                   </div>
