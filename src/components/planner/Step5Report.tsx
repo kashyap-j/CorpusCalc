@@ -1,10 +1,6 @@
-import { useState } from 'react';
 import { usePlannerStore } from '../../store/plannerStore';
-import { useAuthStore } from '../../store/authStore';
 import { fmt, compute } from '../../lib/math';
 import StepHeader from './StepHeader';
-import AuthModal from '../auth/AuthModal';
-import AIInsightPanel from './AIInsightPanel';
 
 const S5_STYLES = `
   .s5-eq-row {
@@ -28,20 +24,8 @@ const S5_STYLES = `
 
 export default function Step5Report() {
   const { state: S } = usePlannerStore();
-  const { user } = useAuthStore();
   const r = compute(S);
   const yearsOfDiscipline = S.retAge > S.age ? S.retAge - S.age : 30;
-
-  const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
-
-  const handleInsightClick = () => {
-    if (!user) {
-      setShowAuthModal(true);
-    } else {
-      setIsPanelOpen(true);
-    }
-  };
 
   return (
     <div>
@@ -142,27 +126,6 @@ export default function Step5Report() {
           </div>
         )}
 
-        {/* CorpusCalc Insights trigger — placed after the on-track/shortfall verdict, highest-intent moment */}
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <button
-            onClick={handleInsightClick}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: '8px',
-              padding: '12px 24px', borderRadius: '12px',
-              background: '#e8622a', border: 'none',
-              color: '#fff', fontSize: '14px', fontWeight: 700,
-              fontFamily: 'var(--font-body)', cursor: 'pointer',
-              boxShadow: '0 4px 14px rgba(232, 98, 42, 0.35)',
-              transition: 'opacity 0.15s',
-            }}
-            onMouseOver={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '0.88'; }}
-            onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '1'; }}
-          >
-            <span style={{ fontSize: '16px' }}>✦</span>
-            Get CorpusCalc Insights
-          </button>
-        </div>
-
         {/* Breakdown two-column */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
           <div style={{ borderRadius: '14px', background: '#F8F7F4', padding: '16px', border: '1px solid #E8E4DE' }}>
@@ -207,11 +170,6 @@ export default function Step5Report() {
         </div>
       </div>
 
-      {showAuthModal && (
-        <AuthModal initialTab="login" onClose={() => setShowAuthModal(false)} />
-      )}
-
-      <AIInsightPanel isOpen={isPanelOpen} onClose={() => setIsPanelOpen(false)} />
     </div>
   );
 }

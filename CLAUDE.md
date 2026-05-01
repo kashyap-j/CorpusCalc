@@ -55,8 +55,7 @@ corpuscalc/
 │   ├── lib/
 │   │   ├── math.ts     # All corpus/SIP/phase math — pure functions, no side effects
 │   │   ├── sanity.ts   # Sanity client + GROQ queries
-│   │   ├── supabase.ts # Supabase client + table helpers
-│   │   └── hash.ts     # SHA-256 plan_hash utility — takes PlannerState, returns hex string
+│   │   └── supabase.ts # Supabase client + table helpers
 │   └── store/
 │       ├── plannerStore.ts  # Planner state (Zustand + localStorage persist)
 │       └── authStore.ts     # Auth state (Zustand, no persist)
@@ -167,7 +166,6 @@ Submits via `supabase.rpc('submit_feedback', { p_name, p_email, p_message })`. N
 | `user_plans` | One row per user. Stores `user_id`, `inputs` (full planner state as JSON), `corpus_result` (number), `updated_at`. Upserted on conflict with `user_id`. |
 | `visit_counter` | Single row (`id = 1`) with a `count` column. Incremented via `increment_visit_counter()` RPC on each `/plan` load. |
 | `feedback` | Written via `submit_feedback(p_name, p_email, p_message)` RPC. RLS is enforced — the RPC is used instead of direct insert to respect row-level security. |
-| `plan_insights` | Stores insight results per plan_hash. Rate limiting enforced — 1 request per hash per 24h. |
 
 Auth uses Supabase Google OAuth. The `AuthCallback` page exchanges the OAuth code for a session and redirects to the pre-auth destination stored in `sessionStorage`.
 
@@ -328,8 +326,6 @@ The dev server runs on `http://localhost:5173`. Port is strict — if it's alrea
 - **SIP growth modes**: `flat` = no step-up, `salary` = SIP grows at salary growth %, `fixed` = SIP increases by a fixed annual rupee amount.
 - **Glossary data**: Currently hardcoded in `GlossaryPage.tsx`, not fetched from Sanity despite the schema existing.
 - **`studio/sanity.cli.ts` is gitignored**: Do not commit it. It contains the deployment `appId`. The file must exist locally for `npx sanity deploy` to work.
-- **Supabase CLI not required for Edge Function deployment:** Deploy via Supabase Management API using direct PATCH to `https://api.supabase.com/v1/projects/{ref}/functions/{name}`. Requires `SUPABASE_ACCESS_TOKEN` (from supabase.com/dashboard/account/tokens). Claude Code can handle this deployment without any local CLI install.
-- **plan_hash DEV bypass**: `src/lib/hash.ts` appends `Date.now()` to the hash when `import.meta.env.DEV` is true. This prevents the 24h rate limit from blocking repeated local testing. It never reaches production — `import.meta.env.DEV` is false in Vite production builds automatically.
 
 ---
 
@@ -356,77 +352,6 @@ The dev server runs on `http://localhost:5173`. Port is strict — if it's alrea
 - **Root cause of failure:** Chrome service worker from production build was intercepting dev server requests and returning cached old bundle
 - **Fix before next attempt:** Unregister service worker in Chrome DevTools → Application → Service Workers → Unregister `corpuscalc.com` scope, then clear site data for `localhost`, restart dev server, test in Incognito
 - Three changes needed in `ArticlePage.tsx` when resuming (see `YOUTUBE_EMBED_SESSION_NOTES.md`)
-
-### generate-plan-insight Edge Function — STATUS: LIVE ✅
-
-- Deployed at: https://oxjlzwvnhfopttcyeeao.supabase.co/functions/v1/generate-plan-insight
-- Model: `claude-haiku-4-5-20251001` (switched from Sonnet for ~3s response vs 10-15s)
-- max_tokens: 600 (reduced from 1500 — forces concise output, cuts latency)
-- Rate limiting: 3 attempts per plan_hash per 24h (HTTP 429 on 4th attempt). No retry on failure — fail fast.
-- `plan_insights` table created in Supabase with RLS
-- Output schema LOCKED — always returns exactly: `type`/`title`/`detail` for diagnostics, `title`/`detail`/`stateDiff` for suggestions
-- `esm.sh` import removed — uses direct `fetch()` against Supabase PostgREST API, no external deps at cold start
-- Deployed via Supabase Management API (no CLI required)
-- Accepts `computedResult` in POST payload — client sends actual `compute()` output so AI uses
-  correct corpus numbers instead of its own simplified estimates
-- **Bug fixed:** `curAge` field mapping — was reading `s.age` (undefined → defaulted to 30),
-  now reads `s.curAge ?? s.age ?? s.currentAge`. This caused completely wrong corpus projections.
-
-**System prompt rules (do not remove):**
-- EPF rule: for any salaried user, always check if existingInvestments seems low for their age/salary and flag EPF blind spot by name
-- Optimisation rule: if sipAmount < 20% of salaryIncome, always suggest at least one of: NPS 80CCD(1B), step-up SIP, ELSS — name the section and rupee benefit
-- Schema rule: only use field names `type`/`title`/`detail`/`stateDiff` — never `message`/`label`/`rationale`/`impact`/`description`/`body`
-- Detail brevity rule: each diagnostic `detail` must be max 15 words and include one specific number
-
-**Prompt eval status — 5/5 passing as of April 26, 2026:**
-- S1 Late Starter ✅ — EPF blind spot caught, corpus shortfall flagged
-- S2 Early FIRE Seeker ✅ — equity allocation, 40yr horizon, sequence-of-returns risk flagged
-- S3 Overconfident Saver ✅ — ₹4.9Cr shortfall, inflation reality check
-- S4 Dual Income No Kids ✅ — NPS 80CCD(1B) + step-up SIP suggested
-- S5 Near Retirement Panic ✅ — debt allocation, longevity risk, 8yr runway flagged
-
-### notify-waitlist-signup Edge Function — STATUS: LIVE ✅
-
-- Deployed at: https://oxjlzwvnhfopttcyeeao.supabase.co/functions/v1/notify-waitlist-signup
-- Trigger: "Join the waitlist →" click in AIInsightPanel.tsx
-- Payload: { name, email, plan_hash, timestamp } — name and email from Supabase user object
-- Sends email to kashyap@corpuscalc.com via Resend API
-- Subject: "New RIA Waitlist Signup — [user email]"
-- RESEND_API_KEY from Supabase secrets — never hardcoded
-- No rate limiting — signups are low volume
-- Returns 200 on success, 500 on failure. Client fails silently on error.
-- Deployed via Supabase Management API direct fetch (no CLI required)
-
-### CorpusCalc Insights Panel (AIInsightPanel.tsx) — STATUS: LIVE ✅
-
-- Location: `src/components/planner/AIInsightPanel.tsx`
-- Trigger: login-gated button on Step 5 — Tab 1 (Solo/Spouse) and Tab 2 (With Kids)
-- Desktop: fixed right panel 400px, slides in from right via Framer Motion AnimatePresence
-- Mobile: bottom sheet slides up via Framer Motion AnimatePresence
-- plan_hash: SHA-256 of JSON.stringify(plannerState) via Web Crypto API — source: `src/lib/hash.ts`
-  DEV bypass: appends Date.now() when `import.meta.env.DEV` is true (never reaches production)
-- Edge Function: POST to https://oxjlzwvnhfopttcyeeao.supabase.co/functions/v1/generate-plan-insight
-  Authorization: Bearer ${VITE_SUPABASE_ANON_KEY}
-  Payload includes `computedResult` (actual `compute()` output) so AI receives correct numbers
-- 5 states: idle / loading / loaded / error / rate-limited
-- Rate limit: 24h per plan_hash. Countdown timer shown from localStorage key `cc_last_insight_call`
-- **Corpus snapshot card**: shown instantly on panel open (no AI wait) — computed client-side
-  Projected | Required big numbers, progress bar, gap/surplus label with colour coding
-- Health Score pill: derived from diagnostics severity mix, no additional API call
-  all positive = green (#16A34A) 90+, any critical = red (#dc2626) <60, otherwise amber (#e8622a)
-- Diagnostics: compact 3-column table (coloured dot | title | one-line detail)
-  critical=#fef2f2/border #dc2626, warning=#fff7ed/border #e8622a,
-  positive=#f0fdf4/border #16A34A, info=#f0f9ff/border #0ea5e9
-- Suggestions: stateDiff rendered as Field | Value mini-table using `fmt()` from math.ts
-- **Apply to plan button**: only rendered when `stateDiff` is non-empty (hidden for advisory suggestions).
-  On click: `store.update(validDiff)` + re-runs `compute()` with merged state → corpus snapshot
-  updates in real-time in the panel. Shows "Applied ✓" for 2s. Undo deferred.
-- Summary: full text, no line-clamp (previously truncated to 3 lines)
-- Loading: 3 skeleton pulse rows via inline CSS keyframes. No spinner component.
-- All styling: inline styles only — no Tailwind inside this component
-- Label: "CorpusCalc Insights" everywhere in user-facing strings. File not renamed.
-- Elite waitlist CTA: "Want personalised advice from a SEBI Registered Investment Adviser (RIA)? Join the waitlist →"
-- Waitlist click fires notify-waitlist-signup Edge Function (fire-and-forget, fails silently)
 
 ### Social Share Buttons in ArticlePage — STATUS: LIVE ✅
 
