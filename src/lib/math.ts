@@ -665,15 +665,11 @@ export function computeTab2(S: PlannerState): ComputeTab2Result | null {
   const yrs = ytr(S), dur = retDur(S), inv = totInv(S), mo = totMoExp(S);
   const eG = inv * Math.pow(1 + S.invGR / 100, yrs);
 
-  let sC = 0;
-  for (let y = 1; y <= yrs; y++) {
-    const mi = S.retSipMode === 'salary'
-      ? S.retSipAmt * Math.pow(1 + S.salaryGrowth / 100, y - 1)
-      : S.retSipMode === 'fixed'
-        ? S.retSipAmt + S.retSipFixed / 12 * (y - 1)
-        : S.retSipAmt;
-    sC = sC * (1 + S.sipReturn / 100) + mi * 12;
-  }
+  const sC = calcSIPCorpus(
+    S.retSipAmt, yrs, S.sipReturn,
+    S.retSipMode === 'salary' ? 'salary' : S.retSipMode === 'fixed' ? 'fixed' : 'flat',
+    S.retSipMode === 'salary' ? (Number.isFinite(S.salaryGrowth) ? S.salaryGrowth : 7) : (Number.isFinite(S.retSipFixed) ? S.retSipFixed : 0),
+  );
 
   const totC = eG + sC;
   const moR  = mo * Math.pow(1 + S.inflation / 100, yrs);
