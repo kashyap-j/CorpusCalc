@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { usePlannerStore } from '../../store/plannerStore';
 import { fmt, compute } from '../../lib/math';
 import StepHeader from './StepHeader';
+import { AIInsightPanel } from './AIInsightPanel';
 
 const S5_STYLES = `
   .s5-eq-row {
@@ -26,6 +28,7 @@ export default function Step5Report() {
   const { state: S } = usePlannerStore();
   const r = compute(S);
   const yearsOfDiscipline = S.retAge > S.age ? S.retAge - S.age : 30;
+  const [showInsights, setShowInsights] = useState(false);
 
   return (
     <div>
@@ -168,6 +171,30 @@ export default function Step5Report() {
         <div style={{ borderRadius: '12px', background: '#F8F7F4', padding: '14px 16px', fontSize: '12px', color: '#6B7280', fontFamily: 'var(--font-body)', lineHeight: 1.6 }}>
           Assumptions: {S.sipReturn}% SIP return · {S.invGR}% existing investment growth · {S.inflation}% inflation · {S.retAge - S.age} years to build · {r.dur} years to fund
         </div>
+
+        <button
+          onClick={() => setShowInsights(true)}
+          style={{
+            marginTop: 24,
+            padding: '13px 24px',
+            background: '#e8622a',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 8,
+            fontSize: 15,
+            fontWeight: 600,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            fontFamily: 'system-ui, sans-serif',
+          }}
+        >
+          <span>✦</span>
+          Get CorpusCalc Insights
+        </button>
+
+        {showInsights && <AIInsightPanel onClose={() => setShowInsights(false)} />}
       </div>
 
     </div>
