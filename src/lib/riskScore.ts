@@ -6,6 +6,7 @@ export interface RiskScoreResult {
   ytr: number;
   coreRatio: number;
   satelliteRatio: number;
+  contingencyRatio: number;
 }
 
 export function computeRiskScore(state: PlannerState, corpus: number, reqCorpus: number): RiskScoreResult {
@@ -50,9 +51,11 @@ export function computeRiskScore(state: PlannerState, corpus: number, reqCorpus:
     score <= 75 ? 'Moderate-Aggressive' :
     'Aggressive';
 
-  const satelliteRatio = ytr > 10 ? Math.min(0.40, 0.20 + score * 0.002) : 0;
+  const satelliteRatio = ytr > 10 ? Math.min(0.38, 0.19 + score * 0.002) : 0;
+  const contingencyRatio = 0.05;
+  const coreRatio = 1 - satelliteRatio - contingencyRatio;
 
-  return { score, label, ytr, coreRatio: 1 - satelliteRatio, satelliteRatio };
+  return { score, label, ytr, coreRatio, satelliteRatio, contingencyRatio };
 }
 
 export function buildInsightsPrompt(state: PlannerState, r: RiskScoreResult, corpus: number, reqCorpus: number): string {
@@ -93,6 +96,7 @@ ${kidsBlock}
 ALLOCATION CONTEXT:
 Core (${Math.round(r.coreRatio * 100)}%): Nifty 50 Index + Flexi Cap${r.score <= 55 ? ' + Aggressive Hybrid (conservative profile)' : ''}${r.ytr > 10 ? ' + PPF/VPF with 80C caveat' : ''}
 Satellite (${Math.round(r.satelliteRatio * 100)}%): ${r.ytr <= 10 ? 'OMIT — YTR too low' : `Mid Cap${r.ytr > 15 ? ' + Small Cap' : ''}${r.score > 75 ? ' + one Sectoral' : ''} + International fund`}
+Contingency Corpus (always 5% = ₹${Math.round(state.sipAmt * 0.05).toLocaleString('en-IN')}/mo): Liquid Fund or Money Market Fund — emergency buffer, never touch for retirement.
 
 Generate exactly these 6 sections using markdown headers:
 ## 1. Verdict
@@ -107,7 +111,12 @@ Rules:
 - Section 3: if YTR ≤ 10 write "Not applicable — ${r.ytr} years to retirement is too short for satellite equity."
 - Section 5: if no kids data write "No children's goals entered in Step 2."
 - Every 80C suggestion must include: "(Only if old tax regime. New regime users: evaluate on returns alone.)"
-- India-specific instruments only. No generic global advice.`;
+- India-specific instruments only. No generic global advice.
+- Keep each section concise — maximum 5 bullet points per section, no long paragraphs
+- Debt Roadmap: bullet points only, no markdown tables
+- Blind Spots: maximum 4 items, one line each
+- Kids Goals Alert: maximum 3 lines
+- No markdown tables anywhere in the response — use bullet points instead`;
 }
 
 export function hashPlannerState(state: PlannerState): string {

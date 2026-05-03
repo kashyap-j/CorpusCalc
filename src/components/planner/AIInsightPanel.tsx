@@ -47,6 +47,38 @@ function buildSatRows(r: RiskScoreResult, sipAmt: number) {
   return rows;
 }
 
+function MarkdownRenderer({ text, colors }: { text: string; colors: typeof C }) {
+  const lines = text.split('\n');
+  return (
+    <>
+      {lines.map((line, i) => {
+        if (line.startsWith('|') && line.endsWith('|')) return null;
+        if (line.match(/^\|[-| ]+\|$/)) return null;
+        if (line.startsWith('### ')) return <div key={i} style={{ fontWeight: 700, fontSize: 13, marginTop: 10, marginBottom: 4, color: colors.darkGreen }}>{line.slice(4)}</div>;
+        if (line.startsWith('## ')) return <div key={i} style={{ fontWeight: 700, fontSize: 14, marginTop: 10, marginBottom: 4, color: colors.orange }}>{line.slice(3)}</div>;
+        if (line.startsWith('- ')) {
+          const content = line.slice(2).replace(/\*\*(.*?)\*\*/g, '$1');
+          return <div key={i} style={{ paddingLeft: 12, marginBottom: 3 }}>• {content}</div>;
+        }
+        if (line.startsWith('**') && line.endsWith('**')) {
+          return <div key={i} style={{ fontWeight: 700, marginTop: 6, marginBottom: 2 }}>{line.slice(2, -2)}</div>;
+        }
+        if (line.includes('**')) {
+          const parts = line.split(/\*\*(.*?)\*\*/g);
+          return (
+            <div key={i} style={{ marginBottom: 3 }}>
+              {parts.map((part, j) => j % 2 === 1 ? <strong key={j}>{part}</strong> : part)}
+            </div>
+          );
+        }
+        if (line.trim() === '---') return <hr key={i} style={{ border: 'none', borderTop: `1px solid ${colors.border}`, margin: '8px 0' }} />;
+        if (line.trim() === '') return <div key={i} style={{ height: 6 }} />;
+        return <div key={i} style={{ marginBottom: 3 }}>{line}</div>;
+      })}
+    </>
+  );
+}
+
 function parseSections(text: string) {
   const get = (n: number) => {
     const m = text.match(new RegExp(`## ${n}\\.[^\\n]*\\n([\\s\\S]*?)(?=## \\d\\.|$)`));
@@ -263,6 +295,23 @@ export function AIInsightPanel({ onClose }: { onClose: () => void }) {
                   Satellite omitted — {rr.ytr} years to retirement prioritises capital preservation.
                 </div>
               )}
+              <div style={{ marginTop: 16, paddingTop: 16, borderTop: `1px solid ${C.border}` }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: C.purple, fontFamily: 'system-ui, sans-serif' }}>CONTINGENCY CORPUS</span>
+                  <span style={{ fontSize: 12, color: C.muted, fontFamily: 'system-ui, sans-serif' }}>5% · ₹{fmt(Math.round(sipAmt * 0.05))}/mo</span>
+                </div>
+                <div style={{ fontSize: 13, letterSpacing: 1, color: C.purple, marginBottom: 6 }}>
+                  {'█'.repeat(1)}{'░'.repeat(19)}
+                  <span style={{ fontSize: 11, color: C.muted, marginLeft: 8 }}>Safety buffer. Never touch.</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '5px 0', fontFamily: 'system-ui, sans-serif', fontSize: 13, color: C.darkGreen }}>
+                  <span>Liquid Fund / Money Market Fund<span style={{ fontSize: 11, color: C.muted, marginLeft: 6 }}>3–6 months expenses</span></span>
+                  <span style={{ display: 'flex', gap: 16 }}>
+                    <span style={{ color: C.purple }}>₹{fmt(Math.round(sipAmt * 0.05))}</span>
+                    <span style={{ color: C.muted, minWidth: 32, textAlign: 'right' }}>5%</span>
+                  </span>
+                </div>
+              </div>
             </div>
           )}
 
@@ -289,8 +338,8 @@ export function AIInsightPanel({ onClose }: { onClose: () => void }) {
                     <span style={{ color: C.muted }}>{openAcc[key] ? '▲' : '▼'}</span>
                   </button>
                   {openAcc[key] && (
-                    <div style={{ padding: '12px 16px', background: C.bg, fontSize: 13, lineHeight: 1.7, color: C.darkGreen, fontFamily: 'system-ui, sans-serif', whiteSpace: 'pre-wrap' }}>
-                      {body}
+                    <div style={{ padding: '12px 16px', background: C.bg, fontSize: 13, lineHeight: 1.7, color: C.darkGreen, fontFamily: 'system-ui, sans-serif' }}>
+                      <MarkdownRenderer text={body} colors={C} />
                     </div>
                   )}
                 </div>
