@@ -66,7 +66,7 @@ export function AIInsightPanel({ onClose }: { onClose: () => void }) {
 
   const [ps, setPs] = useState<PanelState>('idle');
   const [text, setText] = useState('');
-  const [remaining, setRemaining] = useState<number | null>(null);
+  const [remaining, setRemaining] = useState<number>(5);
   const [resetAt, setResetAt] = useState<string | null>(null);
   const [errMsg, setErrMsg] = useState('');
   const [showRIA, setShowRIA] = useState(false);
@@ -182,11 +182,9 @@ export function AIInsightPanel({ onClose }: { onClose: () => void }) {
         <div style={{ padding: '16px 20px', borderBottom: `1px solid ${C.border}`, background: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
           <div>
             <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.08em', color: C.orange, textTransform: 'uppercase', fontFamily: 'system-ui, sans-serif' }}>CorpusCalc Insights</div>
-            {remaining !== null && (
-              <div style={{ fontSize: 11, color: C.muted, fontFamily: 'system-ui, sans-serif', marginTop: 2 }}>
-                {remaining} of 5 insights remaining today{remaining === 0 && resetAt ? ` · Resets at ${resetAt}` : ''}
-              </div>
-            )}
+            <div style={{ fontSize: 11, color: C.muted, fontFamily: 'system-ui, sans-serif', marginTop: 2 }}>
+              {remaining} of 5 insights remaining today{remaining === 0 && resetAt ? ` · Resets at ${resetAt}` : ''}
+            </div>
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: C.muted, lineHeight: 1 }}>×</button>
         </div>

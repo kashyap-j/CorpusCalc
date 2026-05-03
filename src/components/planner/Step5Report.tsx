@@ -191,7 +191,7 @@ export default function Step5Report() {
           }}
         >
           <span>✦</span>
-          Get CorpusCalc Insights
+          <span>CorpusCalc Insights — See Exactly What Your Money Should Be Doing</span>
         </button>
 
         {showInsights && <AIInsightPanel onClose={() => setShowInsights(false)} />}
